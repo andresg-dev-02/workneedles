@@ -1,0 +1,6 @@
+@WoorkNeedles_HostAddress = http://localhost:5167
+
+GET {{WoorkNeedles_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
