@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Domain.Entities;
+using Infraestructure.Persistence.Models;
 
 namespace Infraestructure.Data;
 

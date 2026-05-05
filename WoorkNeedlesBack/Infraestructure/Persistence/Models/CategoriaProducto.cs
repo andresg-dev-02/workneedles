@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities;
+namespace Infraestructure.Persistence.Models;
 
-public partial class CategoriaInsumo
+public partial class CategoriaProducto
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public partial class CategoriaInsumo
 
     public DateTime? Fechacreacion { get; set; }
 
-    public virtual ICollection<Insumo> Insumos { get; set; } = new List<Insumo>();
+    public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
 }
