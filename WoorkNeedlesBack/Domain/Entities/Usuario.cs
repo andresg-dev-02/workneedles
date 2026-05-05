@@ -18,6 +18,7 @@ public class Usuario
     private Usuario() { }
 
     public static Usuario Crear(
+        
         string nombres, string apellidos, string email,
         string contrasenaHash, string telefono,
         int rolId, int paisId, int ciudadId)
@@ -34,11 +35,11 @@ public class Usuario
             Nombres = nombres.Trim(),
             Apellidos = apellidos.Trim(),
             Email = email.ToLowerInvariant(),
-            ContrasenaHash = contrasenaHash,
+            Contrasena = contrasenaHash,
             Telefono = telefono,
-            RolId = rolId,
-            PaisId = paisId,
-            CiudadId = ciudadId,
+            Idrol = rolId,
+            Idpais = paisId,
+            Idciudad = ciudadId,
             Activo = true,
             FechaCreacion = DateTime.UtcNow
         };
