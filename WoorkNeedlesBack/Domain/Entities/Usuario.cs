@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities;
+using Domain.Exceptions;
+
+namespace Domain.Entities;
 
 public class Usuario
 {
@@ -15,7 +17,9 @@ public class Usuario
     public DateTime FechaCreacion { get; private set; }
     public DateTime? Fechamodificacion { get; private set; }
 
+#pragma warning disable CS8618
     private Usuario() { }
+#pragma warning restore CS8618
 
     public static Usuario Crear(
         
@@ -49,6 +53,6 @@ public class Usuario
     {
         if (Activo) throw new DomainException("El usuario ya está activo.");
         Activo = true;
-        FechaModificacion = DateTime.UtcNow;
+        Fechamodificacion = DateTime.UtcNow;
     }
 }
