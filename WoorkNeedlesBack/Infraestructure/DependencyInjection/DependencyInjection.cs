@@ -9,7 +9,7 @@ using Infraestructure.Data;
 using Infraestructure.Repositories;
 using Infraestructure.Mappings;
 using Application.Interfaces;
-
+using Application.Mappings;
 
 namespace Infraestructure
 {
@@ -21,7 +21,12 @@ namespace Infraestructure
                 options.UseNpgsql(configuration.GetConnectionString("ConnectionPostgress")));
 
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddAutoMapper(config => config.AddProfile<UsuarioProfile>());
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.ShouldUseConstructor = ci => true;
+                cfg.AddProfile<UsuarioProfile>();
+                cfg.AddProfile<UsuarioProfileDto>();
+            });
             services.AddScoped<Application.UseCases.Usuarios.GetAllUsers>();
             return services;
         }

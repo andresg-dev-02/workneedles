@@ -32,7 +32,14 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<Usuario>> GetAllAsync()
     {
-        var usuarios = await _context.Usuarios.ToListAsync();
+        var usuarios = await _context.Usuarios
+            .Include(u => u.IdrolNavigation)
+            .Include(u => u.IdpaisNavigation)
+            .Include(u => u.IdciudadNavigation)
+            .ToListAsync();
+
+            
+
         return _mapper.Map<IEnumerable<Usuario>>(usuarios);
     }
 

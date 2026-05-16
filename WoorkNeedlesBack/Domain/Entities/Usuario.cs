@@ -1,5 +1,5 @@
-using Domain.Exceptions;
-
+﻿using Domain.Exceptions;
+using Domain.Entities;
 namespace Domain.Entities;
 
 public class Usuario
@@ -16,6 +16,9 @@ public class Usuario
     public bool Activo { get; private set; }
     public DateTime FechaCreacion { get; private set; }
     public DateTime? Fechamodificacion { get; private set; }
+    public string Rol { get; private set; } = string.Empty;
+    public string Pais { get; private set; } = string.Empty;
+    public string Ciudad { get; private set; } = string.Empty;
 
 #pragma warning disable CS8618
     private Usuario() { }
@@ -45,7 +48,7 @@ public class Usuario
             Idpais = paisId,
             Idciudad = ciudadId,
             Activo = true,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = DateTime.UtcNow,
         };
     }
 
