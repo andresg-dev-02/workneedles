@@ -27,7 +27,9 @@ namespace Infraestructure
                 cfg.AddProfile<UsuarioProfile>();
                 cfg.AddProfile<UsuarioProfileDto>();
             });
-            services.AddScoped<Application.UseCases.Usuarios.GetAllUsers>();
+            services.AddScoped<Application.UseCases.Users.GetAllUsers>();
+            services.AddScoped<Application.UseCases.Users.GetUserById>();
+            services.AddScoped<Application.UseCases.Users.DeleteUser>();
             return services;
         }
     }

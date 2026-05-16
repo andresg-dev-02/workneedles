@@ -57,9 +57,11 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Usuario user)
+    public async Task DeleteAsync(int id)
     {
-        _context.Usuarios.Remove(_mapper.Map<Infraestructure.Persistence.Models.Usuario>(user));
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario is null) return;
+        _context.Usuarios.Remove(usuario);
         await _context.SaveChangesAsync();
     }
 }

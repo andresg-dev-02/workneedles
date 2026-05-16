@@ -2,7 +2,7 @@ using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
 
-namespace Application.UseCases.Usuarios;
+namespace Application.UseCases.Users;
 
 public class GetAllUsers(IUserRepository usuarioRepository, IMapper mapper)
 {
@@ -11,4 +11,5 @@ public class GetAllUsers(IUserRepository usuarioRepository, IMapper mapper)
         var usuarios = await usuarioRepository.GetAllAsync();
         return mapper.Map<IEnumerable<UsuarioDto>>(usuarios);
     }
+
 }
