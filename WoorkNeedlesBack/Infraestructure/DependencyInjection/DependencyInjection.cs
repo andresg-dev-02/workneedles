@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infraestructure.Data;
-using Domain.Interfaces;
 using Infraestructure.Repositories;
+using Infraestructure.Mappings;
+using Application.Interfaces;
 
 
 namespace Infraestructure
@@ -19,8 +20,9 @@ namespace Infraestructure
             services.AddDbContext<WoorkNeedlesContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("ConnectionPostgress")));
 
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddAutoMapper(config => config.AddProfile<UsuarioProfile>());
+            services.AddScoped<Application.UseCases.Usuarios.GetAllUsers>();
             return services;
         }
     }

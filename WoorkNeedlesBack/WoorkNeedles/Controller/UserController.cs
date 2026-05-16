@@ -7,17 +7,17 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ListarUsuariosUseCase _listarUsuariosUseCase;
+    private readonly GetAllUsers _listarUsuariosUseCase;
 
-    public UserController(ListarUsuariosUseCase listarUsuariosUseCase)
+    public UserController(GetAllUsers listarUsuariosUseCase)
     {
         _listarUsuariosUseCase = listarUsuariosUseCase;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAll()
     {
-        var usuarios = await _listarUsuariosUseCase.ExecuteAsync();
+        var usuarios = await _listarUsuariosUseCase.TraerUsuarios();
         return Ok(usuarios);
     }
 }
