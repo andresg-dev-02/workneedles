@@ -10,8 +10,11 @@ using Infraestructure.Repositories;
 using Infraestructure.Mappings;
 using Application.Interfaces;
 using Application.Mappings;
-using Domain.Ports;
-using Infraestructure.Services;
+using Domain.Ports.Output;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Infraestructure.Services.SecurityParameters;
 
 namespace Infraestructure
 {
@@ -32,9 +35,26 @@ namespace Infraestructure
             services.AddScoped<Application.UseCases.Users.GetAllUsers>();
             services.AddScoped<Application.UseCases.Users.GetUserById>();
             services.AddScoped<Application.UseCases.Users.DeleteUser>();
+            services.AddScoped<Application.UseCases.Login.Auth>();
             services.AddScoped<IPasswordHash, PasswordHash>();
             services.AddScoped<Application.UseCases.Users.AddUser>();
             services.AddScoped<Application.UseCases.Users.UpdateUser>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["Jwt:Issuer"],
+                        ValidAudience = configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+                    };
+                });
             return services;
         }
     }

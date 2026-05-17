@@ -1,6 +1,6 @@
 using Application.UseCases.Users;
 using Microsoft.AspNetCore.Mvc;
-using Application.DTOs;
+using Application.DTOs.UserModel;
 using Domain.Exceptions;
 
 namespace Api.Controllers;

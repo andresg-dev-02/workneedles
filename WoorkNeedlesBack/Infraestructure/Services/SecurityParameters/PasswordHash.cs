@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Ports;
+using Domain.Ports.Output;
 using BC = BCrypt.Net.BCrypt;
 
-namespace Infraestructure.Services
+namespace Infraestructure.Services.SecurityParameters
 {
     public class PasswordHash : IPasswordHash
     {
