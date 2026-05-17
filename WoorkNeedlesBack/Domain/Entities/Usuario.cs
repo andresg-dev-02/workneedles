@@ -48,7 +48,7 @@ public class Usuario
             Idpais = paisId,
             Idciudad = ciudadId,
             Activo = true,
-            FechaCreacion = DateTime.UtcNow,
+            FechaCreacion = DateTime.Now,
         };
     }
 
@@ -58,4 +58,27 @@ public class Usuario
         Activo = true;
         Fechamodificacion = DateTime.UtcNow;
     }
+
+    public void Actualizar(string nombres, string apellidos, string email,
+                       string telefono, int idRol, int idPais, int idCiudad,
+                       string? nuevaContrasena = null)
+{
+    if (string.IsNullOrWhiteSpace(email))
+        throw new DomainException("El email es requerido.");
+    if (!email.Contains('@'))
+        throw new DomainException("El email no es válido.");
+
+    Nombres = nombres.Trim();
+    Apellidos = apellidos.Trim();
+    Email = email.ToLowerInvariant();
+    Telefono = telefono;
+    Idrol = idRol;
+    Idpais = idPais;
+    Idciudad = idCiudad;
+
+    if (!string.IsNullOrWhiteSpace(nuevaContrasena))
+        Contrasena = nuevaContrasena;
+
+    Fechamodificacion = DateTime.Now;
+}
 }

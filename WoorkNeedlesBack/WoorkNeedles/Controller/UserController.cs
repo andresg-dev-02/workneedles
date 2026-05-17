@@ -1,5 +1,7 @@
 using Application.UseCases.Users;
 using Microsoft.AspNetCore.Mvc;
+using Application.DTOs;
+using Domain.Exceptions;
 
 namespace Api.Controllers;
 
@@ -10,12 +12,16 @@ public class UserController : ControllerBase
     private readonly GetAllUsers _listarUsuariosUseCase;
     private readonly GetUserById _traerUusario;
     private readonly DeleteUser _eliminarUusario;
+    private readonly AddUser _createUserUseCase;
+    private readonly UpdateUser _updateUserUseCase;
 
-    public UserController(GetAllUsers listarUsuariosUseCase, GetUserById traerUusario, DeleteUser eliminarUusario)
+    public UserController(GetAllUsers listarUsuariosUseCase, GetUserById traerUusario, DeleteUser eliminarUusario, AddUser createUserUseCase, UpdateUser updateUserUseCase)
     {
         _listarUsuariosUseCase = listarUsuariosUseCase;
         _traerUusario = traerUusario;
         _eliminarUusario = eliminarUusario;
+        _createUserUseCase = createUserUseCase;
+        _updateUserUseCase = updateUserUseCase;
     }
 
     [HttpGet]
@@ -51,6 +57,31 @@ public class UserController : ControllerBase
         {
             return NotFound(ex.Message);
         }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUsuarioDto usuario)
+    {
+        await _createUserUseCase.AddNewUser(usuario);
+        return Created();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUsuarioDto actualizaruserdto)
+    {
+        try
+        {
+            await _updateUserUseCase.ActualizarUsuarioAsync(id, actualizaruserdto);
+            return Ok(new { message = "Usuario actualizado exitosamente." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (DomainException ex)
+    {
+        return BadRequest(ex.Message);
+    }
     }
 
 }

@@ -52,9 +52,12 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateAsync(Usuario user)
     {
-        var usuario = _mapper.Map<Infraestructure.Persistence.Models.Usuario>(user);
-        _context.Usuarios.Update(usuario);
-        await _context.SaveChangesAsync();
+        var usuario = await _context.Usuarios.FindAsync(user.Id);
+    if (usuario is null) throw new KeyNotFoundException("Usuario no encontrado.");
+
+    _mapper.Map(user, usuario);
+
+    await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)

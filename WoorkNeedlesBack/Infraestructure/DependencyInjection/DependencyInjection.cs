@@ -10,6 +10,8 @@ using Infraestructure.Repositories;
 using Infraestructure.Mappings;
 using Application.Interfaces;
 using Application.Mappings;
+using Domain.Ports;
+using Infraestructure.Services;
 
 namespace Infraestructure
 {
@@ -30,6 +32,9 @@ namespace Infraestructure
             services.AddScoped<Application.UseCases.Users.GetAllUsers>();
             services.AddScoped<Application.UseCases.Users.GetUserById>();
             services.AddScoped<Application.UseCases.Users.DeleteUser>();
+            services.AddScoped<IPasswordHash, PasswordHash>();
+            services.AddScoped<Application.UseCases.Users.AddUser>();
+            services.AddScoped<Application.UseCases.Users.UpdateUser>();
             return services;
         }
     }
