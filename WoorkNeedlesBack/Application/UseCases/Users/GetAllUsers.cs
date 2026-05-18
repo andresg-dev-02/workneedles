@@ -1,15 +1,21 @@
 using Application.DTOs.UserModel;
 using Application.Interfaces.User;
 using AutoMapper;
+using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
 
 namespace Application.UseCases.Users;
 
-public class GetAllUsers(IUserRepository usuarioRepository, IMapper mapper)
+public class GetAllUsers(IUnitOfWork unitofwork, IMapper mapper)
 {
-    public async Task<IEnumerable<UsuarioDto>> TraerUsuarios()
+    public async Task<IEnumerable<UsuarioDto>> Execute()
     {
-        var usuarios = await usuarioRepository.GetAllAsync();
+        var options = new QueryOptions<Domain.Entities.Usuario>()
+            .AddInclude("IdrolNavigation")
+            .AddInclude("IdpaisNavigation")
+            .AddInclude("IdciudadNavigation");
+
+        var usuarios = await unitofwork.Usuarios.GetAllAsync(options);
         return mapper.Map<IEnumerable<UsuarioDto>>(usuarios);
     }
-
 }

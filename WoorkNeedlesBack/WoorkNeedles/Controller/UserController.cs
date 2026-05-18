@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var usuarios = await _listarUsuariosUseCase.TraerUsuarios();
+        var usuarios = await _listarUsuariosUseCase.Execute();
         return Ok(usuarios);
     }
 
@@ -62,7 +62,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateUsuarioDto usuario)
     {
-        await _createUserUseCase.AddNewUser(usuario);
+        await _createUserUseCase.Execute(usuario);
         return Created();
     }
 
@@ -71,7 +71,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            await _updateUserUseCase.ActualizarUsuarioAsync(id, actualizaruserdto);
+            await _updateUserUseCase.Execute(id, actualizaruserdto);
             return Ok(new { message = "Usuario actualizado exitosamente." });
         }
         catch (KeyNotFoundException ex)

@@ -1,24 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Interfaces.User;
 using Application.DTOs.UserModel;
+using Domain.Entities;
 using Domain.Ports.Output;
+using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
 
-namespace Application.UseCases.Users
+namespace Application.UseCases.Users;
+
+public class UpdateUser(IUnitOfWork unitofwork, IPasswordHash passwordHash)
 {
-    public class UpdateUser(IUserRepository userRepository, IPasswordHash passwordHash  )
+    public async Task Execute(int id, UpdateUsuarioDto actualizarUsuarioDto)
     {
-         public async Task ActualizarUsuarioAsync(int id, UpdateUsuarioDto actualizaruserdto)
-    {
-        var usuario = await userRepository.GetByIdAsync(id);
-        var ContrasenaNueva = string.IsNullOrWhiteSpace(actualizaruserdto.Contrasena) ? null : passwordHash.Hashear(actualizaruserdto.Contrasena);
+        var options = new QueryOptions<Usuario>()
+            .AddInclude("IdrolNavigation")
+            .AddInclude("IdpaisNavigation")
+            .AddInclude("IdciudadNavigation");
 
-        usuario.Actualizar(actualizaruserdto.Nombres,actualizaruserdto.Apellidos,actualizaruserdto.Email,actualizaruserdto.Telefono,actualizaruserdto.IdRol,actualizaruserdto.IdPais,actualizaruserdto.IdCiudad,ContrasenaNueva
-        );
+        var usuario = await unitofwork.Usuarios.GetByIdAsync(id, options)
+            ?? throw new KeyNotFoundException("Usuario no encontrado.");
 
-        await userRepository.UpdateAsync(usuario);
-    }
+        var contrasenaHash = string.IsNullOrWhiteSpace(actualizarUsuarioDto.Contrasena)
+            ? null : passwordHash.Hashear(actualizarUsuarioDto.Contrasena);
+
+        usuario.Actualizar(actualizarUsuarioDto.Nombres, actualizarUsuarioDto.Apellidos, actualizarUsuarioDto.Email,
+            actualizarUsuarioDto.Telefono, actualizarUsuarioDto.IdRol, actualizarUsuarioDto.IdPais, actualizarUsuarioDto.IdCiudad, contrasenaHash);
+
+        unitofwork.Usuarios.Update(usuario);
+        await unitofwork.SaveAsync();
     }
 }

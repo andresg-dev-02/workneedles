@@ -6,6 +6,7 @@ using Infraestructure.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Infraestructure.Repositories.UserRepo;
 
 namespace Infraestructure.DI;
 

@@ -6,6 +6,7 @@ using Domain.Ports.Output.UnitOfWork;
 using Domain.Ports.Output;
 using Infraestructure.Data;
 using Infraestructure.Repositories.Generic;
+using Application.Interfaces.User;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 
@@ -13,14 +14,16 @@ namespace Infraestructure.Repositories.UnitOfWork
 {
     public class UnitOfWorkRepository(WoorkNeedlesContext context, IMapper mapper) : IUnitOfWork
     {
-        public IGenericRepository<Domain.Entities.Usuario> Usuarios { get; } =
-            new GenericRepository<Domain.Entities.Usuario>(context);
+        public IGenericRepository<Domain.Entities.Usuario> Usuarios { get; } = 
+            new GenericRepository<Domain.Entities.Usuario, Infraestructure.Persistence.Models.Usuario>(context, mapper);
 
         public IGenericRepository<Domain.Entities.CategoriaProducto> Categorias { get; } =
-            new GenericRepository<Domain.Entities.CategoriaProducto>(context);
+            new GenericRepository<Domain.Entities.CategoriaProducto,
+                                Infraestructure.Persistence.Models.CategoriaProducto>(context, mapper);
 
         public IGenericRepository<Domain.Entities.Producto> Productos { get; } =
-            new GenericRepository<Domain.Entities.Producto>(context);
+            new GenericRepository<Domain.Entities.Producto,
+                                Infraestructure.Persistence.Models.Producto>(context, mapper);
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
 

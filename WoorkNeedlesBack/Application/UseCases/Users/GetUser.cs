@@ -1,18 +1,22 @@
 using Application.DTOs.UserModel;
-using Application.Interfaces.User;
 using AutoMapper;
+using Domain.Entities;
+using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
 
 namespace Application.UseCases.Users;
 
-public class GetUserById(IUserRepository userRepository, IMapper mapper)
+public class GetUserById(IUnitOfWork unitofwork, IMapper mapper)
 {
     public async Task<UsuarioDto> Execute(int id)
     {
-        var usuario = await userRepository.GetByIdAsync(id);
+        var options = new QueryOptions<Usuario>()
+            .AddInclude("IdrolNavigation")
+            .AddInclude("IdpaisNavigation")
+            .AddInclude("IdciudadNavigation");
 
-        if (usuario is null)
-            throw new KeyNotFoundException($"Usuario con ID {id} no encontrado.");
-
+        var usuario = await unitofwork.Usuarios.GetByIdAsync(id, options)
+            ?? throw new KeyNotFoundException($"Usuario con ID {id} no encontrado.");
         return mapper.Map<UsuarioDto>(usuario);
     }
 }
