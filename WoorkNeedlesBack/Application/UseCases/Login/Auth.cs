@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Ports.Output;
 using Application.DTOs.Login;
-using Application.Interfaces;
+using Application.Interfaces.User;
 using Domain.Exceptions;
 
 namespace Application.UseCases.Login

@@ -2,13 +2,14 @@ using AutoMapper;
 using Domain.Entities;
 using Application.DTOs.UserModel;
 
-namespace Application.Mappings;
-
-public class UsuarioProfileDto : Profile
+namespace Application.Mappings
 {
-    public UsuarioProfileDto()
+    public class UsuarioProfileDto : Profile
     {
-        CreateMap<Domain.Entities.Usuario, UsuarioDto>();
-        CreateMap<UsuarioDto, Domain.Entities.Usuario>();
+        public UsuarioProfileDto()
+        {
+            CreateMap<Domain.Entities.Usuario, UsuarioDto>();
+            CreateMap<UsuarioDto, Domain.Entities.Usuario>();
+        }
     }
 }

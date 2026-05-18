@@ -1,5 +1,5 @@
 using Application.DTOs.UserModel;
-using Application.Interfaces;
+using Application.Interfaces.User;
 using AutoMapper;
 
 namespace Application.UseCases.Users;

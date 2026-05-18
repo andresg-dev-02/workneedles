@@ -1,5 +1,5 @@
 using Domain.Entities;
-using Application.Interfaces;
+using Application.Interfaces.User;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Infraestructure.Mappings;
@@ -59,7 +59,7 @@ public class UserRepository : IUserRepository
     public async Task UpdateAsync(Usuario user)
     {
         var usuario = await _context.Usuarios.FindAsync(user.Id);
-    if (usuario is null) throw new KeyNotFoundException("Usuario no encontrado.");
+        if (usuario is null) throw new KeyNotFoundException("Usuario no encontrado.");
 
     _mapper.Map(user, usuario);
 

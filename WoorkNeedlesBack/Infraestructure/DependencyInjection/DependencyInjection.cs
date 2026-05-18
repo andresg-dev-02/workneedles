@@ -7,8 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infraestructure.Data;
 using Infraestructure.Repositories;
+using Infraestructure.Mappings.ProductMap;
 using Infraestructure.Mappings;
-using Application.Interfaces;
+using Infraestructure.Repositories.ProductRepo;
+using Application.Interfaces.User;
+using Application.Interfaces.Product;
+using Application.Mappings.ProductoMap;
 using Application.Mappings;
 using Domain.Ports.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,6 +35,10 @@ namespace Infraestructure
                 cfg.ShouldUseConstructor = ci => true;
                 cfg.AddProfile<UsuarioProfile>();
                 cfg.AddProfile<UsuarioProfileDto>();
+                cfg.AddProfile<CategoriaProductoProfile>();     
+                cfg.AddProfile<CategoriaProductoDtoProfile>();
+                cfg.AddProfile<ProductoProfile>();
+                cfg.AddProfile<ProductoDtoProfile>();
             });
             services.AddScoped<Application.UseCases.Users.GetAllUsers>();
             services.AddScoped<Application.UseCases.Users.GetUserById>();
@@ -55,6 +63,20 @@ namespace Infraestructure
                             Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
                     };
                 });
+            services.AddScoped<ICategoriaProductoRepository, CategoriaProductoRepository>();
+            services.AddScoped<Application.UseCases.Products.Categorias.GetAllCategorias>();
+            services.AddScoped<Application.UseCases.Products.Categorias.GetCategoriaById>();
+            services.AddScoped<Application.UseCases.Products.Categorias.CreateCategoria>();
+            services.AddScoped<Application.UseCases.Products.Categorias.UpdateCategoria>();
+            services.AddScoped<Application.UseCases.Products.Categorias.DeleteCategoria>();
+
+            services.AddScoped<Application.Interfaces.Product.IProductoRepository, Infraestructure.Repositories.ProductRepo.ProductoRepository>();
+            services.AddScoped<Application.UseCases.Products.Producto.GetAllProductos>();
+            services.AddScoped<Application.UseCases.Products.Producto.GetProductoById>();
+            services.AddScoped<Application.UseCases.Products.Producto.CreateProducto>();
+            services.AddScoped<Application.UseCases.Products.Producto.UpdateProducto>();
+            services.AddScoped<Application.UseCases.Products.Producto.DeleteProducto>();
+
             return services;
         }
     }

@@ -1,5 +1,5 @@
 ﻿using Domain.Exceptions;
-using Domain.Entities;
+
 namespace Domain.Entities;
 
 public class Usuario

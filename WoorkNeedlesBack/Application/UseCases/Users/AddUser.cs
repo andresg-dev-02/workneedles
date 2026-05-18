@@ -1,4 +1,4 @@
-using Application.Interfaces;
+using Application.Interfaces.User;
 using Application.DTOs.UserModel;
 using Domain.Entities;
 using Domain.Ports.Output;
