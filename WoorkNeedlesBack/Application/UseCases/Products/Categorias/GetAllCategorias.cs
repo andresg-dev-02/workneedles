@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs.Productos;
-using Application.Interfaces.Product;
 using Domain.Entities;
 using AutoMapper;
+using Domain.Ports.Output.UnitOfWork;
 
 namespace Application.UseCases.Products.Categorias
 {
-
-    public class GetAllCategorias(ICategoriaProductoRepository repository, IMapper mapper)
+    public class GetAllCategorias(IUnitOfWork unitofwork, IMapper mapper)
     {
-        public async Task<IEnumerable<CategoriaProductoDto>> TraerCategorias()
+        public async Task<IEnumerable<CategoriaProductoDto>> Execute()
         {
-            var categorias = await repository.GetAllAsync();
+            var categorias = await unitofwork.Categorias.GetAllAsync();
             return mapper.Map<IEnumerable<CategoriaProductoDto>>(categorias);
         }
-    }  
+    }
 }

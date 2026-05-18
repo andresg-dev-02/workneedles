@@ -19,7 +19,7 @@ public class CategoriaProductoController(
     {
         try
         {
-        var categorias = await getAll.TraerCategorias();
+        var categorias = await getAll.Execute();
         return Ok(categorias);
         }
         catch (Exception ex) { return BadRequest(ex.Message); }
@@ -30,7 +30,7 @@ public class CategoriaProductoController(
     {
         try
         {
-            var categoria = await getById.TraerCategoriaPorId(id);
+            var categoria = await getById.Execute(id);
             return Ok(categoria);
         }
         catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
@@ -41,7 +41,7 @@ public class CategoriaProductoController(
     {
         try
         {
-            await create.CrearCategoriaProducto(dto);
+            await create.Execute(dto);
             return Created();
         }
         catch (DomainException ex) { return BadRequest(ex.Message); }
@@ -52,7 +52,7 @@ public class CategoriaProductoController(
     {
         try
         {
-            await update.ActualizarCategoriaProducto(id, dto);
+            await update.Execute(id, dto);
             return Ok(new { message = "Categoría actualizada exitosamente." });
         }
         catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
@@ -64,7 +64,7 @@ public class CategoriaProductoController(
     {
         try
         {
-            await delete.EliminarCategoriaProducto(id);
+            await delete.Execute(id);
             return Ok(new { message = "Categoría eliminada exitosamente." });
         }
         catch (KeyNotFoundException ex) { return NotFound(ex.Message); }

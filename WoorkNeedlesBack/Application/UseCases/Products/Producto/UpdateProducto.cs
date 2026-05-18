@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs.Productos;
-using Application.Interfaces.Product;
 using Domain.Entities;
 using AutoMapper;
+using Domain.Ports.Output.UnitOfWork;
 
 namespace Application.UseCases.Products.Producto
 {
-    public class UpdateProducto(IProductoRepository repository)
+    public class UpdateProducto(IUnitOfWork unitofwork)
     {
-        public async Task ActualizarProducto(int id, UpdateProductoDto dto)
+        public async Task Execute(int id, UpdateProductoDto actualizarProductodto)
         {
-            var producto = await repository.GetByIdAsync(id)
+            var producto = await unitofwork.Productos.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Producto no encontrado.");
             producto.Actualizar(
-                dto.Nombre, dto.Descripcion, dto.Material,
-                dto.Preciobase, dto.Urlimagen, dto.IdCategoria);
-            await repository.UpdateAsync(producto);
+                actualizarProductodto.Nombre, actualizarProductodto.Descripcion, actualizarProductodto.Material,
+                actualizarProductodto.Preciobase, actualizarProductodto.Urlimagen, actualizarProductodto.IdCategoria);
+            unitofwork.Productos.Update(producto);
+            await unitofwork.SaveAsync();
         }
     }
 }

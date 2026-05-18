@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs.Productos;
-using Application.Interfaces.Product;
 using Domain.Entities;
 using AutoMapper;
+using Domain.Ports.Output.UnitOfWork;
 
 namespace Application.UseCases.Products.Categorias
 {
-    public class UpdateCategoria(ICategoriaProductoRepository repository)
-    { 
-        public async Task ActualizarCategoriaProducto(int id, UpdateCategoriaProductoDto dto)
+    public class UpdateCategoria(IUnitOfWork unitofwork)
+    {
+        public async Task Execute(int id, UpdateCategoriaProductoDto categoriaProductodto)
         {
-            var categoria = await repository.GetByIdAsync(id)
+            var categoria = await unitofwork.Categorias.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Categoría no encontrada.");
-            categoria.Actualizar(dto.Nombre, dto.Descripcion);
-            await repository.UpdateAsync(categoria);
+            categoria.Actualizar(categoriaProductodto.Nombre, categoriaProductodto.Descripcion);
+            unitofwork.Categorias.Update(categoria);
+            await unitofwork.SaveAsync();
         }
     }
 }

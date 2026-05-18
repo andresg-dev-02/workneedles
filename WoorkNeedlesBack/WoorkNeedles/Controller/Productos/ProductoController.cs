@@ -17,7 +17,7 @@ namespace WoorkNeedles.Controller.Productos
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var productos = await getAll.TraerProductos();
+            var productos = await getAll.Execute();
             return Ok(productos);
         }
 
@@ -26,7 +26,7 @@ namespace WoorkNeedles.Controller.Productos
         {
             try
             {
-                var producto = await getById.TraerProductoId(id);
+                var producto = await getById.Execute(id);
                 return Ok(producto);
             }
             catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
@@ -37,7 +37,7 @@ namespace WoorkNeedles.Controller.Productos
         {
             try
             {
-                await create.CrearProducto(dto);
+                await create.Execute(dto);
                 return Created();
             }
             catch (DomainException ex) { return BadRequest(ex.Message); }
@@ -48,7 +48,7 @@ namespace WoorkNeedles.Controller.Productos
         {
             try
             {
-                await update.ActualizarProducto(id, dto);
+                await update.Execute(id, dto);
                 return Ok(new { message = "Producto actualizado exitosamente." });
             }
             catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
@@ -60,7 +60,7 @@ namespace WoorkNeedles.Controller.Productos
         {
             try
             {
-                await delete.EliminarProducto(id);
+                await delete.Execute(id);
                 return Ok(new { message = "Producto eliminado exitosamente." });
             }
             catch (KeyNotFoundException ex) { return NotFound(ex.Message); }

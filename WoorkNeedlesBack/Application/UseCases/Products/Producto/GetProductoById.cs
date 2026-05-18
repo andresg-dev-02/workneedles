@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs.Productos;
-using Application.Interfaces.Product;
 using Domain.Entities;
 using AutoMapper;
+using Domain.Ports.Output.UnitOfWork;
 
 namespace Application.UseCases.Products.Producto
 {
-    public class GetProductoById(IProductoRepository repository, IMapper mapper)
+    public class GetProductoById(IUnitOfWork unitofwork, IMapper mapper)
     {
-        public async Task<ProductoDto> TraerProductoId(int id)
+        public async Task<ProductoDto> Execute(int id)
         {
-            var producto = await repository.GetByIdAsync(id)
-                ?? throw new KeyNotFoundException("Producto no encontrado.");
+            var producto = await unitofwork.Productos.GetByIdAsync(id) ?? throw new KeyNotFoundException("Producto no encontrado.");
             return mapper.Map<ProductoDto>(producto);
         }
     }
