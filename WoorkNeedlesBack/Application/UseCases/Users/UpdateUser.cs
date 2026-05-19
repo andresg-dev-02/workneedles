@@ -1,0 +1,30 @@
+using Application.DTOs.UserModel;
+using Domain.Entities;
+using Domain.Ports.Output;
+using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
+
+namespace Application.UseCases.Users;
+
+public class UpdateUser(IUnitOfWork unitofwork, IPasswordHash passwordHash)
+{
+    public async Task Execute(int id, UpdateUsuarioDto actualizarUsuarioDto)
+    {
+        var options = new QueryOptions<Usuario>()
+            .AddInclude("IdrolNavigation")
+            .AddInclude("IdpaisNavigation")
+            .AddInclude("IdciudadNavigation");
+
+        var usuario = await unitofwork.Usuarios.GetByIdAsync(id, options)
+            ?? throw new KeyNotFoundException("Usuario no encontrado.");
+
+        var contrasenaHash = string.IsNullOrWhiteSpace(actualizarUsuarioDto.Contrasena)
+            ? null : passwordHash.Hashear(actualizarUsuarioDto.Contrasena);
+
+        usuario.Actualizar(actualizarUsuarioDto.Nombres, actualizarUsuarioDto.Apellidos, actualizarUsuarioDto.Email,
+            actualizarUsuarioDto.Telefono, actualizarUsuarioDto.IdRol, actualizarUsuarioDto.IdPais, actualizarUsuarioDto.IdCiudad, contrasenaHash);
+
+        unitofwork.Usuarios.Update(usuario);
+        await unitofwork.SaveAsync();
+    }
+}
