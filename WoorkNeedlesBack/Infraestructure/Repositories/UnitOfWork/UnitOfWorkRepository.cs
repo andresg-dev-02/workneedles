@@ -25,8 +25,23 @@ namespace Infraestructure.Repositories.UnitOfWork
             new GenericRepository<Domain.Entities.Producto,
                                 Infraestructure.Persistence.Models.Producto>(context, mapper);
 
-        public async Task SaveAsync() => await context.SaveChangesAsync();
+        public IGenericRepository<Domain.Entities.Colore> Colores { get; } =
+            new GenericRepository<Domain.Entities.Colore,
+                                Infraestructure.Persistence.Models.Colore>(context, mapper);
 
+        public IGenericRepository<Domain.Entities.Talla> Tallas { get; } =
+            new GenericRepository<Domain.Entities.Talla,
+                                Infraestructure.Persistence.Models.Talla>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.ProductoColore> ProductoColores { get; } =
+            new GenericRepository<Domain.Entities.ProductoColore,
+                                Infraestructure.Persistence.Models.ProductoColore>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.ProductoTalla> ProductoTallas { get; } =
+            new GenericRepository<Domain.Entities.ProductoTalla,
+                                Infraestructure.Persistence.Models.ProductoTalla>(context, mapper);
+
+        public async Task SaveAsync() => await context.SaveChangesAsync();
         public void Dispose() => context.Dispose();
     }
 }
