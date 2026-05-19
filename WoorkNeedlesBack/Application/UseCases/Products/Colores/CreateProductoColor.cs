@@ -2,10 +2,11 @@ using Application.DTOs.Productos;
 using Domain.Entities;
 using AutoMapper;
 using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
 
 namespace Application.UseCases.Products.Colores
 {
-    public class CreateProductoColore(IUnitOfWork unitofwork)
+    public class CreateProductoColor(IUnitOfWork unitofwork)
     {
         public async Task Execute(CreateProductoColorDto productoColorCreatedto)
         {
@@ -15,16 +16,21 @@ namespace Application.UseCases.Products.Colores
         }
     }
 
-    public class GetAllProductoColores(IUnitOfWork unitofwork, IMapper mapper)
+    public class GetAllProductoColor(IUnitOfWork unitofwork, IMapper mapper)
     {
-        public async Task<IEnumerable<ProductoColorDto>> Execute()
+        public async Task<IEnumerable<ProductoColorDto>> Execute(int id)
         {
-            var productoColores = await unitofwork.ProductoColores.GetAllAsync();
-            return mapper.Map<IEnumerable<ProductoColorDto>>(productoColores);
+            var options = new QueryOptions<ProductoColore>()
+                .AddInclude("IdproductoNavigation")
+                .AddInclude("IdcolorNavigation");
+
+            var productoColores = await unitofwork.ProductoColores.GetAllAsync(options);
+            return mapper.Map<IEnumerable<ProductoColorDto>>(
+                productoColores.Where(pc => pc.Idproducto == id));
         }
     }
 
-    public class DeleteProductoColore(IUnitOfWork unitofwork)
+    public class DeleteProductoColor(IUnitOfWork unitofwork)
     {
         public async Task Execute(int id)
         {

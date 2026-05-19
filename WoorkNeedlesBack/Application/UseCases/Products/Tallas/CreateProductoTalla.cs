@@ -2,6 +2,7 @@ using Application.DTOs.Productos;
 using Domain.Entities;
 using AutoMapper;
 using Domain.Ports.Output.UnitOfWork;
+using Domain.Specification;
 
 namespace Application.UseCases.Products.Tallas
 {
@@ -17,10 +18,15 @@ namespace Application.UseCases.Products.Tallas
 
     public class GetAllProductoTallas(IUnitOfWork unitofwork, IMapper mapper)
     {
-        public async Task<IEnumerable<ProductoTallaDto>> Execute()
+        public async Task<IEnumerable<ProductoTallaDto>> Execute(int id)
         {
-            var productoTallas = await unitofwork.ProductoTallas.GetAllAsync();
-            return mapper.Map<IEnumerable<ProductoTallaDto>>(productoTallas);
+            var options = new QueryOptions<ProductoTalla>()
+                .AddInclude("IdproductoNavigation")
+                .AddInclude("IdtallaNavigation");
+
+            var productoTallas = await unitofwork.ProductoTallas.GetAllAsync(options);
+            return mapper.Map<IEnumerable<ProductoTallaDto>>(
+                productoTallas.Where(pt => pt.Idproducto == id));
         }
     }
 
