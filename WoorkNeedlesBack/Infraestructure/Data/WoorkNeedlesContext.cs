@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using Infraestructure.Persistence.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Data;
 
 public partial class WoorkNeedlesContext : DbContext
 {
-    public WoorkNeedlesContext()
-    {
-    }
-
     public WoorkNeedlesContext(DbContextOptions<WoorkNeedlesContext> options)
         : base(options)
     {
@@ -24,7 +20,7 @@ public partial class WoorkNeedlesContext : DbContext
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
-    public virtual DbSet<ColoresProducto> ColoresProductos { get; set; }
+    public virtual DbSet<Colore> Colores { get; set; }
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
@@ -46,9 +42,13 @@ public partial class WoorkNeedlesContext : DbContext
 
     public virtual DbSet<Producto> Productos { get; set; }
 
+    public virtual DbSet<ProductoColore> ProductoColores { get; set; }
+
+    public virtual DbSet<ProductoTalla> ProductoTallas { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<TallasProducto> TallasProductos { get; set; }
+    public virtual DbSet<Talla> Tallas { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
@@ -186,27 +186,25 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasConstraintName("fk_cliente_paises");
         });
 
-        modelBuilder.Entity<ColoresProducto>(entity =>
+        modelBuilder.Entity<Colore>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("ColoresProducto_pkey");
-
-            entity.ToTable("ColoresProducto");
-
-            entity.HasIndex(e => new { e.Idproducto, e.Color }, "ColoresProducto_idproducto_color_key").IsUnique();
+            entity.HasKey(e => e.Id).HasName("Colores_pkey");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Codigohex)
                 .HasMaxLength(7)
                 .HasColumnName("codigohex");
-            entity.Property(e => e.Color)
+            entity.Property(e => e.Fechacreacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechacreacion");
+            entity.Property(e => e.Fechamodificacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
-                .HasColumnName("color");
-            entity.Property(e => e.Idproducto).HasColumnName("idproducto");
-
-            entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.ColoresProductos)
-                .HasForeignKey(d => d.Idproducto)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_coloresp_producto");
+                .HasColumnName("nombre");
         });
 
         modelBuilder.Entity<Departamento>(entity =>
@@ -535,6 +533,59 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasConstraintName("fk_prodcuto_categoria");
         });
 
+        modelBuilder.Entity<ProductoColore>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ProductoColores_pkey");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Fechacreacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechacreacion");
+            entity.Property(e => e.Fechamodificacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Idcolor).HasColumnName("idcolor");
+            entity.Property(e => e.Idproducto).HasColumnName("idproducto");
+
+            entity.HasOne(d => d.IdcolorNavigation).WithMany(p => p.ProductoColores)
+                .HasForeignKey(d => d.Idcolor)
+                .HasConstraintName("ProductoColores_idcolor_fkey");
+
+            entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.ProductoColores)
+                .HasForeignKey(d => d.Idproducto)
+                .HasConstraintName("ProductoColores_idproducto_fkey");
+        });
+
+        modelBuilder.Entity<ProductoTalla>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("ProductoTallas_pkey");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Fechacreacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechacreacion");
+            entity.Property(e => e.Fechamodificacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Idproducto).HasColumnName("idproducto");
+            entity.Property(e => e.Idtalla).HasColumnName("idtalla");
+            entity.Property(e => e.Stock)
+                .HasDefaultValue(0)
+                .HasColumnName("stock");
+
+            entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.ProductoTallas)
+                .HasForeignKey(d => d.Idproducto)
+                .HasConstraintName("ProductoTallas_idproducto_fkey");
+
+            entity.HasOne(d => d.IdtallaNavigation).WithMany(p => p.ProductoTallas)
+                .HasForeignKey(d => d.Idtalla)
+                .HasConstraintName("ProductoTallas_idtalla_fkey");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Roles_pkey");
@@ -552,27 +603,22 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasColumnName("permisos");
         });
 
-        modelBuilder.Entity<TallasProducto>(entity =>
+        modelBuilder.Entity<Talla>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("TallasProducto_pkey");
-
-            entity.ToTable("TallasProducto");
-
-            entity.HasIndex(e => new { e.Idproducto, e.Talla }, "TallasProducto_idproducto_talla_key").IsUnique();
+            entity.HasKey(e => e.Id).HasName("Tallas_pkey");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Idproducto).HasColumnName("idproducto");
-            entity.Property(e => e.Stock)
-                .HasDefaultValue(0)
-                .HasColumnName("stock");
-            entity.Property(e => e.Talla)
+            entity.Property(e => e.Fechacreacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechacreacion");
+            entity.Property(e => e.Fechamodificacion)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Nombre)
                 .HasMaxLength(10)
-                .HasColumnName("talla");
-
-            entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.TallasProductos)
-                .HasForeignKey(d => d.Idproducto)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_tallasp_producto");
+                .HasColumnName("nombre");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

@@ -11,7 +11,7 @@ namespace Application.UseCases.Login
 {
     public class Auth(IUserRepository userRepository, IPasswordHash passwordHash, ITokenGenerator tokenGenerator)
     {
-        public async Task<TokenDto> Login(LoginDto usuarioLoginDto)
+        public async Task<TokenDto> Execute(LoginDto usuarioLoginDto)
         {
             var usuario = await userRepository.GetByEmailAsync(usuarioLoginDto.Email)
                 ?? throw new DomainException("Credenciales inválidas.");

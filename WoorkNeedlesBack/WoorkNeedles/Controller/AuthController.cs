@@ -18,7 +18,7 @@ namespace WoorkNeedles.Controller
         {
             try
             {
-                var token = await loginCase.Login(usuarioLoginDto);
+                var token = await loginCase.Execute(usuarioLoginDto);
                 return Ok(token);
             }
             catch (DomainException ex)
