@@ -21,8 +21,8 @@ namespace Application.DTOs.Productos
     public class ProductoColorDto
     {
         public int Id { get; set; }
-        public int? Idproducto { get; set; }
-        public int? Idcolor { get; set; }
+        public string Nombrecolor { get; set; } = string.Empty;
+        public string Codigohex { get; set; } = string.Empty;
     }
 
     public class CreateProductoColorDto

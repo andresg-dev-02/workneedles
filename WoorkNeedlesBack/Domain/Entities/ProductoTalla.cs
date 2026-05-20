@@ -11,38 +11,34 @@ namespace Domain.Entities
         public int Id { get; private set; }
         public int? Idproducto { get; private set; }
         public int? Idtalla { get; private set; }
-        public int Stock { get; private set; }
         public DateTime Fechacreacion { get; private set; }
         public DateTime? Fechamodificacion { get; private set; }
+        public string NombreProducto { get; private set; } = string.Empty;
+        public string NombreTalla { get; private set; } = string.Empty;
 
         private ProductoTalla() { }
 
-        public static ProductoTalla Crear(int idProducto, int idTalla, int stock)
+        public static ProductoTalla Crear(int idProducto, int idTalla)
         {
             if (idProducto <= 0)
                 throw new DomainException("El producto es requerido.");
             if (idTalla <= 0)
                 throw new DomainException("La talla es requerida.");
-            if (stock < 0)
-                throw new DomainException("El stock no puede ser negativo.");
 
             var pt = new ProductoTalla { Fechacreacion = DateTime.Now };
-            pt.Actualizar(idProducto, idTalla, stock);
+            pt.Actualizar(idProducto, idTalla);
             return pt;
         }
 
-        public void Actualizar(int idProducto, int idTalla, int stock)
+        public void Actualizar(int idProducto, int idTalla)
         {
             if (idProducto <= 0)
                 throw new DomainException("El producto es requerido.");
             if (idTalla <= 0)
                 throw new DomainException("La talla es requerida.");
-            if (stock < 0)
-                throw new DomainException("El stock no puede ser negativo.");
 
             Idproducto = idProducto;
             Idtalla = idTalla;
-            Stock = stock;
             Fechamodificacion = DateTime.Now;
         }
     }

@@ -40,6 +40,10 @@ namespace Infraestructure.Repositories.UnitOfWork
         public IGenericRepository<Domain.Entities.ProductoTalla> ProductoTallas { get; } =
             new GenericRepository<Domain.Entities.ProductoTalla,
                                 Infraestructure.Persistence.Models.ProductoTalla>(context, mapper);
+        
+        public IGenericRepository<Domain.Entities.Inventario> Inventario { get; } =
+            new GenericRepository<Domain.Entities.Inventario,
+                                Infraestructure.Persistence.Models.Inventario>(context, mapper);
 
         public async Task SaveAsync() => await context.SaveChangesAsync();
         public void Dispose() => context.Dispose();

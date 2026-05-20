@@ -15,11 +15,12 @@ public class Producto
     public DateTime? Fechacreacion { get; private set; }
     public DateTime? Fechamodificacion { get; private set; }
     public string Categoria { get; private set; } = string.Empty;
+    public string? Genero { get; private set; }
     
     private Producto() { }
 
     public static Producto Crear(string nombre, string descripcion, string? material,
-        decimal preciobase, string? urlimagen, int idcategoria)
+        decimal preciobase, string? urlimagen, int idcategoria, string? genero)
     {
         if (string.IsNullOrWhiteSpace(nombre))
             throw new DomainException("El nombre es requerido.");
@@ -35,12 +36,12 @@ public class Producto
             Idcategoria = idcategoria
         };
 
-        producto.Actualizar(nombre, descripcion, material, preciobase, urlimagen, idcategoria);
+        producto.Actualizar(nombre, descripcion, material, preciobase, urlimagen, idcategoria, genero);
         return producto;
     }
 
     public void Actualizar(string nombre, string descripcion, string? material,
-        decimal preciobase, string? urlimagen, int idcategoria)
+        decimal preciobase, string? urlimagen, int idcategoria, string? genero)
     {
         if (string.IsNullOrWhiteSpace(nombre))
             throw new DomainException("El nombre es requerido.");
@@ -56,5 +57,6 @@ public class Producto
         Urlimagen = urlimagen?.Trim();
         Idcategoria = idcategoria;
         Fechamodificacion = DateTime.Now;
+        Genero = genero?.Trim();
     }
 }

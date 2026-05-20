@@ -23,16 +23,14 @@ namespace Application.DTOs.Productos
     public class ProductoTallaDto
     {
         public int Id { get; set; }
-        public int? Idproducto { get; set; }
-        public int? Idtalla { get; set; }
-        public int Stock { get; set; }
+        public string NombreProducto { get; set; } = string.Empty;
+        public string NombreTalla { get; set; } = string.Empty;
     }
 
     public class CreateProductoTallaDto
     {
         public int Idproducto { get; set; }
         public int Idtalla { get; set; }
-        public int Stock { get; set; }
     }
 
     public class UpdateProductoTallaDto : CreateProductoTallaDto { }

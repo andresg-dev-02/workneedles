@@ -34,6 +34,8 @@ public partial class WoorkNeedlesContext : DbContext
 
     public virtual DbSet<InsumosProducto> InsumosProductos { get; set; }
 
+    public virtual DbSet<Inventario> Inventarios { get; set; }
+
     public virtual DbSet<Pago> Pagos { get; set; }
 
     public virtual DbSet<Paise> Paises { get; set; }
@@ -385,6 +387,42 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasConstraintName("fk_insumosp_producto");
         });
 
+        modelBuilder.Entity<Inventario>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Inventario_pkey");
+
+            entity.ToTable("Inventario");
+
+            entity.HasIndex(e => new { e.Idproducto, e.Idcolor, e.Idtalla }, "Inventario_idproducto_idcolor_idtalla_key").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Fechacreacion)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechacreacion");
+            entity.Property(e => e.Fechamodificacion)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Idcolor).HasColumnName("idcolor");
+            entity.Property(e => e.Idproducto).HasColumnName("idproducto");
+            entity.Property(e => e.Idtalla).HasColumnName("idtalla");
+            entity.Property(e => e.Stock)
+                .HasDefaultValue(0)
+                .HasColumnName("stock");
+
+            entity.HasOne(d => d.IdcolorNavigation).WithMany(p => p.Inventarios)
+                .HasForeignKey(d => d.Idcolor)
+                .HasConstraintName("Inventario_idcolor_fkey");
+
+            entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.Inventarios)
+                .HasForeignKey(d => d.Idproducto)
+                .HasConstraintName("Inventario_idproducto_fkey");
+
+            entity.HasOne(d => d.IdtallaNavigation).WithMany(p => p.Inventarios)
+                .HasForeignKey(d => d.Idtalla)
+                .HasConstraintName("Inventario_idtalla_fkey");
+        });
+
         modelBuilder.Entity<Pago>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Pagos_pkey");
@@ -513,6 +551,9 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("fechamodificacion");
+            entity.Property(e => e.Genero)
+                .HasMaxLength(10)
+                .HasColumnName("genero");
             entity.Property(e => e.Idcategoria).HasColumnName("idcategoria");
             entity.Property(e => e.Material)
                 .HasMaxLength(100)
@@ -573,9 +614,6 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasColumnName("fechamodificacion");
             entity.Property(e => e.Idproducto).HasColumnName("idproducto");
             entity.Property(e => e.Idtalla).HasColumnName("idtalla");
-            entity.Property(e => e.Stock)
-                .HasDefaultValue(0)
-                .HasColumnName("stock");
 
             entity.HasOne(d => d.IdproductoNavigation).WithMany(p => p.ProductoTallas)
                 .HasForeignKey(d => d.Idproducto)

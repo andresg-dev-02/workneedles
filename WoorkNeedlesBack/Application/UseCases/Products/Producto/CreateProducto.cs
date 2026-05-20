@@ -16,7 +16,7 @@ namespace Application.UseCases.Products.Producto
         {
             var producto = Domain.Entities.Producto.Crear(
                 crearProductodto.Nombre, crearProductodto.Descripcion, crearProductodto.Material,
-                crearProductodto.Preciobase, crearProductodto.Urlimagen, crearProductodto.IdCategoria);
+                crearProductodto.Preciobase, crearProductodto.Urlimagen, crearProductodto.IdCategoria, crearProductodto.Genero);
             await unitofwork.Productos.AddAsync(producto);
             await unitofwork.SaveAsync();
         }
@@ -48,7 +48,12 @@ namespace Application.UseCases.Products.Producto
     {
         public async Task<ProductoDto> Execute(int id)
         {
-            var producto = await unitofwork.Productos.GetByIdAsync(id) ?? throw new KeyNotFoundException("Producto no encontrado.");
+            var options = new QueryOptions<Domain.Entities.Producto>()
+                .AddInclude("IdcategoriaNavigation");
+
+            var producto = await unitofwork.Productos.GetByIdAsync(id, options)
+                ?? throw new KeyNotFoundException("Producto no encontrado.");
+
             return mapper.Map<ProductoDto>(producto);
         }
     }
@@ -61,7 +66,7 @@ namespace Application.UseCases.Products.Producto
                 ?? throw new KeyNotFoundException("Producto no encontrado.");
             producto.Actualizar(
                 actualizarProductodto.Nombre, actualizarProductodto.Descripcion, actualizarProductodto.Material,
-                actualizarProductodto.Preciobase, actualizarProductodto.Urlimagen, actualizarProductodto.IdCategoria);
+                actualizarProductodto.Preciobase, actualizarProductodto.Urlimagen, actualizarProductodto.IdCategoria, actualizarProductodto.Genero);
             unitofwork.Productos.Update(producto);
             await unitofwork.SaveAsync();
         }

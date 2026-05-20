@@ -16,6 +16,7 @@ public class ProductoDto
     public bool Activo { get; set; }
     public DateTime? Fechacreacion { get; set; }
     public string Categoria { get; set; } = string.Empty;
+    public string? Genero { get; set; }
 }
 
 public class CreateProductoDto
@@ -26,6 +27,7 @@ public class CreateProductoDto
     public decimal Preciobase { get; set; }
     public string? Urlimagen { get; set; }
     public int IdCategoria { get; set; }
+    public string? Genero { get; set; }
 }
 
 public class UpdateProductoDto : CreateProductoDto { }

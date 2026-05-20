@@ -21,6 +21,10 @@ public static class MappingsDI
             cfg.AddProfile<ProductoDtoProfile>();
             cfg.AddProfile<ColoresProfile>();
             cfg.AddProfile<TallasProfile>();
+            cfg.AddProfile<ColorTallaDtoProfile>();
+            cfg.AddProfile<ColorTallaProductoDtoProfile>();
+            cfg.AddProfile<InventarioProfile>();
+            cfg.AddProfile<InventarioDtoProfile>();
         });
         return services;
     }

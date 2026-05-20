@@ -15,5 +15,7 @@ public partial class Colore
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public virtual ICollection<Inventario> Inventarios { get; set; } = new List<Inventario>();
+
     public virtual ICollection<ProductoColore> ProductoColores { get; set; } = new List<ProductoColore>();
 }

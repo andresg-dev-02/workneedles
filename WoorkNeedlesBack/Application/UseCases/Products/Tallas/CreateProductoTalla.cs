@@ -10,7 +10,7 @@ namespace Application.UseCases.Products.Tallas
     {
         public async Task Execute(CreateProductoTallaDto crearProductodto)
         {
-            var productoTalla = ProductoTalla.Crear(crearProductodto.Idproducto, crearProductodto.Idtalla, crearProductodto.Stock);
+            var productoTalla = ProductoTalla.Crear(crearProductodto.Idproducto, crearProductodto.Idtalla);
             await unitofwork.ProductoTallas.AddAsync(productoTalla);
             await unitofwork.SaveAsync();
         }
@@ -36,7 +36,7 @@ namespace Application.UseCases.Products.Tallas
         {
             var productoTalla = await unitofwork.ProductoTallas.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Relación producto-talla no encontrada.");
-            productoTalla.Actualizar(actualizarProductodto.Idproducto, actualizarProductodto.Idtalla, actualizarProductodto.Stock);
+            productoTalla.Actualizar(actualizarProductodto.Idproducto, actualizarProductodto.Idtalla);
             unitofwork.ProductoTallas.Update(productoTalla);
             await unitofwork.SaveAsync();
         }

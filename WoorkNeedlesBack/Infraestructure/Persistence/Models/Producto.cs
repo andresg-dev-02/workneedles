@@ -25,11 +25,15 @@ public partial class Producto
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public string? Genero { get; set; }
+
     public virtual ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
 
     public virtual CategoriaProducto IdcategoriaNavigation { get; set; } = null!;
 
     public virtual ICollection<InsumosProducto> InsumosProductos { get; set; } = new List<InsumosProducto>();
+
+    public virtual ICollection<Inventario> Inventarios { get; set; } = new List<Inventario>();
 
     public virtual ICollection<ProductoColore> ProductoColores { get; set; } = new List<ProductoColore>();
 

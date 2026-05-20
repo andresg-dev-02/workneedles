@@ -13,6 +13,8 @@ namespace Domain.Entities
         public int? Idcolor { get; private set; }
         public DateTime Fechacreacion { get; private set; }
         public DateTime? Fechamodificacion { get; private set; }
+        public string Nombrecolor { get; private set; } = string.Empty;
+        public string Codigohex { get; private set; } = string.Empty;
 
         private ProductoColore() { }
 

@@ -13,5 +13,7 @@ public partial class Talla
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public virtual ICollection<Inventario> Inventarios { get; set; } = new List<Inventario>();
+
     public virtual ICollection<ProductoTalla> ProductoTallas { get; set; } = new List<ProductoTalla>();
 }
