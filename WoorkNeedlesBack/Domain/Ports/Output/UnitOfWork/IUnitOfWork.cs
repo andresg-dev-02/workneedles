@@ -17,6 +17,9 @@ namespace Domain.Ports.Output.UnitOfWork
         IGenericRepository<Domain.Entities.ProductoColore> ProductoColores { get; }
         IGenericRepository<Domain.Entities.ProductoTalla> ProductoTallas { get; }
         IGenericRepository<Domain.Entities.Inventario> Inventario { get; }
+        IGenericRepository<Domain.Entities.CategoriaInsumo> CategoriasInsumo { get; }
+        IGenericRepository<Domain.Entities.Insumo> Insumos { get; }
+        IGenericRepository<Domain.Entities.InsumosProducto> InsumosProducto { get; }
         Task SaveAsync();
     }
 }

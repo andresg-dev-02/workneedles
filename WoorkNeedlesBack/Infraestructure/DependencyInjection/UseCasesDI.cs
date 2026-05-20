@@ -16,7 +16,8 @@ public static class UseCasesDI
                 "Application.UseCases.Products.Producto",
                 "Application.UseCases.Products.Colores",
                 "Application.UseCases.Products.Tallas",
-                "Application.UseCases.Products.Inventario"
+                "Application.UseCases.Products.Inventario",
+                "Application.UseCases.Products.Insumos"
             ))
             .AsSelf()
             .WithScopedLifetime());

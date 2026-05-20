@@ -45,6 +45,18 @@ namespace Infraestructure.Repositories.UnitOfWork
             new GenericRepository<Domain.Entities.Inventario,
                                 Infraestructure.Persistence.Models.Inventario>(context, mapper);
 
+        public IGenericRepository<Domain.Entities.CategoriaInsumo> CategoriasInsumo { get; } =
+            new GenericRepository<Domain.Entities.CategoriaInsumo,
+                                Infraestructure.Persistence.Models.CategoriaInsumo>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.Insumo> Insumos { get; } =
+            new GenericRepository<Domain.Entities.Insumo,
+                                Infraestructure.Persistence.Models.Insumo>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.InsumosProducto> InsumosProducto { get; } =
+            new GenericRepository<Domain.Entities.InsumosProducto,
+                                Infraestructure.Persistence.Models.InsumosProducto>(context, mapper);
+
         public async Task SaveAsync() => await context.SaveChangesAsync();
         public void Dispose() => context.Dispose();
     }
