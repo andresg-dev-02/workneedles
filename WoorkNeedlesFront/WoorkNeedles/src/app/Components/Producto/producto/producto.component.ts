@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductoService } from '../../../Services/services/producto.service';
+import { ProductoService } from '../../../Services/Producto/producto.service';
 import { ProductoModel } from '../../../Models/Producto/producto.model';
 
 @Component({
