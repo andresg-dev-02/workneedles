@@ -25,9 +25,7 @@ public partial class Pago
 
     public DateTime? Fechacreacion { get; set; }
 
-    public virtual Pago IdpedidoNavigation { get; set; } = null!;
+    public virtual Pedido IdpedidoNavigation { get; set; } = null!;
 
     public virtual Usuario IdusuarioNavigation { get; set; } = null!;
-
-    public virtual ICollection<Pago> InverseIdpedidoNavigation { get; set; } = new List<Pago>();
 }

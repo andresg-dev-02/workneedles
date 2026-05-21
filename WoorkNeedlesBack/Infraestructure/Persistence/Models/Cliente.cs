@@ -39,6 +39,8 @@ public partial class Cliente
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public virtual ICollection<Devolucione> Devoluciones { get; set; } = new List<Devolucione>();
+
     public virtual Ciudade IdciudadNavigation { get; set; } = null!;
 
     public virtual Departamento IddepartNavigation { get; set; } = null!;

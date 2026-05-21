@@ -57,6 +57,30 @@ namespace Infraestructure.Repositories.UnitOfWork
             new GenericRepository<Domain.Entities.InsumosProducto,
                                 Infraestructure.Persistence.Models.InsumosProducto>(context, mapper);
 
+        public IGenericRepository<Domain.Entities.Cliente> Clientes { get; } =
+            new GenericRepository<Domain.Entities.Cliente,
+                                Infraestructure.Persistence.Models.Cliente>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.Pedido> Pedidos { get; } =
+            new GenericRepository<Domain.Entities.Pedido,
+                                Infraestructure.Persistence.Models.Pedido>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.DetallePedido> DetallesPedido { get; } =
+            new GenericRepository<Domain.Entities.DetallePedido,
+                                Infraestructure.Persistence.Models.DetallePedido>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.Pago> Pagos { get; } =
+            new GenericRepository<Domain.Entities.Pago,
+                                Infraestructure.Persistence.Models.Pago>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.HistorialPedido> HistorialPedidos { get; } =
+            new GenericRepository<Domain.Entities.HistorialPedido,
+                                Infraestructure.Persistence.Models.HistorialPedido>(context, mapper);
+
+        public IGenericRepository<Domain.Entities.Devolucione> Devoluciones { get; } =
+            new GenericRepository<Domain.Entities.Devolucione,
+                                Infraestructure.Persistence.Models.Devolucione>(context, mapper);
+
         public async Task SaveAsync() => await context.SaveChangesAsync();
         public void Dispose() => context.Dispose();
     }

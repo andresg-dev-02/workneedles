@@ -11,15 +11,15 @@ public partial class DetallePedido
 
     public int Idproducto { get; set; }
 
-    public string? Talla { get; set; }
-
-    public string? Color { get; set; }
-
     public int Cantidad { get; set; }
 
     public decimal Preciounitario { get; set; }
 
     public decimal Subtotal { get; set; }
+
+    public int? Idinventario { get; set; }
+
+    public virtual Inventario? IdinventarioNavigation { get; set; }
 
     public virtual Pedido IdpedidoNavigation { get; set; } = null!;
 

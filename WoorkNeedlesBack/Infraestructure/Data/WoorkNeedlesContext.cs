@@ -235,9 +235,7 @@ public partial class WoorkNeedlesContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Cantidad).HasColumnName("cantidad");
-            entity.Property(e => e.Color)
-                .HasMaxLength(50)
-                .HasColumnName("color");
+            entity.Property(e => e.Idinventario).HasColumnName("idinventario");
             entity.Property(e => e.Idpedido).HasColumnName("idpedido");
             entity.Property(e => e.Idproducto).HasColumnName("idproducto");
             entity.Property(e => e.Preciounitario)
@@ -246,9 +244,10 @@ public partial class WoorkNeedlesContext : DbContext
             entity.Property(e => e.Subtotal)
                 .HasPrecision(10, 2)
                 .HasColumnName("subtotal");
-            entity.Property(e => e.Talla)
-                .HasMaxLength(10)
-                .HasColumnName("talla");
+
+            entity.HasOne(d => d.IdinventarioNavigation).WithMany(p => p.DetallePedidos)
+                .HasForeignKey(d => d.Idinventario)
+                .HasConstraintName("DetallePedidos_idinventario_fkey");
 
             entity.HasOne(d => d.IdpedidoNavigation).WithMany(p => p.DetallePedidos)
                 .HasForeignKey(d => d.Idpedido)
@@ -272,9 +271,14 @@ public partial class WoorkNeedlesContext : DbContext
             entity.Property(e => e.Fecha)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("fecha");
+            entity.Property(e => e.Idcliente).HasColumnName("idcliente");
             entity.Property(e => e.Idpedido).HasColumnName("idpedido");
             entity.Property(e => e.Idusuario).HasColumnName("idusuario");
             entity.Property(e => e.Motivo).HasColumnName("motivo");
+
+            entity.HasOne(d => d.IdclienteNavigation).WithMany(p => p.Devoluciones)
+                .HasForeignKey(d => d.Idcliente)
+                .HasConstraintName("Devoluciones_idcliente_fkey");
 
             entity.HasOne(d => d.IdpedidoNavigation).WithMany(p => p.Devoluciones)
                 .HasForeignKey(d => d.Idpedido)
@@ -453,7 +457,7 @@ public partial class WoorkNeedlesContext : DbContext
                 .HasMaxLength(30)
                 .HasColumnName("tipopago");
 
-            entity.HasOne(d => d.IdpedidoNavigation).WithMany(p => p.InverseIdpedidoNavigation)
+            entity.HasOne(d => d.IdpedidoNavigation).WithMany(p => p.Pagos)
                 .HasForeignKey(d => d.Idpedido)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_pagos_pedido");

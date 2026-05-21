@@ -19,6 +19,8 @@ public partial class Inventario
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public virtual ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+
     public virtual Colore? IdcolorNavigation { get; set; }
 
     public virtual Producto? IdproductoNavigation { get; set; }

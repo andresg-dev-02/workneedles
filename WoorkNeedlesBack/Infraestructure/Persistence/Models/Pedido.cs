@@ -42,4 +42,6 @@ public partial class Pedido
     public virtual Cliente IdclienteNavigation { get; set; } = null!;
 
     public virtual Usuario IdusuarioNavigation { get; set; } = null!;
+
+    public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 }

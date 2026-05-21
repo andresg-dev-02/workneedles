@@ -2,8 +2,13 @@ using Application.Mappings;
 using Application.Mappings.ProductoMap;
 using Infraestructure.Mappings;
 using Infraestructure.Mappings.ProductMap;
+using Infraestructure.Mappings.PedidoMap;
+using Infraestructure.Mappings.ClientMap;
+using Application.Mappings.ClienteMap;
+using Application.Mappings.PedidoMap;
 using Microsoft.Extensions.DependencyInjection;
-
+using Application.Mappings.PagoMap;
+using Infraestructure.Mappings.PagoMap;
 namespace Infraestructure.DI;
 
 public static class MappingsDI
@@ -27,6 +32,14 @@ public static class MappingsDI
             cfg.AddProfile<InventarioDtoProfile>();
             cfg.AddProfile<InsumosProfile>();
             cfg.AddProfile<InsumosDtoProfile>();
+            cfg.AddProfile<ClienteProfile>();
+            cfg.AddProfile<ClienteDtoProfile>();
+            cfg.AddProfile<PedidoProfile>();
+            cfg.AddProfile<PedidoDtoProfile>();
+            cfg.AddProfile<PagoDtoProfile>();
+            cfg.AddProfile<PagoProfile>();
+            cfg.AddProfile<DetallePedidoProfile>();
+            cfg.AddProfile<PedidoDetalleDtoProfile>();
         });
         return services;
     }

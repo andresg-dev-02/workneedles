@@ -20,6 +20,12 @@ namespace Domain.Ports.Output.UnitOfWork
         IGenericRepository<Domain.Entities.CategoriaInsumo> CategoriasInsumo { get; }
         IGenericRepository<Domain.Entities.Insumo> Insumos { get; }
         IGenericRepository<Domain.Entities.InsumosProducto> InsumosProducto { get; }
+        IGenericRepository<Domain.Entities.Cliente> Clientes { get; }
+        IGenericRepository<Domain.Entities.Pedido> Pedidos { get; }
+        IGenericRepository<Domain.Entities.DetallePedido> DetallesPedido { get; }
+        IGenericRepository<Domain.Entities.Pago> Pagos { get; }
+        IGenericRepository<Domain.Entities.HistorialPedido> HistorialPedidos { get; }
+        IGenericRepository<Domain.Entities.Devolucione> Devoluciones { get; }
         Task SaveAsync();
     }
 }

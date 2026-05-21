@@ -17,6 +17,10 @@ public partial class Devolucione
 
     public DateTime? Fecha { get; set; }
 
+    public int? Idcliente { get; set; }
+
+    public virtual Cliente? IdclienteNavigation { get; set; }
+
     public virtual Pedido IdpedidoNavigation { get; set; } = null!;
 
     public virtual Usuario IdusuarioNavigation { get; set; } = null!;
