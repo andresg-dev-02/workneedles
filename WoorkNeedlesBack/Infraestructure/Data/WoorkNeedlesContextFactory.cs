@@ -20,11 +20,11 @@ namespace Infraestructure.Data
 
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json")
                 .Build();
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            
+            Console.WriteLine("HOLAAAAAAAAAAAAAAAAAAAAAAAA " + connectionString);
             var optionsBuilder = new DbContextOptionsBuilder<WoorkNeedlesContext>();
 
             optionsBuilder.UseNpgsql(connectionString);

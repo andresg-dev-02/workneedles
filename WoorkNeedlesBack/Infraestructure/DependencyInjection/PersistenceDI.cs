@@ -16,7 +16,7 @@ public static class PersistenceDI
         this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<WoorkNeedlesContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("ConnectionPostgress")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
