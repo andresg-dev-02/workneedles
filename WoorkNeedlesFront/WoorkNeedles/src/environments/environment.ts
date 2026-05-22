@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5167/api'
+  apiUrl: 'https://woorkneedles.onrender.com/api'
 };
