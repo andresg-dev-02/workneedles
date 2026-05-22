@@ -12,12 +12,20 @@ namespace WoorkNeedles.Controller.Productos
         GetProductoById getById,
         CreateProducto create,
         UpdateProducto update,
-        DeleteProducto delete) : ControllerBase
+        DeleteProducto delete,
+        FiltrarProductos filtrar) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var productos = await getAll.Execute();
+            return Ok(productos);
+        }
+
+        [HttpGet("buscar")]
+        public async Task<IActionResult> Buscar([FromQuery] FiltroProductoDto filtro)
+        {
+            var productos = await filtrar.Execute(filtro);
             return Ok(productos);
         }
 
