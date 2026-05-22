@@ -19,10 +19,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+
+app.MapOpenApi();
+
 app.UseCors("PermitirAngular");
 app.UseHttpsRedirection();
 app.UseAuthentication();
