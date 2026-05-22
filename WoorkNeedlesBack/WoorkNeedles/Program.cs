@@ -11,7 +11,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") 
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://workneedles.onrender.com" 
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -19,10 +22,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
-app.MapOpenApi();
-
-app.UseCors("PermitirAngular");
+app.UseCors("PermitirAngular");  
+app.MapOpenApi();                
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
