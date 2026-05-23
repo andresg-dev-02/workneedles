@@ -51,6 +51,19 @@ export class AuthService {
     }
   }
 
+  getUsuarioId(): number {
+  try {
+    const token = this.getToken();
+    if (!token) return 0;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return parseInt(
+      payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '0'
+    );
+  } catch {
+    return 0;
+  }
+}
+
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('expiracion');
