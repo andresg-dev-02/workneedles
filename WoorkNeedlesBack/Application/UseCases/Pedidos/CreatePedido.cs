@@ -14,10 +14,11 @@ namespace Application.UseCases.Pedidos
     {
         public async Task Execute(CreatePedidoDto dto)
         {
-            var pedido = Domain.Entities.Pedido.Crear(dto.IdCliente, dto.IdUsuario,
+            var pedido = Domain.Entities.Pedido.Crear(
+                dto.IdCliente, dto.IdUsuario,
                 dto.FechEntregaAprox, dto.FechaEntrega,
                 dto.DireccionEntrega, dto.Observaciones,
-                dto.Subtotal, dto.Descuento);
+                dto.Descuento);
             await unitofwork.Pedidos.AddAsync(pedido);
             await unitofwork.SaveAsync();
         }
@@ -55,7 +56,6 @@ namespace Application.UseCases.Pedidos
             var options = new QueryOptions<Pedido>()
                 .AddInclude("IdclienteNavigation")
                 .AddInclude("IdusuarioNavigation");
-
             var pedidos = await unitofwork.Pedidos.GetAllAsync(options);
             return mapper.Map<IEnumerable<PedidoDto>>(
                 pedidos.Where(p => p.Idcliente == idCliente));
@@ -68,10 +68,11 @@ namespace Application.UseCases.Pedidos
         {
             var pedido = await unitofwork.Pedidos.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Pedido no encontrado.");
-            pedido.Actualizar(dto.IdCliente, dto.IdUsuario,
+            pedido.Actualizar(
+                dto.IdCliente, dto.IdUsuario,
                 dto.FechEntregaAprox, dto.FechaEntrega,
                 dto.DireccionEntrega, dto.Observaciones,
-                dto.Subtotal, dto.Descuento);
+                dto.Descuento); 
             unitofwork.Pedidos.Update(pedido);
             await unitofwork.SaveAsync();
         }

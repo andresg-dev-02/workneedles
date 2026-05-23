@@ -28,9 +28,8 @@ namespace Domain.Entities
         private Pedido() { }
 
         public static Pedido Crear(int idCliente, int idUsuario,
-        DateOnly fechEntregaAprox, DateOnly fechaEntrega,
-        string direccionEntrega, string observaciones,
-        decimal subtotal, decimal? descuento)
+            DateOnly fechEntregaAprox, DateOnly fechaEntrega,
+            string direccionEntrega, string observaciones, decimal? descuento)
         {
             if (idCliente <= 0)
                 throw new DomainException("El cliente es requerido.");
@@ -38,29 +37,26 @@ namespace Domain.Entities
                 throw new DomainException("El usuario es requerido.");
             if (string.IsNullOrWhiteSpace(direccionEntrega))
                 throw new DomainException("La dirección de entrega es requerida.");
-            if (subtotal <= 0)
-                throw new DomainException("El subtotal debe ser mayor a 0.");
 
             var p = new Pedido
             {
                 Fechapedido = DateTime.Now,
                 Fechacreacion = DateTime.Now,
-                Estado = "pendiente"
+                Estado = "pendiente",
+                Subtotal = 0,
+                Total = 0
             };
             p.Actualizar(idCliente, idUsuario, fechEntregaAprox, fechaEntrega,
-                direccionEntrega, observaciones, subtotal, descuento);
+                direccionEntrega, observaciones, descuento);
             return p;
         }
 
         public void Actualizar(int idCliente, int idUsuario,
             DateOnly fechEntregaAprox, DateOnly fechaEntrega,
-            string direccionEntrega, string observaciones,
-            decimal subtotal, decimal? descuento)
+            string direccionEntrega, string observaciones, decimal? descuento)
         {
             if (string.IsNullOrWhiteSpace(direccionEntrega))
                 throw new DomainException("La dirección de entrega es requerida.");
-            if (subtotal <= 0)
-                throw new DomainException("El subtotal debe ser mayor a 0.");
 
             Idcliente = idCliente;
             Idusuario = idUsuario;
@@ -68,9 +64,15 @@ namespace Domain.Entities
             Fechaentrega = fechaEntrega;
             Direccionentrega = direccionEntrega.Trim();
             Observaciones = observaciones.Trim();
-            Subtotal = subtotal;
             Descuento = descuento;
-            Total = subtotal - (descuento ?? 0);
+            Total = Subtotal - (descuento ?? 0);
+            Fechamodificacion = DateTime.Now;
+        }
+
+        public void RecalcularTotales(decimal subtotal)
+        {
+            Subtotal = subtotal;
+            Total = subtotal - (Descuento ?? 0);
             Fechamodificacion = DateTime.Now;
         }
 

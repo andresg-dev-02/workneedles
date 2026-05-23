@@ -22,12 +22,7 @@ namespace Application.UseCases.Pedidos
                 .Where(d => d.Idpedido == dto.Idpedido)
                 .Sum(d => d.Subtotal) + detalle.Subtotal; 
 
-            pedido.Actualizar(
-                pedido.Idcliente, pedido.Idusuario,
-                pedido.Fechentregaaprox, pedido.Fechaentrega,
-                pedido.Direccionentrega, pedido.Observaciones,
-                subtotalReal, pedido.Descuento
-            );
+            pedido.RecalcularTotales(subtotalReal);
 
             unitofWork.Pedidos.Update(pedido);
             await unitofWork.SaveAsync();

@@ -29,7 +29,6 @@ namespace Application.DTOs.Pedido
         public DateOnly FechaEntrega { get; set; }
         public string DireccionEntrega { get; set; } = string.Empty;
         public string Observaciones { get; set; } = string.Empty;
-        public decimal Subtotal { get; set; }
         public decimal? Descuento { get; set; }
     }
 
