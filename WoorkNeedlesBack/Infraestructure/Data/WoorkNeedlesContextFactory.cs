@@ -24,7 +24,6 @@ namespace Infraestructure.Data
                 .Build();
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            Console.WriteLine("HOLAAAAAAAAAAAAAAAAAAAAAAAA " + connectionString);
             var optionsBuilder = new DbContextOptionsBuilder<WoorkNeedlesContext>();
 
             optionsBuilder.UseNpgsql(connectionString);
