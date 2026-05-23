@@ -13,6 +13,23 @@ namespace Application.UseCases.Pedidos
             var detalle = Domain.Entities.DetallePedido.Crear(dto.Idpedido, dto.Idproducto,
                 dto.Idinventario, dto.Cantidad, dto.Preciounitario);
             await unitofWork.DetallesPedido.AddAsync(detalle);
+
+            var pedido = await unitofWork.Pedidos.GetByIdAsync(dto.Idpedido)
+                ?? throw new KeyNotFoundException("Pedido no encontrado.");
+
+            var detalles = await unitofWork.DetallesPedido.GetAllAsync();
+            var subtotalReal = detalles
+                .Where(d => d.Idpedido == dto.Idpedido)
+                .Sum(d => d.Subtotal) + detalle.Subtotal; 
+
+            pedido.Actualizar(
+                pedido.Idcliente, pedido.Idusuario,
+                pedido.Fechentregaaprox, pedido.Fechaentrega,
+                pedido.Direccionentrega, pedido.Observaciones,
+                subtotalReal, pedido.Descuento
+            );
+
+            unitofWork.Pedidos.Update(pedido);
             await unitofWork.SaveAsync();
         }
     }
