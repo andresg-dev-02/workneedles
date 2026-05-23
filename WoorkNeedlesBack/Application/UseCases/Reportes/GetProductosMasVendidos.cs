@@ -13,7 +13,7 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<ProductoMasVendidoDto>> Execute()
         {
-            var options = new QueryOptions<Domain.Entities.DetallePedido>()
+            var options = new QueryOptions<DetallePedido>()
                 .AddInclude("IdproductoNavigation");
 
             var detalles = await unitofwork.DetallesPedido.GetAllAsync(options);
@@ -35,18 +35,28 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<IngresoMensualDto>> Execute()
         {
+            var detalleOptions = new QueryOptions<DetallePedido>()
+                .AddInclude("IdproductoNavigation");
+
             var pedidos = await unitofwork.Pedidos.GetAllAsync();
+            var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions);
 
             return pedidos
                 .Where(p => p.Fechapedido.HasValue)
                 .GroupBy(p => new { p.Fechapedido!.Value.Month, p.Fechapedido.Value.Year })
-                .Select(g => new IngresoMensualDto
+                .Select(g =>
                 {
-                    Mes = new DateTime(g.Key.Year, g.Key.Month, 1)
-                        .ToString("MMMM", new System.Globalization.CultureInfo("es-CO")),
-                    Anio = g.Key.Year,
-                    TotalIngresos = g.Sum(p => p.Total),
-                    TotalPedidos = g.Count()
+                    var idsPedidos = g.Select(p => p.Id).ToList();
+                    var detallesGrupo = detalles.Where(d => idsPedidos.Contains(d.Idpedido));
+
+                    return new IngresoMensualDto
+                    {
+                        Mes = new DateTime(g.Key.Year, g.Key.Month, 1)
+                            .ToString("MMMM", new System.Globalization.CultureInfo("es-CO")),
+                        Anio = g.Key.Year,
+                        TotalIngresos = detallesGrupo.Sum(d => d.Subtotal), 
+                        TotalPedidos = g.Count()
+                    };
                 })
                 .OrderByDescending(i => i.Anio)
                 .ThenByDescending(i => i.Mes)
@@ -58,18 +68,28 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<FrecuenciaPedidoDto>> Execute()
         {
-            var options = new QueryOptions<Pedido>()
+            var pedidoOptions = new QueryOptions<Pedido>()
                 .AddInclude("IdclienteNavigation");
 
-            var pedidos = await unitofwork.Pedidos.GetAllAsync(options);
+            var detalleOptions = new QueryOptions<DetallePedido>()
+                .AddInclude("IdproductoNavigation");
+
+            var pedidos = await unitofwork.Pedidos.GetAllAsync(pedidoOptions);
+            var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions); 
 
             return pedidos
                 .GroupBy(p => p.NombreCliente)
-                .Select(g => new FrecuenciaPedidoDto
+                .Select(g =>
                 {
-                    NombreCliente = g.Key,
-                    TotalPedidos = g.Count(),
-                    TotalGastado = detallesCliente.Sum(d => d.Cantidad * d.Precio),
+                    var detallesCliente = detalles
+                        .Where(d => g.Select(p => p.Id).Contains(d.Idpedido)); 
+
+                    return new FrecuenciaPedidoDto
+                    {
+                        NombreCliente = g.Key,
+                        TotalPedidos = g.Count(),
+                        TotalGastado = detallesCliente.Sum(d => d.Subtotal),
+                    };
                 })
                 .OrderByDescending(f => f.TotalPedidos)
                 .ToList();
@@ -105,7 +125,7 @@ namespace Application.UseCases.Reportes
                     {
                         NombreCliente = g.Key.NombreCliente,
                         TotalPedidos = g.Count(),
-                        TotalGastado = detallesCliente.Sum(d => d.Cantidad * d.Precio),
+                        TotalGastado = detallesCliente.Sum(d => d.Subtotal), 
                         UltimoPedido = g.Max(p => p.Fechapedido),
                         ProductoFavorito = productoFavorito
                     };
