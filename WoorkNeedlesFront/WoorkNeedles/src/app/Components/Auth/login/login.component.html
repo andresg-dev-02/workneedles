@@ -46,7 +46,7 @@
       </div>
 
       <button
-        class="w-full bg-[#8d1d4f] text-white py-3 rounded-xl font-semibold"
+        class="w-full bg-[#8d1d4f] text-white py-3 rounded-xl font-semibold hover:bg-[#4A0E2A] hover:cursor-pointer active:bg-[#70163F]"
       >
         Entrar
       </button>
@@ -54,7 +54,7 @@
     </form>
 
     <div
-      *ngIf="error"
+      @if {erro}
       class="mt-5 bg-red-100 text-red-600 p-3 rounded-xl"
     >
       {{ error }}

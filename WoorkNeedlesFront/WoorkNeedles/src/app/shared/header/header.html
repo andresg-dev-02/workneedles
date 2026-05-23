@@ -1,12 +1,42 @@
-<div class="navbar bg-base-100 shadow-sm">
+<div class="navbar bg-base-100 shadow-sm relative">
   <div class="flex-1 flex items-center gap-2">
     <div class="bg-[#7B1D3F] text-white font-bold w-8 h-8 flex items-center justify-center rounded-md text-sm">
       W
     </div>
     <span class="font-semibold text-lg">WoorkNeedles</span>
   </div>
+
   <div class="flex-none flex items-center gap-2">
-    <button (click)="goToLogin()" class="btn btn-ghost">Login</button>
-    <a class="btn text-white" style="background-color: #7B1D3F;">Get Started</a>
+
+    @if (!isAdmin) {
+      <button (click)="goToLogin()" class="btn btn-ghost">Login</button>
+      <a class="btn text-white" style="background-color: #7B1D3F;">Get Started</a>
+    }
+
+    @if (isAdmin) {
+      <div class="relative">
+        <button (click)="toggleMenu()" class="btn btn-ghost flex items-center gap-1">
+          Panel Admin
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        @if (menuOpen) {
+          <div class="absolute right-0 mt-2 w-48 bg-base-100 rounded-box shadow-lg z-50 border border-base-200">
+            <ul class="menu p-2">
+              <li><a (click)="navigateTo('/admin/usuarios')">Usuarios</a></li>
+              <li><a (click)="navigateTo('/admin/productos')">Productos</a></li>
+              <li><a (click)="navigateTo('/admin/reportes')">Reportes</a></li>
+            </ul>
+          </div>
+        }
+      </div>
+
+      <button (click)="logout()" class="btn text-white" style="background-color: #7B1D3F;">
+        Cerrar sesión
+      </button>
+    }
+
   </div>
 </div>
