@@ -69,7 +69,7 @@ namespace Application.UseCases.Reportes
                 {
                     NombreCliente = g.Key,
                     TotalPedidos = g.Count(),
-                    TotalGastado = g.Sum(p => p.Total)
+                    TotalGastado = detallesCliente.Sum(d => d.Cantidad * d.Precio),
                 })
                 .OrderByDescending(f => f.TotalPedidos)
                 .ToList();
@@ -105,7 +105,7 @@ namespace Application.UseCases.Reportes
                     {
                         NombreCliente = g.Key.NombreCliente,
                         TotalPedidos = g.Count(),
-                        TotalGastado = g.Sum(p => p.Total),
+                        TotalGastado = detallesCliente.Sum(d => d.Cantidad * d.Precio),
                         UltimoPedido = g.Max(p => p.Fechapedido),
                         ProductoFavorito = productoFavorito
                     };
