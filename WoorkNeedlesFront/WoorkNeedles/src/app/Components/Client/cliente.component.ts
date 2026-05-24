@@ -19,6 +19,7 @@ export class ClienteComponent implements OnInit {
   clienteEditar: ClienteDto | null = null;
   clienteEliminar: ClienteDto | null = null;
   fechamodificacion: string | null = null;
+  fechacreacion: string | null = null;
   ubication: any = null; 
   error = '';
 

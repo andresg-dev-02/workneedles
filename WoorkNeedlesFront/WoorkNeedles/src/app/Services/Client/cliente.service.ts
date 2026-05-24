@@ -19,6 +19,7 @@ export interface ClienteDto {
   pais: string;
   departamento: string;
   ciudad: string;
+  fechacreacion: string | null;
   fechamodificacion: string | null;
 }
 

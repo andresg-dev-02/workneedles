@@ -23,6 +23,7 @@ namespace Application.DTOs.Client
         public string Departamento { get; set; } = string.Empty;
         public string Ciudad { get; set; } = string.Empty;
         public DateTime? Fechamodificacion { get; set; }
+        public DateTime? Fechacreacion { get; set; }
     }
 
     public class CreateClienteDto
