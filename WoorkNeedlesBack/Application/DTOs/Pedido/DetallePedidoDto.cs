@@ -14,6 +14,8 @@ namespace Application.DTOs.Pedido
         public int Cantidad { get; set; }
         public decimal Preciounitario { get; set; }
         public decimal Subtotal { get; set; }
+        public DateTime? Fechacreacion { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreateDetallePedidoDto
