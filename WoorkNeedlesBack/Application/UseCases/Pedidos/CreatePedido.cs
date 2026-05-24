@@ -69,7 +69,7 @@ namespace Application.UseCases.Pedidos
             var pedido = await unitofwork.Pedidos.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Pedido no encontrado.");
             pedido.Actualizar(
-                Domain.Entities.Pedido.IdCliente, Domain.Entities.Pedido.IdUsuario,
+                pedido.Idcliente, pedido.Idusuario,
                 dto.FechEntregaAprox, dto.FechaEntrega,
                 dto.DireccionEntrega, dto.Observaciones,
                 dto.Descuento); 
