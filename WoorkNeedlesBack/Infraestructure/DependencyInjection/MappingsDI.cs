@@ -9,6 +9,8 @@ using Application.Mappings.PedidoMap;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Mappings.PagoMap;
 using Infraestructure.Mappings.PagoMap;
+using Application.Mappings.GeoMap;
+
 namespace Infraestructure.DI;
 
 public static class MappingsDI
@@ -40,6 +42,7 @@ public static class MappingsDI
             cfg.AddProfile<PagoProfile>();
             cfg.AddProfile<DetallePedidoProfile>();
             cfg.AddProfile<PedidoDetalleDtoProfile>();
+            cfg.AddProfile<UbicationDtoProfile>();
         });
         return services;
     }

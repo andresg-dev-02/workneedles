@@ -26,6 +26,7 @@ namespace Domain.Ports.Output.UnitOfWork
         IGenericRepository<Domain.Entities.Pago> Pagos { get; }
         IGenericRepository<Domain.Entities.HistorialPedido> HistorialPedidos { get; }
         IGenericRepository<Domain.Entities.Devolucione> Devoluciones { get; }
+        IGenericRepository<Domain.Entities.Ciudade> Ubicaciones { get; }
         Task SaveAsync();
     }
 }

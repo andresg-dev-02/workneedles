@@ -4,6 +4,7 @@ import { LoginComponent } from './Components/Auth/login/login.component';
 import { ReportesComponent } from './Components/Reportes/reportes.component';
 import { PedidoComponent } from './Components/Pedido/pedido/pedido.component';
 import { CrearPedidoComponent } from './Components/Pedido/CrearPedido/crear-pedido-component';
+import { ClienteComponent } from './Components/Client/cliente.component';
 
 export const routes: Routes = [
   { path: 'productos', component: ProductoComponent },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'admin/reportes', component: ReportesComponent },
   { path: '', redirectTo: 'productos', pathMatch: 'full' },
   { path: 'admin/pedidos', component: PedidoComponent},
-  { path: 'admin/pedidos/nuevo', component: CrearPedidoComponent}
+  { path: 'admin/pedidos/nuevo', component: CrearPedidoComponent},
+  { path: 'admin/clientes', component: ClienteComponent }
 ];

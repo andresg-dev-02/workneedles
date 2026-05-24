@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ProductoModel } from '../../Models/Producto/producto.model';
+
+export interface InventarioDto {
+  id: number;
+  nombreProducto: string;
+  nombreColor: string;
+  nombreTalla: string;
+  stock: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -17,4 +24,7 @@ export class ProductoService {
     return this.http.get<ProductoModel[]>(this.apiUrl);
   }
 
+  getInventario(idProducto: number): Observable<InventarioDto[]> {
+    return this.http.get<InventarioDto[]>(`${this.apiUrl}/${idProducto}/Inventario`);
+  }
 }

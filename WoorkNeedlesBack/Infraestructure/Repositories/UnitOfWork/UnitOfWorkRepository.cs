@@ -81,6 +81,10 @@ namespace Infraestructure.Repositories.UnitOfWork
             new GenericRepository<Domain.Entities.Devolucione,
                                 Infraestructure.Persistence.Models.Devolucione>(context, mapper);
 
+        public IGenericRepository<Domain.Entities.Ciudade> Ubicaciones { get; } =
+            new GenericRepository<Domain.Entities.Ciudade,
+                                Infraestructure.Persistence.Models.Ciudade>(context, mapper);
+
         public async Task SaveAsync() => await context.SaveChangesAsync();
         public void Dispose() => context.Dispose();
     }
