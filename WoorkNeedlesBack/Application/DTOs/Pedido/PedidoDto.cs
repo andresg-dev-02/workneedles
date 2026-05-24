@@ -8,6 +8,8 @@ namespace Application.DTOs.Pedido
     public class PedidoDto
     {
         public int Id { get; set; }
+        public int Idcliente { get; set; }  
+        public int Idusuario { get; set; }
         public string NombreCliente { get; set; } = string.Empty;
         public string NombreUsuario { get; set; } = string.Empty;
         public DateTime? Fechapedido { get; set; }

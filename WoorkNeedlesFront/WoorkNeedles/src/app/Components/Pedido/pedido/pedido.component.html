@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-gray-50 p-6">
-
   <div class="max-w-6xl mx-auto">
 
     <!-- Header -->
@@ -8,11 +7,7 @@
         <h1 class="text-2xl font-bold text-gray-900">Pedidos</h1>
         <p class="text-gray-500 text-sm mt-1">Gestiona todos los pedidos del negocio</p>
       </div>
-      <button
-        (click)="nuevoPedido()"
-        class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2"
-        style="background-color: #7B1D3F;"
-      >
+      <button (click)="nuevoPedido()" class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2" style="background-color: #7B1D3F;">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
@@ -23,9 +18,6 @@
     <!-- Error -->
     @if (error) {
       <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm flex items-center gap-2">
-        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
         {{ error }}
         <button (click)="cargarPedidos()" class="ml-auto underline text-xs">Reintentar</button>
       </div>
@@ -38,7 +30,6 @@
       </div>
     }
 
-    <!-- Lista -->
     @if (!loading) {
       @if (pedidos.length === 0) {
         <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
@@ -46,13 +37,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
           </svg>
           <p class="text-gray-400 text-sm">No hay pedidos aún</p>
-          <button
-            (click)="nuevoPedido()"
-            class="text-sm font-medium underline"
-            style="color: #7B1D3F;"
-          >
-            Crear el primer pedido
-          </button>
+          <button (click)="nuevoPedido()" class="text-sm font-medium underline" style="color: #7B1D3F;">Crear el primer pedido</button>
         </div>
       } @else {
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -66,14 +51,13 @@
                 <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Fecha pedido</th>
                 <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Entrega aprox.</th>
                 <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Estado</th>
-                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</th>
-                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Fecha Modificación</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Total</th>
                 <th class="px-6 py-3"></th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
               @for (p of pedidos; track p.id) {
-                <tr class="hover:bg-gray-50 transition-colors cursor-pointer" (click)="verDetalle(p.id)">
+                <tr class="hover:bg-gray-50 transition-colors">
                   <td class="px-6 py-4 text-gray-400 font-mono text-xs">#{{ p.id }}</td>
                   <td class="px-6 py-4 font-medium text-gray-900">{{ p.nombreCliente }}</td>
                   <td class="px-6 py-4 text-gray-500">{{ formatDate(p.fechapedido) }}</td>
@@ -84,11 +68,28 @@
                     </span>
                   </td>
                   <td class="px-6 py-4 text-right font-semibold text-gray-900">{{ formatCurrency(p.total) }}</td>
-                  <td class="px-6 py-4 text-gray-500">{{ p.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}</td>
-                  <td class="px-6 py-4 text-right">
-                    <svg class="w-4 h-4 text-gray-300 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-1">
+                      <!-- Ver detalles -->
+                      <button (click)="verDetalles(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Ver detalles">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                      </button>
+                      <!-- Editar -->
+                      <button (click)="abrirEditar(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 transition-colors" title="Editar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                      </button>
+                      <!-- Eliminar -->
+                      <button (click)="abrirEliminar(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Eliminar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               }
@@ -98,19 +99,28 @@
           <!-- Cards mobile -->
           <div class="md:hidden divide-y divide-gray-100">
             @for (p of pedidos; track p.id) {
-              <div class="px-4 py-4 cursor-pointer hover:bg-gray-50" (click)="verDetalle(p.id)">
+              <div class="px-4 py-4">
                 <div class="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <p class="font-medium text-gray-900 text-sm">{{ p.nombreCliente }}</p>
                     <p class="text-xs text-gray-400 mt-0.5">#{{ p.id }} · {{ formatDate(p.fechapedido) }}</p>
                   </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ estadoClase(p.estado) }}">
-                    {{ p.estado }}
-                  </span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ estadoClase(p.estado) }}">{{ p.estado }}</span>
                 </div>
                 <div class="flex items-center justify-between">
                   <p class="text-xs text-gray-400">Entrega: {{ formatDate(p.fechentregaaprox) }}</p>
                   <p class="text-sm font-bold text-gray-900">{{ formatCurrency(p.total) }}</p>
+                </div>
+                <div class="flex gap-2 mt-2">
+                  <button (click)="verDetalles(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  </button>
+                  <button (click)="abrirEditar(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-yellow-600 hover:bg-yellow-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  </button>
+                  <button (click)="abrirEliminar(p)" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
                 </div>
               </div>
             }
@@ -119,6 +129,228 @@
         </div>
       }
     }
-
   </div>
 </div>
+
+<!-- ── MODAL VER DETALLES ── -->
+@if (modalDetalles && pedidoSeleccionado) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalDetalles = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div>
+          <h3 class="font-semibold text-gray-900">Pedido #{{ pedidoSeleccionado.id }}</h3>
+          <p class="text-xs text-gray-400 mt-0.5">{{ pedidoSeleccionado.nombreCliente }}</p>
+        </div>
+        <button (click)="modalDetalles = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Info pedido -->
+      <div class="px-6 pt-4 pb-2 grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <p class="text-xs text-gray-400">Estado</p>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-0.5 {{ estadoClase(pedidoSeleccionado.estado) }}">{{ pedidoSeleccionado.estado }}</span>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400">Total</p>
+          <p class="font-bold text-gray-900">{{ formatCurrency(pedidoSeleccionado.total) }}</p>
+        </div>
+        <div class="col-span-2">
+          <p class="text-xs text-gray-400">Dirección</p>
+          <p class="text-gray-700 text-xs">{{ pedidoSeleccionado.direccionentrega }}</p>
+        </div>
+        @if (pedidoSeleccionado.observaciones) {
+          <div class="col-span-2">
+            <p class="text-xs text-gray-400">Observaciones</p>
+            <p class="text-gray-700 text-xs">{{ pedidoSeleccionado.observaciones }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Detalles -->
+      <div class="px-6 pb-4">
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Productos</p>
+
+        @if (loadingDetalles) {
+          <div class="flex justify-center py-6">
+            <div class="w-6 h-6 border-2 border-gray-200 rounded-full animate-spin" style="border-top-color: #7B1D3F;"></div>
+          </div>
+        } @else if (detalles.length === 0) {
+          <p class="text-sm text-gray-400 text-center py-4">Sin productos en este pedido</p>
+        } @else {
+          <div class="space-y-2 max-h-56 overflow-y-auto">
+            @for (d of detalles; track d.id) {
+              <div class="flex items-center justify-between gap-3 py-2 px-3 bg-gray-50 rounded-lg">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ d.nombreProducto }}</p>
+                  <p class="text-xs text-gray-400">Talla {{ d.talla }} · {{ d.color }} · {{ d.cantidad }} × {{ formatCurrency(d.preciounitario) }}</p>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-sm font-semibold text-gray-900">{{ formatCurrency(d.subtotal) }}</span>
+                  <button (click)="abrirEditarDetalle(d)" class="p-1 rounded text-gray-400 hover:text-yellow-600 hover:bg-yellow-50" title="Editar">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  </button>
+                  <button (click)="eliminarDetalle(d)" class="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50" title="Eliminar">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="px-6 pb-4">
+        <button (click)="modalDetalles = false" class="w-full btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR PEDIDO ── -->
+@if (modalEditar && pedidoEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar pedido #{{ pedidoEditar.id }}</h3>
+        <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3 text-sm">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Entrega aprox.</label>
+            <input type="date" [(ngModel)]="pedidoEditar.fechentregaaprox"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Fecha entrega</label>
+            <input type="date" [(ngModel)]="pedidoEditar.fechaentrega"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Dirección de entrega</label>
+          <input type="text" [(ngModel)]="pedidoEditar.direccionentrega"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Observaciones</label>
+          <input type="text" [(ngModel)]="pedidoEditar.observaciones"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Descuento (COP)</label>
+          <input type="number" [(ngModel)]="pedidoEditar.descuento" min="0"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Estado</label>
+          <select [(ngModel)]="pedidoEditar.estado"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            @for (e of estadoOpciones; track e) {
+              <option [value]="e">{{ e }}</option>
+            }
+          </select>
+        </div>
+
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="guardarEdicion()" [disabled]="loadingEditar"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingEditar) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR DETALLE ── -->
+@if (modalEditarDetalle && detalleEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditarDetalle = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div>
+          <h3 class="font-semibold text-gray-900">Editar producto</h3>
+          <p class="text-xs text-gray-400 mt-0.5">{{ detalleEditar.nombreProducto }} · T{{ detalleEditar.talla }} · {{ detalleEditar.color }}</p>
+        </div>
+        <button (click)="modalEditarDetalle = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Cantidad</label>
+          <input type="number" [(ngModel)]="editarCantidad" min="1"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Precio unitario</label>
+          <input type="number" [(ngModel)]="editarPrecio" min="0"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        @if (editarCantidad > 0 && editarPrecio > 0) {
+          <p class="text-xs text-gray-400">Subtotal: <span class="font-semibold text-gray-700">{{ formatCurrency(editarCantidad * editarPrecio) }}</span></p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditarDetalle = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="guardarDetalle()" [disabled]="loadingEditarDetalle"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingEditarDetalle) { Guardando... } @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR PEDIDO ── -->
+@if (modalEliminar && pedidoEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar pedido #{{ pedidoEliminar.id }}?</p>
+          <p class="text-sm text-gray-500 mt-1">Se eliminarán todos los productos asociados y el pedido permanentemente.</p>
+        </div>
+      </div>
+
+      @if (errorEliminar) {
+        <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-xs mb-4">{{ errorEliminar }}</div>
+      }
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 btn bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+    </div>
+  </div>
+}

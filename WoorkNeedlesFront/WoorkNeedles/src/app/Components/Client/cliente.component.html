@@ -237,11 +237,11 @@
           </div>
           <div class="col-span-2">
             <p class="text-xs text-gray-400 mb-0.5">Fecha de Creación</p>
-            <p class="text-gray-900">{{ clienteDetalle.fechacreacion }}</p>
+            <p class="text-gray-900">{{ clienteDetalle.fechacreacion | date:'dd/MM/yyyy HH:mm'}}</p>
           </div>
           <div class="col-span-2">
             <p class="text-xs text-gray-400 mb-0.5">Fecha de Modificación</p>
-            <p class="text-gray-900">{{ clienteDetalle.fechamodificacion }}</p>
+            <p class="text-gray-900">{{ clienteDetalle.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
           @if (clienteDetalle.preferenciasCompra) {
             <div class="col-span-2">
