@@ -14,8 +14,6 @@ export interface CreatePedidoDto {
 }
 
 export interface UpdatePedidoDto {
-  idCliente: number;
-  idUsuario: number;
   fechEntregaAprox: string;
   fechaEntrega: string;
   direccionEntrega: string;

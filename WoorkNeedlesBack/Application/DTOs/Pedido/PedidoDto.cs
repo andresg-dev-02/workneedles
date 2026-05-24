@@ -35,7 +35,14 @@ namespace Application.DTOs.Pedido
         public decimal? Descuento { get; set; }
     }
 
-    public class UpdatePedidoDto : CreatePedidoDto { }
+    public class UpdatePedidoDto 
+    {
+        public DateOnly FechEntregaAprox { get; set; }
+        public DateOnly FechaEntrega { get; set; }
+        public string DireccionEntrega { get; set; } = string.Empty;
+        public string Observaciones { get; set; } = string.Empty;
+        public decimal? Descuento { get; set; }
+    }
 
     public class CambiarEstadoPedidoDto
     {

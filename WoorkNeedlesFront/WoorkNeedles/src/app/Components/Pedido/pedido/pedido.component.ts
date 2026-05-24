@@ -57,6 +57,9 @@ export class PedidoComponent implements OnInit {
   loadingEliminar = false;
   errorEliminar = '';
 
+  pedidoEditarIdCliente = 0;
+  pedidoEditarIdUsuario = 0;
+
   readonly estadoOpciones = ['pendiente', 'en preparacion', 'enviado', 'entregado', 'cancelado'];
 
   readonly estadoClases: Record<string, string> = {
@@ -98,8 +101,7 @@ export class PedidoComponent implements OnInit {
       error: () => { this.loadingDetalles = false; }
     });
   }
-  pedidoEditarIdCliente = 0;
-  pedidoEditarIdUsuario = 0;
+
   // ── Editar pedido ──
   abrirEditar(pedido: PedidoModel) {
   this.pedidoEditar = { ...pedido };
@@ -118,17 +120,28 @@ export class PedidoComponent implements OnInit {
     if (!this.pedidoEditar) return;
     this.loadingEditar = true;
 
-    this.pedidoService.updatePedido(this.pedidoEditar.id, {
-      idCliente: this.pedidoEditarIdCliente,
-      idUsuario: this.pedidoEditarIdUsuario,
+    const updateDatos = this.pedidoService.updatePedido(this.pedidoEditar.id, {
       fechEntregaAprox: this.pedidoEditar.fechentregaaprox,
       fechaEntrega: this.pedidoEditar.fechaentrega,
       direccionEntrega: this.pedidoEditar.direccionentrega,
       observaciones: this.pedidoEditar.observaciones,
-      descuento: this.pedidoEditar.descuento
-    }).subscribe({
-      next: () => { this.modalEditar = false; this.loadingEditar = false; this.cargarPedidos(); },
-      error: () => { this.loadingEditar = false; }
+      descuento: this.pedidoEditar.descuento,
+    });
+
+    const updateEstado = this.pedidoService.cambiarEstado(
+      this.pedidoEditar.id,
+      this.pedidoEditar.estado
+    );
+
+    Promise.all([
+      updateDatos.toPromise(),
+      updateEstado.toPromise()
+    ]).then(() => {
+      this.modalEditar = false;
+      this.loadingEditar = false;
+      this.cargarPedidos();
+    }).catch(() => {
+      this.loadingEditar = false;
     });
   }
 
