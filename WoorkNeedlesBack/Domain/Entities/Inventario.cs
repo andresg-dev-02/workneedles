@@ -45,4 +45,22 @@ public class Inventario
         Stock = stock;
         Fechamodificacion = DateTime.Now;
     }
+
+    public void RestarStock(int cantidad)
+    {
+        if (cantidad <= 0)
+            throw new DomainException("La cantidad debe ser mayor a 0.");
+        if (Stock - cantidad < 0)
+            throw new DomainException("Stock insuficiente.");
+        Stock -= cantidad;
+        Fechamodificacion = DateTime.Now;
+    }
+
+    public void RestaurarStock(int cantidad)
+    {
+        if (cantidad <= 0)
+            throw new DomainException("La cantidad debe ser mayor a 0.");
+        Stock += cantidad;
+        Fechamodificacion = DateTime.Now;
+    }
 }

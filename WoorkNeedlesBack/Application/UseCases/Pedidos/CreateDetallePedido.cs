@@ -10,20 +10,27 @@ namespace Application.UseCases.Pedidos
     {
         public async Task Execute(CreateDetallePedidoDto dto)
         {
+            if (dto.Idinventario.HasValue)
+            {
+                var inventario = await unitofWork.Inventario.GetByIdAsync(dto.Idinventario.Value)
+                    ?? throw new KeyNotFoundException("Inventario no encontrado.");
+                inventario.RestarStock(dto.Cantidad);
+                unitofWork.Inventario.Update(inventario);
+            }
+
             var detalle = Domain.Entities.DetallePedido.Crear(dto.Idpedido, dto.Idproducto,
                 dto.Idinventario, dto.Cantidad, dto.Preciounitario);
             await unitofWork.DetallesPedido.AddAsync(detalle);
 
             var pedido = await unitofWork.Pedidos.GetByIdAsync(dto.Idpedido)
-                ?? throw new KeyNotFoundException("Pedido no encontrado.");
+            ?? throw new KeyNotFoundException("Pedido no encontrado.");
 
             var detalles = await unitofWork.DetallesPedido.GetAllAsync();
             var subtotalReal = detalles
                 .Where(d => d.Idpedido == dto.Idpedido)
-                .Sum(d => d.Subtotal) + detalle.Subtotal; 
+                .Sum(d => d.Subtotal) + detalle.Subtotal;
 
             pedido.RecalcularTotales(subtotalReal);
-
             unitofWork.Pedidos.Update(pedido);
             await unitofWork.SaveAsync();
         }

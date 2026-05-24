@@ -84,6 +84,26 @@ namespace Application.UseCases.Pedidos
         {
             var pedido = await unitofwork.Pedidos.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Pedido no encontrado.");
+
+            if (dto.Estado.ToLower() == "cancelado")
+            {
+                var detalles = await unitofwork.DetallesPedido.GetAllAsync();
+                var detallesPedido = detalles.Where(d => d.Idpedido == id).ToList();
+
+                foreach (var detalle in detallesPedido)
+                {
+                    if (detalle.Idinventario.HasValue)
+                    {
+                        var inventario = await unitofwork.Inventario.GetByIdAsync(detalle.Idinventario.Value);
+                        if (inventario != null)
+                        {
+                            inventario.RestaurarStock(detalle.Cantidad);
+                            unitofwork.Inventario.Update(inventario);
+                        }
+                    }
+                }
+            }
+
             pedido.CambiarEstado(dto.Estado);
             unitofwork.Pedidos.Update(pedido);
             await unitofwork.SaveAsync();

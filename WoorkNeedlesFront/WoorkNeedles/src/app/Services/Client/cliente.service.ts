@@ -27,6 +27,18 @@ export class ClienteService {
 
   constructor(private http: HttpClient) {}
 
+  getUbicacion(): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/Ubication`);
+  }
+
+  createCliente(dto: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, dto);
+  }
+
+  updateCliente(id: number, dto: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, dto);
+  }
+
   getClientes(): Observable<ClienteDto[]> {
     return this.http.get<ClienteDto[]>(this.apiUrl);
   }
