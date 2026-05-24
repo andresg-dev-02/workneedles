@@ -5,10 +5,11 @@ import { Router } from '@angular/router';
 import { ClienteService, ClienteDto } from '../../../Services/Client/cliente.service';
 import { PedidoService, CreatePedidoDto, CreateDetallePedidoDto } from '../../../Services/Pedido/pedido.service';
 import { ProductoService, InventarioDto } from '../../../Services/Producto/producto.service';
+import { PagoService, CreatePagoDto } from '../../../Services/Pago/pago.service';
 import { ProductoModel } from '../../../Models/Producto/producto.model';
 import { AuthService } from '../../../Services/Auth/auth.service';
 
-type Paso = 'pedido' | 'detalles';
+type Paso = 'pedido' | 'detalles' | 'pago';
 
 interface DetalleLocal {
   idproducto: number;
@@ -49,11 +50,27 @@ export class CrearPedidoComponent implements OnInit {
   preciounitario = 0;
   detalles: DetalleLocal[] = [];
 
+  // Paso 3 — pago
+  registrarPago = false;
+  tipopago = '';
+  montoPago = 0;
+  referenciaPago: string | null = null;
+  observacionesPago: string | null = null;
+
+  readonly tiposPago = [
+    { value: 'efectivo',         label: 'Efectivo' },
+    { value: 'transferencia',    label: 'Transferencia' },
+    { value: 'tarjeta_credito',  label: 'Tarjeta de crédito' },
+    { value: 'tarjeta_debito',   label: 'Tarjeta de débito' },
+    { value: 'credito_empresa',  label: 'Crédito empresa' },
+  ];
+
   // Estado
   pedidoCreadoId: number | null = null;
   loading = false;
   loadingInventario = false;
   loadingDetalle = false;
+  loadingPago = false;
   error = '';
   successMsg = '';
 
@@ -61,6 +78,7 @@ export class CrearPedidoComponent implements OnInit {
     private clienteService: ClienteService,
     private productoService: ProductoService,
     private pedidoService: PedidoService,
+    private pagoService: PagoService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -82,6 +100,10 @@ export class CrearPedidoComponent implements OnInit {
 
   get totalDetalles(): number {
     return this.detalles.reduce((s, d) => s + d.subtotal, 0);
+  }
+
+  get totalConDescuento(): number {
+    return this.totalDetalles - (this.descuento ?? 0);
   }
 
   puedeCrearPedido(): boolean {
@@ -113,6 +135,7 @@ export class CrearPedidoComponent implements OnInit {
           next: pedidos => {
             const ultimo = pedidos[pedidos.length - 1];
             this.pedidoCreadoId = ultimo.id;
+            this.montoPago = this.totalConDescuento;
             this.paso = 'detalles';
             this.loading = false;
           },
@@ -123,35 +146,26 @@ export class CrearPedidoComponent implements OnInit {
     });
   }
 
-  // ── Paso 2: seleccionar producto → cargar inventario ──
+  // ── Paso 2: detalles ──
   onProductoChange() {
     this.inventario = [];
     this.inventarioSeleccionado = null;
     this.preciounitario = 0;
-
     if (!this.idProductoSeleccionado) return;
 
     this.loadingInventario = true;
     this.productoService.getInventario(Number(this.idProductoSeleccionado)).subscribe({
-      next: inv => {
-        this.inventario = inv.filter(i => i.stock > 0);
-        this.loadingInventario = false;
-      },
-      error: () => { this.error = 'No se pudo cargar el inventario.'; this.loadingInventario = false; }
+      next: inv => { this.inventario = inv.filter(i => i.stock > 0); this.loadingInventario = false; },
+      error: () => { this.loadingInventario = false; }
     });
 
     const producto = this.productos.find(p => p.id === Number(this.idProductoSeleccionado));
     if (producto) this.preciounitario = producto.preciobase ?? 0;
   }
 
-  onVarianteChange() {
-    // inventarioSeleccionado se asigna via ngModel con el objeto completo
-  }
-
   agregarDetalle() {
     if (!this.idProductoSeleccionado || !this.inventarioSeleccionado || this.cantidad <= 0 || this.preciounitario <= 0) return;
     if (!this.pedidoCreadoId) return;
-
     if (this.cantidad > this.inventarioSeleccionado.stock) {
       this.error = `Stock insuficiente. Disponible: ${this.inventarioSeleccionado.stock}`;
       return;
@@ -181,6 +195,7 @@ export class CrearPedidoComponent implements OnInit {
           preciounitario: this.preciounitario,
           subtotal: this.cantidad * this.preciounitario
         });
+        this.montoPago = this.totalConDescuento;
         this.successMsg = '✓ Producto agregado correctamente.';
         this.resetDetalle();
         this.loadingDetalle = false;
@@ -197,7 +212,33 @@ export class CrearPedidoComponent implements OnInit {
     this.preciounitario = 0;
   }
 
-  finalizarPedido() {
+  irAPago() {
+    this.montoPago = this.totalConDescuento;
+    this.paso = 'pago';
+  }
+
+  // ── Paso 3: pago ──
+  registrarPagoAhora() {
+    if (!this.pedidoCreadoId || !this.tipopago || this.montoPago <= 0) return;
+    this.loadingPago = true;
+    this.error = '';
+
+    const dto: CreatePagoDto = {
+      idpedido: this.pedidoCreadoId,
+      idusuario: this.authService.getUsuarioId(),
+      monto: this.montoPago,
+      tipopago: this.tipopago,
+      referencia: this.referenciaPago || null,
+      observaciones: this.observacionesPago || null
+    };
+
+    this.pagoService.createPago(this.pedidoCreadoId, dto).subscribe({
+      next: () => { this.loadingPago = false; this.router.navigate(['/admin/pedidos']); },
+      error: () => { this.error = 'No se pudo registrar el pago.'; this.loadingPago = false; }
+    });
+  }
+
+  finalizarSinPago() {
     this.router.navigate(['/admin/pedidos']);
   }
 

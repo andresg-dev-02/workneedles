@@ -6,6 +6,8 @@ namespace Application.DTOs.Productos
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public string Codigohex { get; set; } = string.Empty;
+        public DateTime? Fechacreacion { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreateColorDto

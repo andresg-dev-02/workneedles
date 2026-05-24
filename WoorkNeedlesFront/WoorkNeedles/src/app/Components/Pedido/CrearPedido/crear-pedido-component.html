@@ -3,7 +3,7 @@
 
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6">
-      <button (click)="finalizarPedido()" class="text-gray-400 hover:text-gray-600">
+      <button (click)="finalizarSinPago()" class="text-gray-400 hover:text-gray-600">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
@@ -11,34 +11,47 @@
       <div>
         <h1 class="text-2xl font-bold text-gray-900">Nuevo pedido</h1>
         <p class="text-gray-500 text-xs mt-0.5">
-          @if (paso === 'pedido') { Paso 1 de 2 — Datos del pedido }
-          @else { Paso 2 de 2 — Agregar productos · Pedido #{{ pedidoCreadoId }} }
+          @if (paso === 'pedido') { Paso 1 de 3 — Datos del pedido }
+          @else if (paso === 'detalles') { Paso 2 de 3 — Agregar productos · Pedido #{{ pedidoCreadoId }} }
+          @else { Paso 3 de 3 — Pago · Pedido #{{ pedidoCreadoId }} }
         </p>
       </div>
     </div>
 
     <!-- Indicador de pasos -->
     <div class="flex items-center gap-2 mb-6">
+      <!-- Paso 1 -->
       <div class="flex items-center gap-2">
         <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background-color: #7B1D3F;">
-          @if (paso === 'detalles') {
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-            </svg>
+          @if (paso !== 'pedido') {
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
           } @else { 1 }
         </div>
         <span class="text-sm font-medium text-gray-900">Pedido</span>
       </div>
-      <div class="flex-1 h-px mx-2" [class.bg-gray-800]="paso === 'detalles'" [class.bg-gray-200]="paso === 'pedido'"></div>
+      <div class="flex-1 h-px mx-1" [class.bg-gray-800]="paso !== 'pedido'" [class.bg-gray-200]="paso === 'pedido'"></div>
+      <!-- Paso 2 -->
       <div class="flex items-center gap-2">
-        <div
-          class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-          [class.text-white]="paso === 'detalles'"
-          [class.text-gray-400]="paso !== 'detalles'"
-          [class.bg-gray-200]="paso !== 'detalles'"
-          [style]="paso === 'detalles' ? 'background-color: #7B1D3F;' : ''"
-        >2</div>
-        <span class="text-sm font-medium" [class.text-gray-900]="paso === 'detalles'" [class.text-gray-400]="paso !== 'detalles'">Productos</span>
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+          [class.text-white]="paso === 'detalles' || paso === 'pago'"
+          [class.text-gray-400]="paso === 'pedido'"
+          [class.bg-gray-200]="paso === 'pedido'"
+          [style]="paso !== 'pedido' ? 'background-color: #7B1D3F;' : ''">
+          @if (paso === 'pago') {
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          } @else { 2 }
+        </div>
+        <span class="text-sm font-medium" [class.text-gray-900]="paso !== 'pedido'" [class.text-gray-400]="paso === 'pedido'">Productos</span>
+      </div>
+      <div class="flex-1 h-px mx-1" [class.bg-gray-800]="paso === 'pago'" [class.bg-gray-200]="paso !== 'pago'"></div>
+      <!-- Paso 3 -->
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+          [class.text-white]="paso === 'pago'"
+          [class.text-gray-400]="paso !== 'pago'"
+          [class.bg-gray-200]="paso !== 'pago'"
+          [style]="paso === 'pago' ? 'background-color: #7B1D3F;' : ''">3</div>
+        <span class="text-sm font-medium" [class.text-gray-900]="paso === 'pago'" [class.text-gray-400]="paso !== 'pago'">Pago</span>
       </div>
     </div>
 
@@ -62,7 +75,7 @@
             }
           </select>
           @if (clienteSeleccionado) {
-            <p class="text-xs text-gray-400 mt-1"> {{ clienteSeleccionado.direccion }}, {{ clienteSeleccionado.ciudad }}</p>
+            <p class="text-xs text-gray-400 mt-1">📍 {{ clienteSeleccionado.direccion }}, {{ clienteSeleccionado.ciudad }}</p>
           }
         </div>
 
@@ -75,13 +88,11 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Entrega aprox.</label>
-            <input type="date" [(ngModel)]="fechEntregaAprox"
-              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+            <input type="date" [(ngModel)]="fechEntregaAprox" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Fecha entrega</label>
-            <input type="date" [(ngModel)]="fechaEntrega"
-              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+            <input type="date" [(ngModel)]="fechaEntrega" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
           </div>
         </div>
 
@@ -98,15 +109,11 @@
           </div>
         </div>
 
-        <button
-          (click)="crearPedido()"
-          [disabled]="!puedeCrearPedido() || loading"
+        <button (click)="crearPedido()" [disabled]="!puedeCrearPedido() || loading"
           class="w-full btn text-white py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-          style="background-color: #7B1D3F;"
-        >
+          style="background-color: #7B1D3F;">
           @if (loading) { Creando pedido... } @else { Continuar → Agregar productos }
         </button>
-
       </div>
     }
 
@@ -114,11 +121,9 @@
     @if (paso === 'detalles') {
       <div class="space-y-4">
 
-        <!-- Formulario -->
         <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <h2 class="font-semibold text-gray-900">Agregar producto</h2>
 
-          <!-- Producto -->
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">Producto</label>
             <select [(ngModel)]="idProductoSeleccionado" (ngModelChange)="onProductoChange()"
@@ -130,7 +135,6 @@
             </select>
           </div>
 
-          <!-- Variante (talla + color) -->
           @if (loadingInventario) {
             <p class="text-xs text-gray-400 flex items-center gap-2">
               <span class="w-3 h-3 border border-gray-300 rounded-full animate-spin inline-block" style="border-top-color: #7B1D3F;"></span>
@@ -145,9 +149,7 @@
                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
                 <option [ngValue]="null" disabled>Selecciona una variante</option>
                 @for (inv of inventario; track inv.id) {
-                  <option [ngValue]="inv">
-                    {{ inv.nombreTalla }} · {{ inv.nombreColor }} — Stock: {{ inv.stock }}
-                  </option>
+                  <option [ngValue]="inv">{{ inv.nombreTalla }} · {{ inv.nombreColor }} — Stock: {{ inv.stock }}</option>
                 }
               </select>
             </div>
@@ -157,7 +159,6 @@
             <p class="text-xs text-red-400">Sin stock disponible para este producto.</p>
           }
 
-          <!-- Cantidad y precio -->
           @if (inventarioSeleccionado) {
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -173,27 +174,22 @@
                   class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
               </div>
             </div>
-
             @if (cantidad > 0 && preciounitario > 0) {
               <p class="text-xs text-gray-400">Subtotal: <span class="font-semibold text-gray-700">{{ formatCurrency(cantidad * preciounitario) }}</span></p>
             }
           }
 
-          @if (successMsg) {
-            <p class="text-xs text-green-600">{{ successMsg }}</p>
-          }
+          @if (successMsg) { <p class="text-xs text-green-600">{{ successMsg }}</p> }
 
-          <button
-            (click)="agregarDetalle()"
+          <button (click)="agregarDetalle()"
             [disabled]="!inventarioSeleccionado || cantidad <= 0 || preciounitario <= 0 || loadingDetalle"
             class="w-full btn text-white py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            style="background-color: #7B1D3F;"
-          >
+            style="background-color: #7B1D3F;">
             @if (loadingDetalle) { Agregando... } @else { + Agregar producto }
           </button>
         </div>
 
-        <!-- Lista de productos agregados -->
+        <!-- Resumen productos -->
         @if (detalles.length > 0) {
           <div class="bg-white rounded-xl border border-gray-200 p-6">
             <h2 class="font-semibold text-gray-900 mb-3">Productos en este pedido</h2>
@@ -202,25 +198,141 @@
                 <div class="flex items-center justify-between gap-4 py-2 border-b border-gray-50 last:border-0">
                   <div>
                     <p class="text-sm font-medium text-gray-900">{{ d.nombreProducto }}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">
-                      Talla {{ d.talla }} · {{ d.color }} · {{ d.cantidad }} × {{ formatCurrency(d.preciounitario) }}
-                    </p>
+                    <p class="text-xs text-gray-400 mt-0.5">Talla {{ d.talla }} · {{ d.color }} · {{ d.cantidad }} × {{ formatCurrency(d.preciounitario) }}</p>
                   </div>
                   <span class="text-sm font-semibold text-gray-900 flex-shrink-0">{{ formatCurrency(d.subtotal) }}</span>
                 </div>
               }
             </div>
-            <div class="flex justify-between font-bold text-gray-900 pt-3 mt-1">
-              <span>Total</span>
-              <span>{{ formatCurrency(totalDetalles) }}</span>
+            <div class="flex justify-between text-sm text-gray-500 pt-2 mt-1">
+              <span>Subtotal</span><span>{{ formatCurrency(totalDetalles) }}</span>
+            </div>
+            @if (descuento) {
+              <div class="flex justify-between text-sm text-gray-500 mt-1">
+                <span>Descuento</span><span>- {{ formatCurrency(descuento) }}</span>
+              </div>
+            }
+            <div class="flex justify-between font-bold text-gray-900 pt-2 mt-1 border-t border-gray-100">
+              <span>Total</span><span>{{ formatCurrency(totalConDescuento) }}</span>
             </div>
           </div>
         }
 
-        <!-- Finalizar -->
-        <button (click)="finalizarPedido()" class="w-full btn btn-ghost text-sm py-2 rounded-lg border border-gray-200">
-          Finalizar y ver pedidos
-        </button>
+        <div class="flex gap-2">
+          <button (click)="finalizarSinPago()" class="flex-1 btn btn-ghost text-sm py-2 rounded-lg border border-gray-200">
+            Finalizar sin pago
+          </button>
+          <button (click)="irAPago()" [disabled]="detalles.length === 0"
+            class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50"
+            style="background-color: #7B1D3F;">
+            Continuar → Pago
+          </button>
+        </div>
+
+      </div>
+    }
+
+    <!-- ── PASO 3: Pago ── -->
+    @if (paso === 'pago') {
+      <div class="space-y-4">
+
+        <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-gray-900">Registrar pago</h2>
+            <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">Opcional</span>
+          </div>
+
+          <!-- Toggle registrar pago -->
+          <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+            <div>
+              <p class="text-sm font-medium text-gray-700">¿Registrar pago ahora?</p>
+              <p class="text-xs text-gray-400">Si no, el pedido quedará como "falta por pagar"</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="registrarPago" class="sr-only peer"/>
+              <div class="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#7B1D3F] transition-colors
+                after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full
+                after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4"></div>
+            </label>
+          </div>
+
+          @if (registrarPago) {
+            <!-- Tipo de pago -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Método de pago</label>
+              <div class="grid grid-cols-2 gap-2">
+                @for (tp of tiposPago; track tp.value) {
+                  <label
+                    class="flex items-center gap-2 px-3 py-2.5 rounded-lg border cursor-pointer transition-all text-sm"
+                    [class.border-gray-200]="tipopago !== tp.value"
+                    [class.bg-gray-50]="tipopago !== tp.value"
+                    [class.text-gray-700]="tipopago !== tp.value"
+                    [class.text-white]="tipopago === tp.value"
+                    [style]="tipopago === tp.value ? 'background-color: #7B1D3F; border-color: #7B1D3F;' : ''">
+                    <input type="radio" name="tipopago" [(ngModel)]="tipopago" [value]="tp.value" class="sr-only"/>
+                    {{ tp.label }}
+                  </label>
+                }
+              </div>
+            </div>
+
+            <!-- Monto -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Monto</label>
+              <input type="number" [(ngModel)]="montoPago" min="0"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+              <p class="text-xs text-gray-400 mt-1">Total del pedido: {{ formatCurrency(totalConDescuento) }}</p>
+            </div>
+
+            <!-- Referencia -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Referencia <span class="text-gray-400 font-normal">(opcional)</span></label>
+              <input type="text" [(ngModel)]="referenciaPago" placeholder="Nro. de comprobante, transferencia..."
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+            </div>
+
+            <!-- Observaciones -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones <span class="text-gray-400 font-normal">(opcional)</span></label>
+              <input type="text" [(ngModel)]="observacionesPago" placeholder="Notas adicionales..."
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+            </div>
+          }
+
+          <!-- Resumen pago -->
+          @if (!registrarPago) {
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 flex items-start gap-2">
+              <svg class="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              <div>
+                <p class="text-xs font-medium text-yellow-700">Falta por pagar</p>
+                <p class="text-xs text-yellow-600 mt-0.5">El pedido se creará con pago pendiente. Puedes registrarlo después desde la lista de pedidos.</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-2">
+          <button (click)="paso = 'detalles'" class="flex-1 btn btn-ghost text-sm py-2 rounded-lg border border-gray-200">
+            ← Volver
+          </button>
+          @if (registrarPago) {
+            <button (click)="registrarPagoAhora()"
+              [disabled]="!tipopago || montoPago <= 0 || loadingPago"
+              class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50"
+              style="background-color: #7B1D3F;">
+              @if (loadingPago) { Registrando... } @else { Confirmar pedido y pago }
+            </button>
+          } @else {
+            <button (click)="finalizarSinPago()"
+              class="flex-1 btn text-white text-sm py-2 rounded-lg"
+              style="background-color: #7B1D3F;">
+              Confirmar pedido
+            </button>
+          }
+        </div>
 
       </div>
     }
