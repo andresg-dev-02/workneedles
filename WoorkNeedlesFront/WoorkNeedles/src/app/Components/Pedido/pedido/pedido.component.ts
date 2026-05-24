@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../../Services/Pedido/pedido.service';
+import { ProductoService, InventarioDto } from '../../../Services/Producto/producto.service';
+import { ProductoModel } from '../../../Models/Producto/producto.model';
 import { PedidoModel } from '../../../Models/Pedido/pedido.model';
 
 interface DetallePedidoDto {
@@ -39,6 +41,19 @@ export class PedidoComponent implements OnInit {
   detalles: DetallePedidoDto[] = [];
   loadingDetalles = false;
 
+  // Agregar producto en modal detalles
+  mostrarFormAgregar = false;
+  productos: ProductoModel[] = [];
+  idProductoNuevo: number | null = null;
+  inventarioNuevo: InventarioDto[] = [];
+  inventarioSeleccionadoNuevo: InventarioDto | null = null;
+  cantidadNueva = 1;
+  precioNuevo = 0;
+  loadingInventarioNuevo = false;
+  loadingAgregarDetalle = false;
+  errorAgregarDetalle = '';
+  successAgregarDetalle = '';
+
   // Modal editar pedido
   modalEditar = false;
   pedidoEditar: PedidoModel | null = null;
@@ -70,9 +85,19 @@ export class PedidoComponent implements OnInit {
     'cancelado':      'bg-red-100 text-red-700',
   };
 
-  constructor(private pedidoService: PedidoService, private router: Router) {}
+  constructor(
+    private pedidoService: PedidoService,
+    private productoService: ProductoService,
+    private router: Router
+  ) {}
 
-  ngOnInit() { this.cargarPedidos(); }
+  ngOnInit() {
+    this.cargarPedidos();
+    this.productoService.getProductos().subscribe({
+      next: p => this.productos = p,
+      error: () => {}
+    });
+  }
 
   cargarPedidos() {
     this.loading = true;
@@ -95,6 +120,8 @@ export class PedidoComponent implements OnInit {
     this.detalles = [];
     this.modalDetalles = true;
     this.loadingDetalles = true;
+    this.mostrarFormAgregar = false;
+    this.resetFormAgregar();
 
     this.pedidoService.getDetalles(pedido.id).subscribe({
       next: d => { this.detalles = d; this.loadingDetalles = false; },
@@ -102,19 +129,85 @@ export class PedidoComponent implements OnInit {
     });
   }
 
+  // ── Agregar producto en modal detalles ──
+  toggleFormAgregar() {
+    this.mostrarFormAgregar = !this.mostrarFormAgregar;
+    if (!this.mostrarFormAgregar) this.resetFormAgregar();
+  }
+
+  onProductoNuevoChange() {
+    this.inventarioNuevo = [];
+    this.inventarioSeleccionadoNuevo = null;
+    this.precioNuevo = 0;
+    if (!this.idProductoNuevo) return;
+
+    this.loadingInventarioNuevo = true;
+    this.productoService.getInventario(Number(this.idProductoNuevo)).subscribe({
+      next: inv => { this.inventarioNuevo = inv.filter(i => i.stock > 0); this.loadingInventarioNuevo = false; },
+      error: () => { this.loadingInventarioNuevo = false; }
+    });
+
+    const producto = this.productos.find(p => p.id === Number(this.idProductoNuevo));
+    if (producto) this.precioNuevo = producto.preciobase ?? 0;
+  }
+
+  agregarProductoAPedido() {
+    if (!this.pedidoSeleccionado || !this.idProductoNuevo || !this.inventarioSeleccionadoNuevo) return;
+    if (this.cantidadNueva <= 0 || this.precioNuevo <= 0) return;
+    if (this.cantidadNueva > this.inventarioSeleccionadoNuevo.stock) {
+      this.errorAgregarDetalle = `Stock insuficiente. Disponible: ${this.inventarioSeleccionadoNuevo.stock}`;
+      return;
+    }
+
+    this.loadingAgregarDetalle = true;
+    this.errorAgregarDetalle = '';
+    this.successAgregarDetalle = '';
+
+    this.pedidoService.addDetalle(this.pedidoSeleccionado.id, {
+      idpedido: this.pedidoSeleccionado.id,
+      idproducto: Number(this.idProductoNuevo),
+      idinventario: this.inventarioSeleccionadoNuevo.id,
+      cantidad: this.cantidadNueva,
+      preciounitario: this.precioNuevo
+    }).subscribe({
+      next: () => {
+        this.successAgregarDetalle = '✓ Producto agregado.';
+        this.loadingAgregarDetalle = false;
+        this.resetFormAgregar();
+        this.mostrarFormAgregar = false;
+        // Recargar detalles y pedidos
+        this.pedidoService.getDetalles(this.pedidoSeleccionado!.id).subscribe({
+          next: d => { this.detalles = d; },
+          error: () => {}
+        });
+        this.cargarPedidos();
+      },
+      error: () => { this.errorAgregarDetalle = 'No se pudo agregar el producto.'; this.loadingAgregarDetalle = false; }
+    });
+  }
+
+  private resetFormAgregar() {
+    this.idProductoNuevo = null;
+    this.inventarioNuevo = [];
+    this.inventarioSeleccionadoNuevo = null;
+    this.cantidadNueva = 1;
+    this.precioNuevo = 0;
+    this.errorAgregarDetalle = '';
+    this.successAgregarDetalle = '';
+  }
+
   // ── Editar pedido ──
   abrirEditar(pedido: PedidoModel) {
-  this.pedidoEditar = { ...pedido };
-  // Necesitamos los IDs reales — los traemos del pedido completo
-  this.pedidoService.getPedidoById(pedido.id).subscribe({
-    next: (p: any) => {
-      this.pedidoEditarIdCliente = p.idCliente ?? p.idcliente ?? 0;
-      this.pedidoEditarIdUsuario = p.idUsuario ?? p.idusuario ?? 0;
-    },
-    error: () => {}
-  });
-  this.modalEditar = true;
-}
+    this.pedidoEditar = { ...pedido };
+    this.pedidoService.getPedidoById(pedido.id).subscribe({
+      next: (p: any) => {
+        this.pedidoEditarIdCliente = p.idCliente ?? p.idcliente ?? 0;
+        this.pedidoEditarIdUsuario = p.idUsuario ?? p.idusuario ?? 0;
+      },
+      error: () => {}
+    });
+    this.modalEditar = true;
+  }
 
   guardarEdicion() {
     if (!this.pedidoEditar) return;
@@ -133,16 +226,11 @@ export class PedidoComponent implements OnInit {
       this.pedidoEditar.estado
     );
 
-    Promise.all([
-      updateDatos.toPromise(),
-      updateEstado.toPromise()
-    ]).then(() => {
+    Promise.all([updateDatos.toPromise(), updateEstado.toPromise()]).then(() => {
       this.modalEditar = false;
       this.loadingEditar = false;
       this.cargarPedidos();
-    }).catch(() => {
-      this.loadingEditar = false;
-    });
+    }).catch(() => { this.loadingEditar = false; });
   }
 
   // ── Editar detalle ──
@@ -197,14 +285,11 @@ export class PedidoComponent implements OnInit {
     this.loadingEliminar = true;
     this.errorEliminar = '';
 
-    // 1. Cargar detalles del pedido
     this.pedidoService.getDetalles(this.pedidoEliminar.id).subscribe({
       next: async (detalles) => {
-        // 2. Eliminar cada detalle
         for (const detalle of detalles) {
           await this.pedidoService.deleteDetalle(this.pedidoEliminar!.id, detalle.id).toPromise();
         }
-        // 3. Eliminar el pedido
         this.pedidoService.deletePedido(this.pedidoEliminar!.id).subscribe({
           next: () => {
             this.pedidos = this.pedidos.filter(p => p.id !== this.pedidoEliminar!.id);

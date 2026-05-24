@@ -96,13 +96,16 @@ namespace Application.UseCases.Pedidos
             var detalle = await unitofWork.DetallesPedido.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Detalle de pedido no encontrado.");
 
+            Console.WriteLine($">>> Eliminando detalle {id}, Cantidad: {detalle.Cantidad}, Inventario: {detalle.Idinventario}");
             // 1. Restaurar stock
             if (detalle.Idinventario.HasValue)
             {
                 var inventario = await unitofWork.Inventario.GetByIdAsync(detalle.Idinventario.Value);
                 if (inventario != null)
                 {
+                    Console.WriteLine($">>> Stock antes: {inventario.Stock}");
                     inventario.RestaurarStock(detalle.Cantidad);
+                    Console.WriteLine($">>> Stock después: {inventario.Stock}");
                     unitofWork.Inventario.Update(inventario);
                 }
             }

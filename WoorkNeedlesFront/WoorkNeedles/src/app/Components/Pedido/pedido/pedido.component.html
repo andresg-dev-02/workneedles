@@ -133,6 +133,7 @@
 </div>
 
 <!-- ── MODAL VER DETALLES ── -->
+<!-- ── MODAL VER DETALLES ── -->
 @if (modalDetalles && pedidoSeleccionado) {
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/40" (click)="modalDetalles = false"></div>
@@ -170,10 +171,99 @@
         }
       </div>
 
-      <!-- Detalles -->
-      <div class="px-6 pb-4">
-        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Productos</p>
+      <!-- Productos -->
+      <div class="px-6 pb-2">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Productos</p>
+          <button (click)="toggleFormAgregar()"
+            class="text-xs flex items-center gap-1 px-2 py-1 rounded-lg transition-colors"
+            [class]="mostrarFormAgregar ? 'bg-gray-100 text-gray-600' : 'text-white'"
+            [style]="mostrarFormAgregar ? '' : 'background-color: #7B1D3F;'">
+            @if (mostrarFormAgregar) {
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              Cancelar
+            } @else {
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Agregar producto
+            }
+          </button>
+        </div>
 
+        <!-- Formulario agregar producto -->
+        @if (mostrarFormAgregar) {
+          <div class="bg-gray-50 rounded-xl p-4 mb-3 space-y-3">
+
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Producto</label>
+              <select [(ngModel)]="idProductoNuevo" (ngModelChange)="onProductoNuevoChange()"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white">
+                <option [ngValue]="null" disabled>Selecciona un producto</option>
+                @for (p of productos; track p.id) {
+                  <option [ngValue]="p.id">{{ p.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            @if (loadingInventarioNuevo) {
+              <p class="text-xs text-gray-400 flex items-center gap-1">
+                <span class="w-3 h-3 border border-gray-300 rounded-full animate-spin inline-block" style="border-top-color: #7B1D3F;"></span>
+                Cargando variantes...
+              </p>
+            }
+
+            @if (!loadingInventarioNuevo && inventarioNuevo.length > 0) {
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Talla / Color</label>
+                <select [(ngModel)]="inventarioSeleccionadoNuevo"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white">
+                  <option [ngValue]="null" disabled>Selecciona una variante</option>
+                  @for (inv of inventarioNuevo; track inv.id) {
+                    <option [ngValue]="inv">{{ inv.nombreTalla }} · {{ inv.nombreColor }} — Stock: {{ inv.stock }}</option>
+                  }
+                </select>
+              </div>
+            }
+
+            @if (!loadingInventarioNuevo && idProductoNuevo && inventarioNuevo.length === 0) {
+              <p class="text-xs text-red-400">Sin stock disponible para este producto.</p>
+            }
+
+            @if (inventarioSeleccionadoNuevo) {
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">
+                    Cantidad <span class="text-gray-400">(máx. {{ inventarioSeleccionadoNuevo.stock }})</span>
+                  </label>
+                  <input type="number" [(ngModel)]="cantidadNueva" min="1" [max]="inventarioSeleccionadoNuevo.stock"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white"/>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Precio unitario</label>
+                  <input type="number" [(ngModel)]="precioNuevo" min="0"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none bg-white"/>
+                </div>
+              </div>
+              @if (cantidadNueva > 0 && precioNuevo > 0) {
+                <p class="text-xs text-gray-400">Subtotal: <span class="font-semibold text-gray-700">{{ formatCurrency(cantidadNueva * precioNuevo) }}</span></p>
+              }
+            }
+
+            @if (errorAgregarDetalle) {
+              <p class="text-xs text-red-500">{{ errorAgregarDetalle }}</p>
+            }
+            @if (successAgregarDetalle) {
+              <p class="text-xs text-green-600">{{ successAgregarDetalle }}</p>
+            }
+
+            <button (click)="agregarProductoAPedido()"
+              [disabled]="!inventarioSeleccionadoNuevo || cantidadNueva <= 0 || precioNuevo <= 0 || loadingAgregarDetalle"
+              class="w-full btn text-white text-xs py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+              @if (loadingAgregarDetalle) { Agregando... } @else { + Confirmar producto }
+            </button>
+          </div>
+        }
+
+        <!-- Lista de detalles -->
         @if (loadingDetalles) {
           <div class="flex justify-center py-6">
             <div class="w-6 h-6 border-2 border-gray-200 rounded-full animate-spin" style="border-top-color: #7B1D3F;"></div>
@@ -181,7 +271,7 @@
         } @else if (detalles.length === 0) {
           <p class="text-sm text-gray-400 text-center py-4">Sin productos en este pedido</p>
         } @else {
-          <div class="space-y-2 max-h-56 overflow-y-auto">
+          <div class="space-y-2 max-h-52 overflow-y-auto">
             @for (d of detalles; track d.id) {
               <div class="flex items-center justify-between gap-3 py-2 px-3 bg-gray-50 rounded-lg">
                 <div class="flex-1 min-w-0">
@@ -203,7 +293,7 @@
         }
       </div>
 
-      <div class="px-6 pb-4">
+      <div class="px-6 pb-4 pt-2">
         <button (click)="modalDetalles = false" class="w-full btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cerrar</button>
       </div>
     </div>
