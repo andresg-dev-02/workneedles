@@ -37,7 +37,7 @@ export class PedidoComponent implements OnInit {
     this.loading = true;
     this.error = '';
     this.pedidoService.getPedidos().subscribe({
-      next: p => { this.pedidos = p; this.loading = false; },
+      next: p => { this.pedidos = p; console.log(p); this.loading = false; },
       error: () => { this.error = 'No se pudieron cargar los pedidos.'; this.loading = false; }
     });
   }

@@ -19,6 +19,7 @@ namespace Application.DTOs.Pedido
         public decimal Subtotal { get; set; }
         public decimal? Descuento { get; set; }
         public decimal Total { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreatePedidoDto

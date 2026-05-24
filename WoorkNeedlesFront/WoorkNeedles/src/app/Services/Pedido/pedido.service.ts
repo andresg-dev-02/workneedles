@@ -28,6 +28,7 @@ export interface PedidoDto {
   fechapedido: string;
   fechentregaaprox: string;
   fechaentrega: string;
+  fechamodificacion: string;
   estado: string;
   direccionentrega: string;
   observaciones: string;

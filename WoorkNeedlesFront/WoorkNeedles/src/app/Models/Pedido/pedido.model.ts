@@ -5,6 +5,7 @@ export interface PedidoModel {
   fechapedido: string | null;
   fechentregaaprox: string;
   fechaentrega: string;
+  fechamodificacion: string;
   estado: string;
   direccionentrega: string;
   observaciones: string;
