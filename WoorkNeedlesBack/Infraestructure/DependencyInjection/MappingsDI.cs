@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Application.Mappings.PagoMap;
 using Infraestructure.Mappings.PagoMap;
 using Application.Mappings.GeoMap;
+using Infraestructure.Mappings.GeoMap;
 
 namespace Infraestructure.DI;
 
