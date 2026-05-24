@@ -19,6 +19,7 @@ export interface ClienteDto {
   pais: string;
   departamento: string;
   ciudad: string;
+  fechamodificacion: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

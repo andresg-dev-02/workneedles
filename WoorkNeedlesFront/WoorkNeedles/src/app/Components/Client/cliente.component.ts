@@ -18,6 +18,7 @@ export class ClienteComponent implements OnInit {
   clienteDetalle: ClienteDto | null = null;
   clienteEditar: ClienteDto | null = null;
   clienteEliminar: ClienteDto | null = null;
+  fechamodificacion: string | null = null;
   ubication: any = null; 
   error = '';
 
@@ -34,7 +35,11 @@ export class ClienteComponent implements OnInit {
 cargarClientes() {
 
   this.clienteService.getClientes().subscribe({
-    next: c => this.clientes = c,
+    next: c => {
+      this.clientes = c;
+
+      console.log(this.clientes);
+    },
     error: () => this.error = 'Error al cargar clientes.'
   });
 
