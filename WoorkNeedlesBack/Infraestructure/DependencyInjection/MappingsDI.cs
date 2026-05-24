@@ -43,6 +43,7 @@ public static class MappingsDI
             cfg.AddProfile<DetallePedidoProfile>();
             cfg.AddProfile<PedidoDetalleDtoProfile>();
             cfg.AddProfile<UbicationDtoProfile>();
+            cfg.AddProfile<UbicationProfile>();
         });
         return services;
     }
