@@ -13,12 +13,20 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<ProductoMasVendidoDto>> Execute()
         {
+            var estadosValidos = new[] { "enviado", "entregado" };
+
+            var pedidos = await unitofwork.Pedidos.GetAllAsync();
+            var idsPedidosValidos = pedidos
+                .Where(p => estadosValidos.Contains(p.Estado))
+                .Select(p => p.Id)
+                .ToHashSet();
+
             var options = new QueryOptions<DetallePedido>()
                 .AddInclude("IdproductoNavigation");
-
             var detalles = await unitofwork.DetallesPedido.GetAllAsync(options);
 
             return detalles
+                .Where(d => idsPedidosValidos.Contains(d.Idpedido))
                 .GroupBy(d => d.NombreProducto)
                 .Select(g => new ProductoMasVendidoDto
                 {
@@ -35,6 +43,8 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<IngresoMensualDto>> Execute()
         {
+            var estadosValidos = new[] { "enviado", "entregado" };
+
             var detalleOptions = new QueryOptions<DetallePedido>()
                 .AddInclude("IdproductoNavigation");
 
@@ -42,7 +52,7 @@ namespace Application.UseCases.Reportes
             var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions);
 
             return pedidos
-                .Where(p => p.Fechapedido.HasValue)
+                .Where(p => p.Fechapedido.HasValue && estadosValidos.Contains(p.Estado))
                 .GroupBy(p => new { p.Fechapedido!.Value.Month, p.Fechapedido.Value.Year })
                 .Select(g =>
                 {
@@ -54,7 +64,7 @@ namespace Application.UseCases.Reportes
                         Mes = new DateTime(g.Key.Year, g.Key.Month, 1)
                             .ToString("MMMM", new System.Globalization.CultureInfo("es-CO")),
                         Anio = g.Key.Year,
-                        TotalIngresos = detallesGrupo.Sum(d => d.Subtotal), 
+                        TotalIngresos = detallesGrupo.Sum(d => d.Subtotal),
                         TotalPedidos = g.Count()
                     };
                 })
@@ -68,21 +78,23 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<FrecuenciaPedidoDto>> Execute()
         {
+            var estadosValidos = new[] { "enviado", "entregado" };
+
             var pedidoOptions = new QueryOptions<Pedido>()
                 .AddInclude("IdclienteNavigation");
-
             var detalleOptions = new QueryOptions<DetallePedido>()
                 .AddInclude("IdproductoNavigation");
 
             var pedidos = await unitofwork.Pedidos.GetAllAsync(pedidoOptions);
-            var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions); 
+            var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions);
 
             return pedidos
+                .Where(p => estadosValidos.Contains(p.Estado))
                 .GroupBy(p => p.NombreCliente)
                 .Select(g =>
                 {
                     var detallesCliente = detalles
-                        .Where(d => g.Select(p => p.Id).Contains(d.Idpedido)); 
+                        .Where(d => g.Select(p => p.Id).Contains(d.Idpedido));
 
                     return new FrecuenciaPedidoDto
                     {
@@ -100,9 +112,10 @@ namespace Application.UseCases.Reportes
     {
         public async Task<IEnumerable<ComportamientoClienteDto>> Execute()
         {
+            var estadosValidos = new[] { "enviado", "entregado" };
+
             var pedidoOptions = new QueryOptions<Pedido>()
                 .AddInclude("IdclienteNavigation");
-
             var detalleOptions = new QueryOptions<DetallePedido>()
                 .AddInclude("IdproductoNavigation");
 
@@ -110,6 +123,7 @@ namespace Application.UseCases.Reportes
             var detalles = await unitofwork.DetallesPedido.GetAllAsync(detalleOptions);
 
             return pedidos
+                .Where(p => estadosValidos.Contains(p.Estado))
                 .GroupBy(p => new { p.NombreCliente, p.Idcliente })
                 .Select(g =>
                 {
@@ -125,7 +139,7 @@ namespace Application.UseCases.Reportes
                     {
                         NombreCliente = g.Key.NombreCliente,
                         TotalPedidos = g.Count(),
-                        TotalGastado = detallesCliente.Sum(d => d.Subtotal), 
+                        TotalGastado = detallesCliente.Sum(d => d.Subtotal),
                         UltimoPedido = g.Max(p => p.Fechapedido),
                         ProductoFavorito = productoFavorito
                     };
