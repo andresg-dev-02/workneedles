@@ -12,7 +12,8 @@ namespace Application.Mappings.GeoMap
     {
         public UbicationDtoProfile()
         {
-            CreateMap<Ciudade, CiudadDto>();
+            CreateMap<Domain.Entities.Ciudade, CiudadDto>();
+            CreateMap<CiudadDto, Domain.Entities.Ciudade>();
         }
     }
 }

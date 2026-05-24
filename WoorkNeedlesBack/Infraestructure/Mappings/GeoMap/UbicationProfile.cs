@@ -12,18 +12,15 @@ namespace Infraestructure.Mappings.GeoMap
     {
         public UbicationProfile()
         {
-            CreateMap<
-                Infraestructure.Persistence.Models.Ciudade,
-                Domain.Entities.Ciudade
-            >()
-            .ForMember(
-                dest => dest.DepartamentoNombre,
-                opt => opt.MapFrom(src => src.IddepartNavigation.Nombre)
-            )
-            .ForMember(
-                dest => dest.PaisNombre,
-                opt => opt.MapFrom(src => src.IddepartNavigation.IdpaisNavigation.Nombre)
-            );
+            CreateMap<Infraestructure.Persistence.Models.Ciudade, Domain.Entities.Ciudade>()
+                .ForMember(
+                    dest => dest.DepartamentoNombre,
+                    opt => opt.MapFrom(src => src.IddepartNavigation.Nombre)
+                )
+                .ForMember(
+                    dest => dest.PaisNombre,
+                    opt => opt.MapFrom(src => src.IddepartNavigation.IdpaisNavigation.Nombre)
+                );
         }
     }
 }
