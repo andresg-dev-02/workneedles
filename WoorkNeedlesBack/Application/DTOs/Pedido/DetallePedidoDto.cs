@@ -8,6 +8,7 @@ namespace Application.DTOs.Pedido
     public class DetallePedidoDto
     {
         public int Id { get; set; }
+        public int? Idinventario { get; set; }
         public string NombreProducto { get; set; } = string.Empty;
         public string Talla { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;

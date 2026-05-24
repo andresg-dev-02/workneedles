@@ -10,6 +10,7 @@ import { PedidoModel } from '../../../Models/Pedido/pedido.model';
 interface DetallePedidoDto {
   id: number;
   nombreProducto: string;
+  idinventario: number | null;
   talla: string;
   color: string;
   cantidad: number;
@@ -246,7 +247,7 @@ export class PedidoComponent implements OnInit {
     this.loadingEditarDetalle = true;
 
     const dto: UpdateDetallePedidoDto = {
-      idinventario: null,
+      idinventario: this.detalleEditar.idinventario ?? null, // 👈 usa el del detalle original
       cantidad: this.editarCantidad,
       preciounitario: this.editarPrecio
     };
