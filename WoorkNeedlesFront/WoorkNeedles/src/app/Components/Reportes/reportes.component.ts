@@ -1,5 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ElementRef, ViewChild  } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import jsPDF from 'jspdf';
+import { forkJoin } from 'rxjs';
+import autoTable from 'jspdf-autotable';
 import {
   ReportesService,
   ProductoMasVendidoDto,
@@ -107,4 +110,101 @@ export class ReportesComponent implements OnInit {
   get totalPedidosSum(): number {
     return this.ingresos.reduce((s, i) => s + i.totalPedidos, 0);
   }
+
+  @ViewChild('reporteContainer') reporteContainer!: ElementRef;
+
+exportarPDFCompleto() {
+  this.loading = true;
+
+  forkJoin({
+    productos: this.reportesService.getProductosMasVendidos(),
+    ingresos: this.reportesService.getIngresosMensuales(),
+    frecuencia: this.reportesService.getFrecuenciaPedidos(),
+    comportamiento: this.reportesService.getComportamientoClientes(),
+  }).subscribe({
+    next: ({ productos, ingresos, frecuencia, comportamiento }) => {
+      this.loading = false;
+      const doc = new jsPDF();
+
+      // ── Portada ──
+      doc.setFontSize(20);
+      doc.setTextColor(123, 29, 63);
+      doc.text('WoorkNeedles', 14, 20);
+      doc.setFontSize(13);
+      doc.setTextColor(80, 80, 80);
+      doc.text('Reporte general de métricas', 14, 28);
+      doc.setFontSize(9);
+      doc.text(`Generado: ${new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}`, 14, 35);
+
+      // ── Productos más vendidos ──
+      doc.setFontSize(12);
+      doc.setTextColor(123, 29, 63);
+      doc.text('Productos más vendidos', 14, 48);
+      autoTable(doc, {
+        startY: 52,
+        head: [['#', 'Producto', 'Unidades vendidas', 'Total ingresos']],
+        body: productos.map((p, i) => [
+          i + 1, p.nombreProducto, p.totalVendido, this.formatCurrency(p.totalIngresos)
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [123, 29, 63] }
+      });
+
+      // ── Ingresos mensuales ──
+      const y1 = (doc as any).lastAutoTable.finalY + 12;
+      doc.setFontSize(12);
+      doc.setTextColor(123, 29, 63);
+      doc.text('Ingresos mensuales', 14, y1);
+      autoTable(doc, {
+        startY: y1 + 4,
+        head: [['Mes', 'Año', 'Total ingresos', 'Pedidos']],
+        body: ingresos.map(i => [
+          i.mes, i.anio, this.formatCurrency(i.totalIngresos), i.totalPedidos
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [123, 29, 63] }
+      });
+
+      // ── Frecuencia de pedidos ──
+      const y2 = (doc as any).lastAutoTable.finalY + 12;
+      doc.setFontSize(12);
+      doc.setTextColor(123, 29, 63);
+      doc.text('Frecuencia de pedidos por cliente', 14, y2);
+      autoTable(doc, {
+        startY: y2 + 4,
+        head: [['Cliente', 'Total pedidos', 'Total gastado']],
+        body: frecuencia.map(f => [
+          f.nombreCliente, f.totalPedidos, this.formatCurrency(f.totalGastado)
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [123, 29, 63] }
+      });
+
+      // ── Comportamiento de clientes ──
+      const y3 = (doc as any).lastAutoTable.finalY + 12;
+      doc.setFontSize(12);
+      doc.setTextColor(123, 29, 63);
+      doc.text('Comportamiento de clientes', 14, y3);
+      autoTable(doc, {
+        startY: y3 + 4,
+        head: [['Cliente', 'Pedidos', 'Total gastado', 'Último pedido', 'Producto favorito']],
+        body: comportamiento.map(c => [
+          c.nombreCliente,
+          c.totalPedidos,
+          this.formatCurrency(c.totalGastado),
+          this.formatDate(c.ultimoPedido),
+          c.productoFavorito || '—'
+        ]),
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [123, 29, 63] }
+      });
+
+      doc.save('reporte-completo.pdf');
+    },
+    error: () => {
+      this.loading = false;
+      this.error = 'No se pudo generar el reporte completo.';
+    }
+  });
+}
 }

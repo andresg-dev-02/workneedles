@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -22,32 +22,25 @@ export interface UpdateInventarioDto {
   stock: number;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class InventarioService implements OnInit
-{
-  private apiUrl = environment.apiUrl + '/Inventario';
+@Injectable({ providedIn: 'root' })
+export class InventarioService {
+  private apiUrl = environment.apiUrl + '/Producto';
 
   constructor(private http: HttpClient) {}
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
+
+  getInventarioPorProducto(idProducto: number): Observable<InventarioDto[]> {
+    return this.http.get<InventarioDto[]>(`${this.apiUrl}/${idProducto}/Inventario`);
   }
 
-  getInventarios(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}`);
+  createInventario(idProducto: number, dto: CreateInventarioDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${idProducto}/Inventario`, dto);
   }
 
-  createInventario(dto: CreateInventarioDto): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, dto);
+  updateInventario(idProducto: number, id: number, dto: UpdateInventarioDto): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${idProducto}/Inventario/${id}`, dto);
   }
 
-  updateInventario(id: number, dto: UpdateInventarioDto): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, dto);
+  deleteInventario(idProducto: number, id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${idProducto}/Inventario/${id}`);
   }
-
-  deleteInventario(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
-  }
-
 }

@@ -55,6 +55,18 @@ export class ProductoService {
     return this.http.get<InsumosProductoDto[]>(`${this.apiUrl}/${idProducto}/Insumos`);
   }
 
+  createInsumoProducto(idProducto: number, dto: { idinsumo: number; cantidad: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${idProducto}/Insumos`, { ...dto, idproducto: idProducto });
+  }
+
+  updateInsumoProducto(idProducto: number, id: number, cantidad: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${idProducto}/Insumos/${id}`, { cantidad });
+  }
+
+  deleteInsumoProducto(idProducto: number, id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${idProducto}/Insumos/${id}`);
+  }
+
   createProducto(dto: CreateProductoDto): Observable<void> {
     return this.http.post<void>(this.apiUrl, dto);
   }

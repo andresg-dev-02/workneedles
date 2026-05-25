@@ -1,0 +1,574 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Inventario</h1>
+        <p class="text-gray-500 text-sm mt-1">Selecciona una categoría para explorar productos</p>
+      </div>
+      <button (click)="abrirNuevoProducto()"
+        class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2"
+        style="background-color: #7B1D3F;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuevo producto
+      </button>
+    </div>
+
+    @if (errorCategorias) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ errorCategorias }}</div>
+    }
+
+    <!-- Pills categorías -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      @for (cat of categorias; track cat.id) {
+        <button (click)="seleccionarCategoria(cat)"
+          class="px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150"
+          [class.text-white]="categoriaSeleccionada?.id === cat.id"
+          [class.border-transparent]="categoriaSeleccionada?.id === cat.id"
+          [class.text-gray-600]="categoriaSeleccionada?.id !== cat.id"
+          [class.border-gray-200]="categoriaSeleccionada?.id !== cat.id"
+          [class.bg-white]="categoriaSeleccionada?.id !== cat.id"
+          [style.background-color]="categoriaSeleccionada?.id === cat.id ? '#7B1D3F' : ''">
+          {{ cat.nombre }}
+        </button>
+      }
+    </div>
+
+    <!-- Sin selección -->
+    @if (!categoriaSeleccionada) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>
+        <p class="text-gray-400 text-sm">Selecciona una categoría para ver los productos</p>
+      </div>
+    }
+
+    @if (categoriaSeleccionada && cargandoProductos) {
+      <div class="bg-white rounded-xl border border-gray-200 flex items-center justify-center py-20">
+        <p class="text-gray-400 text-sm">Cargando productos...</p>
+      </div>
+    }
+
+    @if (errorProductos) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">{{ errorProductos }}</div>
+    }
+
+    @if (categoriaSeleccionada && !cargandoProductos && productos.length === 0 && !errorProductos) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay productos con inventario e insumos en esta categoría</p>
+      </div>
+    }
+
+    <!-- Grid productos -->
+    @if (!cargandoProductos && productos.length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        @for (producto of productos; track producto.id) {
+          <div class="bg-white rounded-xl border p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200"
+            [class.border-gray-200]="!estaSeleccionado(producto)"
+            [class.shadow-md]="estaSeleccionado(producto)"
+            [style.border-color]="estaSeleccionado(producto) ? '#7B1D3F' : ''"
+            (click)="seleccionarProducto(producto)"
+            role="button" tabindex="0"
+            (keydown.enter)="seleccionarProducto(producto)">
+
+            @if (producto.urlimagen) {
+              <img [src]="producto.urlimagen" [alt]="producto.nombre" class="w-full h-36 object-cover rounded-lg"/>
+            } @else {
+              <div class="w-full h-36 rounded-lg bg-gray-100 flex items-center justify-center">
+                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+            }
+
+            <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white" style="background-color: #7B1D3F;">
+              <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+              </svg>
+              <span class="text-sm font-semibold truncate">{{ producto.nombre }}</span>
+            </div>
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-sm text-gray-500">{{ producto.material }}</span>
+            </div>
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-smx5 text-gray-500">Creacion: {{ producto.fechacreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-smx5 text-gray-500">Modificacion: {{ producto.fechamodificacion | date:'dd/MM/yyyy HH:mm'}}</span>
+            </div>
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-sm font-bold text-gray-900">${{ producto.preciobase | number:'1.2-2' }}</span>
+            </div>
+            
+
+            <!-- Detalle expandido -->
+            @if (estaSeleccionado(producto)) {
+              <div class="border-t border-gray-100 pt-3" (click)="$event.stopPropagation()">
+
+                @if (cargandoDetalle) {
+                  <p class="text-xs text-gray-400 py-1">Cargando detalle...</p>
+                }
+
+                @if (!cargandoDetalle) {
+
+                  <!-- Inventario -->
+                  <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Inventario</p>
+                    <button (click)="abrirModalInventario()"
+                      class="text-xs px-2 py-1 rounded-lg text-white flex items-center gap-1"
+                      style="background-color: #7B1D3F;">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                      </svg>
+                      Agregar
+                    </button>
+                  </div>
+
+                  @if (inventario.length === 0) {
+                    <p class="text-xs text-gray-400 italic mb-3">Sin registros.</p>
+                  } @else {
+                    <table class="w-full text-xs mb-4">
+                      <thead>
+                        <tr class="border-b border-gray-200">
+                          <th class="text-left font-semibold text-gray-500 pb-1.5">Color</th>
+                          <th class="text-left font-semibold text-gray-500 pb-1.5">Talla</th>
+                          <th class="text-right font-semibold text-gray-500 pb-1.5">Stock</th>
+                          <th class="pb-1.5"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of inventario; track item.id) {
+                          <tr class="border-b border-gray-100 last:border-0">
+                            <td class="py-1.5 text-gray-800">{{ item.nombreColor }}</td>
+                            <td class="py-1.5 text-gray-800">{{ item.nombreTalla }}</td>
+                            <td class="py-1.5 text-right font-medium"
+                              [class.text-green-600]="item.stock > 0"
+                              [class.text-red-500]="item.stock === 0">
+                              {{ item.stock }}
+                            </td>
+                            <td class="py-1.5 text-right">
+                              <div class="flex justify-end gap-1">
+                                <button (click)="abrirEditarStock(item)"
+                                  class="px-1.5 py-0.5 rounded text-xs text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
+                                  Editar
+                                </button>
+                                <button (click)="eliminarInventario(item)"
+                                  class="px-1.5 py-0.5 rounded text-xs text-red-600 bg-red-50 hover:bg-red-100">
+                                  Quitar
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+
+                  <!-- Insumos -->
+                  <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Insumos</p>
+                    <button (click)="abrirModalInsumo()"
+                      class="text-xs px-2 py-1 rounded-lg text-white flex items-center gap-1"
+                      style="background-color: #7B1D3F;">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                      </svg>
+                      Agregar
+                    </button>
+                  </div>
+
+                  @if (insumos.length === 0) {
+                    <p class="text-xs text-gray-400 italic">Sin insumos.</p>
+                  } @else {
+                    <table class="w-full text-xs">
+                      <thead>
+                        <tr class="border-b border-gray-200">
+                          <th class="text-left font-semibold text-gray-500 pb-1.5">Insumo</th>
+                          <th class="text-right font-semibold text-gray-500 pb-1.5">Cant.</th>
+                          <th class="pb-1.5"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (insumo of insumos; track insumo.id) {
+                          <tr class="border-b border-gray-100 last:border-0">
+                            <td class="py-1.5 text-gray-800">{{ insumo.nombreInsumo }}</td>
+                            <td class="py-1.5 text-right text-gray-700">{{ insumo.cantidad }} {{ insumo.unidadMedida }}</td>
+                            <td class="py-1.5 text-right">
+                              <div class="flex justify-end gap-1">
+                                <button (click)="abrirEditarInsumo(insumo)"
+                                  class="px-1.5 py-0.5 rounded text-xs text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
+                                  Editar
+                                </button>
+                                <button (click)="eliminarInsumo(insumo)"
+                                  class="px-1.5 py-0.5 rounded text-xs text-red-600 bg-red-50 hover:bg-red-100">
+                                  Quitar
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- ── MODAL AGREGAR INVENTARIO ── -->
+@if (modalInventario) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalInventario = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Agregar inventario</h3>
+        <button (click)="modalInventario = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-6 py-4 space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Color *</label>
+          <select [(ngModel)]="nuevoInventario.idcolor"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            <option [ngValue]="0" disabled>Selecciona un color</option>
+            @for (color of colores; track color.id) {
+              <option [ngValue]="color.id">{{ color.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Talla *</label>
+          <select [(ngModel)]="nuevoInventario.idtalla"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            <option [ngValue]="0" disabled>Selecciona una talla</option>
+            @for (talla of tallas; track talla.id) {
+              <option [ngValue]="talla.id">{{ talla.nombre }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+          <input type="number" [(ngModel)]="nuevoInventario.stock" min="1"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        @if (errorInventario) {
+          <p class="text-xs text-red-500">{{ errorInventario }}</p>
+        }
+      </div>
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalInventario = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="agregarInventario()" [disabled]="loadingInventario"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingInventario) { Guardando... } @else { Agregar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR STOCK ── -->
+@if (modalEditarStock && inventarioEditando) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditarStock = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar stock</h3>
+        <button (click)="modalEditarStock = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-6 py-4 space-y-3">
+        <p class="text-sm text-gray-600">
+          <span class="font-medium">{{ inventarioEditando.nombreColor }}</span> —
+          <span class="font-medium">{{ inventarioEditando.nombreTalla }}</span>
+        </p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+          <input type="number" [(ngModel)]="stockEditar" min="0"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+      </div>
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditarStock = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="guardarStock()" [disabled]="loadingEditarStock"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingEditarStock) { Guardando... } @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL AGREGAR INSUMO ── -->
+@if (modalInsumo) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalInsumo = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Agregar insumo</h3>
+        <button (click)="modalInsumo = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-6 py-4 space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Insumo *</label>
+          <select [(ngModel)]="nuevoInsumo.idinsumo"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            <option [ngValue]="0" disabled>Selecciona un insumo</option>
+            @for (insumo of insumosFiltrados; track insumo.id) {
+              <option [ngValue]="insumo.id">{{ insumo.nombre }} ({{ insumo.unidadmedida }})</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad *</label>
+          <input type="number" [(ngModel)]="nuevoInsumo.cantidad" min="0.01" step="0.01"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        @if (errorInsumo) {
+          <p class="text-xs text-red-500">{{ errorInsumo }}</p>
+        }
+      </div>
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalInsumo = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="agregarInsumo()" [disabled]="loadingInsumo"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingInsumo) { Guardando... } @else { Agregar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR INSUMO ── -->
+@if (modalEditarInsumo && insumoEditando) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditarInsumo = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar insumo</h3>
+        <button (click)="modalEditarInsumo = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="px-6 py-4 space-y-3">
+        <p class="text-sm text-gray-600 font-medium">{{ insumoEditando.nombreInsumo }}</p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad *</label>
+          <input type="number" [(ngModel)]="cantidadEditar" min="0.01" step="0.01"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+      </div>
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditarInsumo = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="guardarInsumo()" [disabled]="loadingEditarInsumo"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingEditarInsumo) { Guardando... } @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+  <!-- ── MODAL NUEVO PRODUCTO ── -->
+@if (modalNuevoProducto) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalNuevoProducto = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div>
+          <h3 class="font-semibold text-gray-900">Nuevo producto</h3>
+          <p class="text-xs text-gray-400 mt-0.5">
+            @if (pasoNuevoProducto === 'seleccionar') { Selecciona el producto base }
+            @else { {{ productoBaseSeleccionado?.nombre }} — Agregar variantes e insumos }
+          </p>
+        </div>
+        <button (click)="modalNuevoProducto = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Paso 1: seleccionar producto base -->
+      @if (pasoNuevoProducto === 'seleccionar') {
+        <div class="px-6 py-4 max-h-[60vh] overflow-y-auto">
+          @if (cargandoProductosBase) {
+            <div class="flex justify-center py-10">
+              <div class="w-6 h-6 border-2 border-gray-200 rounded-full animate-spin" style="border-top-color: #7B1D3F;"></div>
+            </div>
+          } @else if (productosBase.length === 0) {
+            <p class="text-sm text-gray-400 text-center py-10">Todos los productos ya tienen inventario asignado.</p>
+          } @else {
+            <div class="space-y-2">
+              @for (p of productosBase; track p.id) {
+                <button (click)="seleccionarProductoBase(p)"
+                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 hover:border-[#7B1D3F] hover:bg-rose-50 transition-all text-left">
+                  @if (p.urlimagen) {
+                    <img [src]="p.urlimagen" class="w-12 h-12 rounded-lg object-cover flex-shrink-0"/>
+                  } @else {
+                    <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
+                      </svg>
+                    </div>
+                  }
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ p.nombre }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ p.categoria }} · ${{ p.preciobase | number:'1.0-0' }}</p>
+                  </div>
+                  <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Paso 2: agregar variantes e insumos -->
+      @if (pasoNuevoProducto === 'configurar') {
+        <div class="px-6 py-4 space-y-5 max-h-[65vh] overflow-y-auto">
+
+          <!-- Variantes -->
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Variantes (talla + color + stock)</p>
+
+            <!-- Formulario variante -->
+            <div class="grid grid-cols-3 gap-2 mb-2">
+              <select [(ngModel)]="varianteTemp.idcolor"
+                class="border border-gray-200 rounded-lg px-2 py-2 text-xs focus:outline-none">
+                <option [ngValue]="0" disabled>Color</option>
+                @for (c of colores; track c.id) {
+                  <option [ngValue]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+              <select [(ngModel)]="varianteTemp.idtalla"
+                class="border border-gray-200 rounded-lg px-2 py-2 text-xs focus:outline-none">
+                <option [ngValue]="0" disabled>Talla</option>
+                @for (t of tallas; track t.id) {
+                  <option [ngValue]="t.id">{{ t.nombre }}</option>
+                }
+              </select>
+              <input type="number" [(ngModel)]="varianteTemp.stock" min="1" placeholder="Stock"
+                class="border border-gray-200 rounded-lg px-2 py-2 text-xs focus:outline-none"/>
+            </div>
+            <button (click)="agregarVarianteTemp()"
+              [disabled]="!varianteTemp.idcolor || !varianteTemp.idtalla || varianteTemp.stock <= 0"
+              class="w-full py-1.5 rounded-lg text-xs text-white disabled:opacity-40 mb-3"
+              style="background-color: #7B1D3F;">
+              + Agregar variante
+            </button>
+
+            <!-- Lista variantes -->
+            @if (variantesNuevas.length > 0) {
+              <div class="space-y-1">
+                @for (v of variantesNuevas; track $index; let i = $index) {
+                  <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-xs">
+                    <span class="text-gray-700">{{ nombreColor(v.idcolor) }} · {{ nombreTalla(v.idtalla) }} · Stock: {{ v.stock }}</span>
+                    <button (click)="quitarVariante(i)" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-xs text-gray-400 italic">Sin variantes aún.</p>
+            }
+          </div>
+
+          <!-- Insumos -->
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Insumos <span class="font-normal text-gray-400">(opcional)</span></p>
+
+            <div class="grid grid-cols-2 gap-2 mb-2">
+              <select [(ngModel)]="insumoTemp.idinsumo"
+                class="border border-gray-200 rounded-lg px-2 py-2 text-xs focus:outline-none">
+                <option [ngValue]="0" disabled>Selecciona insumo</option>
+                @for (ins of insumosDisponibles; track ins.id) {
+                  <option [ngValue]="ins.id">{{ ins.nombre }} ({{ ins.unidadmedida }})</option>
+                }
+              </select>
+              <input type="number" [(ngModel)]="insumoTemp.cantidad" min="0.01" step="0.01" placeholder="Cantidad"
+                class="border border-gray-200 rounded-lg px-2 py-2 text-xs focus:outline-none"/>
+            </div>
+            <button (click)="agregarInsumoTemp()"
+              [disabled]="!insumoTemp.idinsumo || insumoTemp.cantidad <= 0"
+              class="w-full py-1.5 rounded-lg text-xs text-white disabled:opacity-40 mb-3"
+              style="background-color: #7B1D3F;">
+              + Agregar insumo
+            </button>
+
+            @if (insumosNuevos.length > 0) {
+              <div class="space-y-1">
+                @for (ins of insumosNuevos; track $index; let i = $index) {
+                  <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-xs">
+                    <span class="text-gray-700">{{ nombreInsumo(ins.idinsumo) }} · {{ ins.cantidad }}</span>
+                    <button (click)="quitarInsumoNuevo(i)" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-xs text-gray-400 italic">Sin insumos aún.</p>
+            }
+          </div>
+
+          @if (errorNuevoProducto) {
+            <p class="text-xs text-red-500">{{ errorNuevoProducto }}</p>
+          }
+        </div>
+
+        <div class="px-6 pb-4 flex gap-2">
+          <button (click)="pasoNuevoProducto = 'seleccionar'"
+            class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">
+            ← Volver
+          </button>
+          <button (click)="guardarNuevoProducto()"
+            [disabled]="variantesNuevas.length === 0 || loadingNuevoProducto"
+            class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50"
+            style="background-color: #7B1D3F;">
+            @if (loadingNuevoProducto) { Guardando... } @else { Confirmar }
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}
