@@ -1,0 +1,151 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Gestión de Pedidos</h1>
+        <p class="text-gray-500 text-sm mt-1">Selecciona un producto para ver sus insumos</p>
+      </div>
+    </div>
+
+    <!-- Error productos -->
+    @if (errorProductos) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">
+        {{ errorProductos }}
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (cargandoProductos) {
+      <div class="bg-white rounded-xl border border-gray-200 flex items-center justify-center py-20">
+        <p class="text-gray-400 text-sm">Cargando productos...</p>
+      </div>
+    }
+
+    <!-- Sin productos -->
+    @if (!cargandoProductos && productos.length === 0) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay productos registrados</p>
+      </div>
+    }
+
+    <!-- Grid productos -->
+    @if (!cargandoProductos && productos.length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        @for (producto of productos; track producto.id) {
+          <div
+            class="bg-white rounded-xl border p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200"
+            [class.border-gray-200]="!estaSeleccionado(producto)"
+            [class.hover:shadow-md]="!estaSeleccionado(producto)"
+            [class.border-pink-800]="estaSeleccionado(producto)"
+            [class.shadow-md]="estaSeleccionado(producto)"
+            (click)="seleccionarProducto(producto)"
+            role="button"
+            [attr.aria-expanded]="estaSeleccionado(producto)"
+            tabindex="0"
+            (keydown.enter)="seleccionarProducto(producto)"
+          >
+            <!-- Imagen -->
+            @if (producto.urlimagen) {
+              <img [src]="producto.urlimagen" [alt]="producto.nombre"
+                class="w-full h-36 object-cover rounded-lg"/>
+            }
+
+            <!-- Badge nombre -->
+            <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white"
+              style="background-color: #7B1D3F;">
+              <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+              </svg>
+              <span class="text-sm font-semibold truncate">{{ producto.nombre }}</span>
+            </div>
+
+            <!-- Descripción -->
+            <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">
+              {{ producto.descripcion || '—' }}
+            </p>
+
+            <!-- Meta -->
+            <div class="space-y-0.5">
+              <p class="text-xs text-gray-400">Categoría: {{ producto.categoria }}</p>
+              @if (producto.genero) {
+                <p class="text-xs text-gray-400">Género: {{ producto.genero }}</p>
+              }
+              @if (producto.material) {
+                <p class="text-xs text-gray-400">Material: {{ producto.material }}</p>
+              }
+            </div>
+
+            <!-- Footer precio + estado -->
+            <div class="flex items-center justify-between mt-auto">
+              <span class="text-sm font-bold text-gray-900">
+                ${{ producto.preciobase | number:'1.2-2' }}
+              </span>
+              <span class="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                [class.bg-green-100]="producto.activo"
+                [class.text-green-700]="producto.activo"
+                [class.bg-red-100]="!producto.activo"
+                [class.text-red-700]="!producto.activo">
+                {{ producto.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            <!-- Panel insumos (expandido) -->
+            @if (estaSeleccionado(producto)) {
+              <div class="border-t border-gray-100 pt-3 cursor-default" (click)="$event.stopPropagation()">
+
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  Insumos
+                </p>
+
+                @if (cargandoInsumos) {
+                  <p class="text-xs text-gray-400 py-1">Cargando insumos...</p>
+                }
+
+                @if (errorInsumos) {
+                  <p class="text-xs text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">
+                    {{ errorInsumos }}
+                  </p>
+                }
+
+                @if (!cargandoInsumos && !errorInsumos && insumos.length === 0) {
+                  <p class="text-xs text-gray-400 italic">Sin insumos registrados.</p>
+                }
+
+                @if (!cargandoInsumos && !errorInsumos && insumos.length > 0) {
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="border-b border-gray-200">
+                        <th class="text-left font-semibold text-gray-500 pb-1.5">Insumo</th>
+                        <th class="text-right font-semibold text-gray-500 pb-1.5">Cant.</th>
+                        <th class="text-right font-semibold text-gray-500 pb-1.5">Unidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (insumo of insumos; track insumo.id) {
+                        <tr class="border-b border-gray-100 last:border-0">
+                          <td class="py-1.5 text-gray-800">{{ insumo.nombreInsumo }}</td>
+                          <td class="py-1.5 text-right text-gray-700">{{ insumo.cantidad }}</td>
+                          <td class="py-1.5 text-right text-gray-500">{{ insumo.unidadMedida }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

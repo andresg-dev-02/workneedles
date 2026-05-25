@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ProductoModel } from '../../Models/Producto/producto.model';
+import { InsumosProductoDto } from '../GestorProductos/gestor-p.service';
 
 export interface InventarioDto {
   id: number;
@@ -26,5 +27,11 @@ export class ProductoService {
 
   getInventario(idProducto: number): Observable<InventarioDto[]> {
     return this.http.get<InventarioDto[]>(`${this.apiUrl}/${idProducto}/Inventario`);
+  }
+
+  getInsumos(idProducto: number): Observable<InsumosProductoDto[]> {
+    return this.http.get<InsumosProductoDto[]>(
+      `${this.apiUrl}/${idProducto}/Insumos`
+    );
   }
 }

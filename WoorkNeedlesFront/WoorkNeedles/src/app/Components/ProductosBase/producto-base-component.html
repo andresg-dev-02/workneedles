@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Productos</h1>
+        <p class="text-gray-500 text-sm mt-1">Catálogo de productos disponibles</p>
+      </div>
+    </div>
+
+    <!-- Error -->
+    @if (errorProductos) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">
+        {{ errorProductos }}
+      </div>
+    }
+
+    <!-- Sin productos -->
+    @if (productos.length === 0 && !errorProductos) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay productos registrados</p>
+      </div>
+    }
+
+    <!-- Grid -->
+    @if (productos.length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        @for (producto of productos; track producto.id) {
+          <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow flex flex-col gap-3">
+
+            <!-- Imagen -->
+            @if (producto.urlimagen) {
+              <img [src]="producto.urlimagen" [alt]="producto.nombre"
+                class="w-full h-36 object-cover rounded-lg"/>
+            } @else {
+              <div class="w-full h-36 rounded-lg bg-gray-100 flex items-center justify-center">
+                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+            }
+
+            <!-- Badge nombre -->
+            <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white"
+              style="background-color: #7B1D3F;">
+              <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+              </svg>
+              <span class="text-sm font-semibold truncate">{{ producto.nombre }}</span>
+            </div>
+
+            <!-- Descripción -->
+            <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">
+              {{ producto.descripcion || '—' }}
+            </p>
+
+            <!-- Meta -->
+            <div class="space-y-0.5">
+              <p class="text-xs text-gray-400">
+                <span class="font-medium text-gray-500">Categoría Producto:</span> {{ producto.categoria }}
+              </p>
+              @if (producto.genero) {
+                <p class="text-xs text-gray-400">
+                  <span class="font-medium text-gray-500">Género:</span> {{ producto.genero }}
+                </p>
+              }
+              @if (producto.material) {
+                <p class="text-xs text-gray-400">
+                  <span class="font-medium text-gray-500">Material:</span> {{ producto.material }}
+                </p>
+              }
+              @if (producto.fechacreacion) {
+                <p class="text-xs text-gray-400">
+                  <span class="font-medium text-gray-500">Creación:</span>
+                  {{ producto.fechacreacion | date:'dd/MM/yyyy' }}
+                </p>
+              }
+              @if(producto.fechamodificacion) {
+                <p class="text-xs text-gray-400">
+                  <span class="font-medium text-gray-500">Última modificación:</span>
+                  {{ producto.fechamodificacion | date:'dd/MM/yyyy' }}
+                </p>
+              }
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-sm font-bold text-gray-900">
+                ${{ producto.preciobase | number:'1.2-2' }}
+              </span>
+              <span class="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                [class.bg-green-100]="producto.activo"
+                [class.text-green-700]="producto.activo"
+                [class.bg-red-100]="!producto.activo"
+                [class.text-red-700]="!producto.activo">
+                {{ producto.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

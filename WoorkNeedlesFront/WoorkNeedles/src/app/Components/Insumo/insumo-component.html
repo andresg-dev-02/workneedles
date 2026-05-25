@@ -31,34 +31,6 @@
       </div>
     }
 
-    <!-- Filtros -->
-    <div class="flex gap-2 mb-5 flex-wrap">
-      <button (click)="filtroActivo = null"
-        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-        [class.text-white]="filtroActivo === null"
-        [class.bg-gray-200]="filtroActivo !== null"
-        [class.text-gray-600]="filtroActivo !== null"
-        [style]="filtroActivo === null ? 'background-color: #7B1D3F;' : ''">
-        Todos
-      </button>
-      <button (click)="filtroActivo = true"
-        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-        [class.text-white]="filtroActivo === true"
-        [class.bg-gray-200]="filtroActivo !== true"
-        [class.text-gray-600]="filtroActivo !== true"
-        [style]="filtroActivo === true ? 'background-color: #7B1D3F;' : ''">
-        Activos
-      </button>
-      <button (click)="filtroActivo = false"
-        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-        [class.text-white]="filtroActivo === false"
-        [class.bg-gray-200]="filtroActivo !== false"
-        [class.text-gray-600]="filtroActivo !== false"
-        [style]="filtroActivo === false ? 'background-color: #7B1D3F;' : ''">
-        Inactivos
-      </button>
-    </div>
-
     <!-- Error -->
     @if (error) {
       <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ error }}</div>
@@ -82,17 +54,13 @@
             <div class="flex items-start justify-between gap-2 mb-3">
               <div class="flex-1 min-w-0">
                 <h2 class="text-base font-bold text-gray-900 truncate">{{ insumo.nombre }}</h2>
-                <p class="text-xs text-gray-400 mt-0.5">Categoria: {{ insumo.categoria }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">Categoría: {{ insumo.categoria }}</p>
               </div>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
-                [class]="insumo.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">
-                {{ insumo.activo ? 'Activo' : 'Inactivo' }}
-              </span>
             </div>
 
             <!-- Descripción -->
             @if (insumo.descripcion) {
-              <p class="text-xs text-gray-500 mb-3 line-clamp-2">Descripción: {{ insumo.descripcion }}</p>
+              <p class="text-xs text-gray-500 mb-3 line-clamp-2">{{ insumo.descripcion }}</p>
             }
 
             <!-- Datos -->
@@ -123,24 +91,20 @@
                 <span class="font-medium text-gray-700">Proveedor:</span> {{ insumo.proveedor }}
               </p>
             }
+
             <!-- Fechas -->
-                <div class="space-y-1 mb-3">
-
-                @if (insumo.activo) {
-                    <p class="text-[11px] text-gray-400">
-                    Creado:
-                    {{ insumo.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
-                    </p>
-                }
-
-                @if (insumo.fechamodificacion) {
-                    <p class="text-[11px] text-gray-400">
-                    Modificado:
-                    {{ insumo.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
-                    </p>
-                }
-
-                </div>
+            <div class="space-y-1 mb-3">
+              @if (insumo.fechacreacion) {
+                <p class="text-[11px] text-gray-400">
+                  Creado: {{ insumo.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
+                </p>
+              }
+              @if (insumo.fechamodificacion) {
+                <p class="text-[11px] text-gray-400">
+                  Modificado: {{ insumo.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
+                </p>
+              }
+            </div>
 
             <!-- Alerta stock -->
             @if (insumo.stockactual <= insumo.stockalerta) {
@@ -181,13 +145,15 @@
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h3 class="font-semibold text-gray-900">Nuevo insumo</h3>
         <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
         </button>
       </div>
 
       <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto text-sm">
-
         <div class="grid grid-cols-2 gap-3">
+
           <div class="col-span-2">
             <label class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
             <input type="text" [(ngModel)]="nuevoInsumo.nombre" placeholder="Ej: Tela poliéster"
@@ -241,10 +207,13 @@
           </div>
 
           <div class="col-span-2">
-            <label class="block text-xs font-medium text-gray-700 mb-1">Proveedor <span class="text-gray-400 font-normal">(opcional)</span></label>
+            <label class="block text-xs font-medium text-gray-700 mb-1">
+              Proveedor <span class="text-gray-400 font-normal">(opcional)</span>
+            </label>
             <input type="text" [(ngModel)]="nuevoInsumo.proveedor" placeholder="Nombre del proveedor"
               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
           </div>
+
         </div>
 
         @if (errorCrear) {
@@ -253,7 +222,8 @@
       </div>
 
       <div class="px-6 pb-4 flex gap-2">
-        <button (click)="modalCrear = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="modalCrear = false"
+          class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
         <button (click)="crearInsumo()" [disabled]="!nuevoInsumo.nombre || !nuevoInsumo.idcategoria || loadingCrear"
           class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
           @if (loadingCrear) { Guardando... } @else { Crear insumo }
@@ -272,7 +242,9 @@
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h3 class="font-semibold text-gray-900">Editar insumo</h3>
         <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
         </button>
       </div>
 
@@ -283,6 +255,18 @@
             <label class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
             <input type="text" [(ngModel)]="insumoEditar.nombre"
               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <!-- ✅ Select de categoría corregido con [ngValue] -->
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Categoría</label>
+            <select [(ngModel)]="insumoEditar.idcategoria"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+              <option [ngValue]="0" disabled>Selecciona una categoría</option>
+              @for (c of categorias; track c.id) {
+                <option [ngValue]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
           </div>
 
           <div class="col-span-2">
@@ -325,25 +309,12 @@
               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
           </div>
 
-          <!-- Estado activo -->
-          <div class="col-span-2 flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-            <div>
-              <p class="text-sm font-medium text-gray-700">Estado</p>
-              <p class="text-xs text-gray-400">{{ insumoEditar.activo ? 'Insumo activo' : 'Insumo inactivo' }}</p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" [(ngModel)]="insumoEditar.activo" class="sr-only peer"/>
-              <div class="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#7B1D3F] transition-colors
-                after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full
-                after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4"></div>
-            </label>
-          </div>
-
         </div>
       </div>
 
       <div class="px-6 pb-4 flex gap-2">
-        <button (click)="modalEditar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="modalEditar = false"
+          class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
         <button (click)="guardarEdicion()" [disabled]="loadingEditar"
           class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
           @if (loadingEditar) { Guardando... } @else { Guardar cambios }
@@ -372,7 +343,8 @@
       </div>
 
       <div class="flex gap-2">
-        <button (click)="modalEliminar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="modalEliminar = false"
+          class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
         <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
           class="flex-1 btn bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50">
           @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }

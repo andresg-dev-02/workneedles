@@ -9,4 +9,5 @@ export interface ProductoModel {
     fechacreacion?: string; 
     categoria: string;
     genero?: string;
+    fechamodificacion?: string;
 }

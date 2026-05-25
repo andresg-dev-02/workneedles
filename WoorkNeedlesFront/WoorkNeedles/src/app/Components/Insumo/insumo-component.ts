@@ -2,7 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InsumosService, InsumoDto, CreateInsumoDto } from '../../Services/Insumo/insumos.service';
-import { CategoriaProductoService, CategoriaProductoDto } from '../../Services/CategoriasProducto/categoria-producto.service';
+import { CategoriaInsumoService, CategoriaInsumoDto } from '../../Services/CategoriaInsumo/categoria-insumo.service';
+
+export interface UpdateInsumoDto {
+  idcategoria: number;
+  nombre: string;
+  descripcion: string;
+  unidadmedida: string;
+  stockactual: number;
+  stockalerta: number;
+  precio: number;
+  proveedor?: string | null;
+}
 
 @Component({
   selector: 'app-insumo-component',
@@ -13,7 +24,7 @@ import { CategoriaProductoService, CategoriaProductoDto } from '../../Services/C
 export class InsumosComponent implements OnInit {
 
   insumos: InsumoDto[] = [];
-  categorias: CategoriaProductoDto[] = [];
+  categorias: CategoriaInsumoDto[] = [];
   error = '';
 
   // Filtro
@@ -33,24 +44,24 @@ export class InsumosComponent implements OnInit {
   // Modal editar
   modalEditar = false;
   loadingEditar = false;
-  insumoEditar: InsumoDto | null = null;
-  insumoEditarIdCategoria = 0;
+  insumoEditar: UpdateInsumoDto | null = null;
+  insumoEditarId = 0;
 
   // Modal eliminar
   modalEliminar = false;
   loadingEliminar = false;
   insumoEliminar: InsumoDto | null = null;
 
-  readonly unidades = ['unidad', 'metro', 'kg', 'litro', 'rollo', 'caja', 'paquete', 'par'];
+  readonly unidades = ['metros', 'kg', 'unidades', 'litros', 'rollos'];
 
   constructor(
     private insumosService: InsumosService,
-    private categoriaService: CategoriaProductoService
+    private categoriaInsumoService: CategoriaInsumoService
   ) {}
 
   ngOnInit() {
     this.getInsumos();
-    this.categoriaService.getCategoriasProducto().subscribe({
+    this.categoriaInsumoService.getCategoriasInsumo().subscribe({
       next: c => this.categorias = c,
       error: () => {}
     });
@@ -83,28 +94,56 @@ export class InsumosComponent implements OnInit {
     this.insumosService.createInsumo(this.nuevoInsumo).subscribe({
       next: () => {
         this.modalCrear = false;
-        this.nuevoInsumo = { idcategoria: 0, nombre: '', descripcion: '', unidadmedida: '', stockactual: 0, stockalerta: 0, precio: 0, proveedor: null };
+        this.nuevoInsumo = {
+          idcategoria: 0, nombre: '', descripcion: '',
+          unidadmedida: '', stockactual: 0, stockalerta: 0,
+          precio: 0, proveedor: null
+        };
         this.loadingCrear = false;
         this.getInsumos();
       },
-      error: () => { this.errorCrear = 'No se pudo crear el insumo.'; this.loadingCrear = false; }
+      error: () => {
+        this.errorCrear = 'No se pudo crear el insumo.';
+        this.loadingCrear = false;
+      }
     });
   }
 
   // ── Editar ──
   abrirEditar(insumo: InsumoDto) {
-    this.insumoEditar = { ...insumo };
-    // buscar la categoria por nombre para obtener el id
+    // Buscar el id de la categoría por nombre
     const cat = this.categorias.find(c => c.nombre === insumo.categoria);
-    this.insumoEditarIdCategoria = cat?.id ?? 0;
+    this.insumoEditarId = insumo.id;
+    this.insumoEditar = {
+      idcategoria: cat?.id ?? 0,
+      nombre: insumo.nombre,
+      descripcion: insumo.descripcion,
+      unidadmedida: insumo.unidadmedida,
+      stockactual: insumo.stockactual,
+      stockalerta: insumo.stockalerta,
+      precio: insumo.precio,
+      proveedor: insumo.proveedor,
+    };
     this.modalEditar = true;
   }
 
   guardarEdicion() {
-    if (!this.insumoEditar) return;
+    if (!this.insumoEditar || !this.insumoEditarId) return;
     this.loadingEditar = true;
-    this.insumosService.updateInsumo(this.insumoEditar.id, this.insumoEditar).subscribe({
-      next: () => { this.modalEditar = false; this.loadingEditar = false; this.getInsumos(); },
+
+    const dto: UpdateInsumoDto = {
+      ...this.insumoEditar,
+      idcategoria: Number(this.insumoEditar.idcategoria), // evita FK error por string
+    };
+
+    this.insumosService.updateInsumo(this.insumoEditarId, dto).subscribe({
+      next: () => {
+        this.modalEditar = false;
+        this.insumoEditar = null;
+        this.insumoEditarId = 0;
+        this.loadingEditar = false;
+        this.getInsumos();
+      },
       error: () => { this.loadingEditar = false; }
     });
   }
@@ -129,6 +168,8 @@ export class InsumosComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency', currency: 'COP', maximumFractionDigits: 0
+    }).format(value);
   }
 }

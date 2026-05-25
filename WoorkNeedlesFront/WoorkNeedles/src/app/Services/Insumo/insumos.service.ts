@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-
 export interface InsumoDto {
   id: number;
   nombre: string;
@@ -30,29 +29,38 @@ export interface CreateInsumoDto {
   proveedor?: string | null;
 }
 
+export interface UpdateInsumoDto {
+  idcategoria: number;
+  nombre: string;
+  descripcion: string;
+  unidadmedida: string;
+  stockactual: number;
+  stockalerta: number;
+  precio: number;
+  proveedor?: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
-export class InsumosService
-{
+export class InsumosService {
   private apiUrl = environment.apiUrl + '/Insumo';
-  
+
   constructor(private http: HttpClient) {}
 
-  getInsumos(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}`);
+  getInsumos(): Observable<InsumoDto[]> {
+    return this.http.get<InsumoDto[]>(`${this.apiUrl}`);
   }
 
   createInsumo(dto: CreateInsumoDto): Observable<any> {
     return this.http.post(`${this.apiUrl}`, dto);
   }
 
-  updateInsumo(id: number, dto: InsumoDto): Observable<any> {
+  updateInsumo(id: number, dto: UpdateInsumoDto): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, dto);
   }
 
-  deleteInsumo(id: number) {
+  deleteInsumo(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
-
 }
