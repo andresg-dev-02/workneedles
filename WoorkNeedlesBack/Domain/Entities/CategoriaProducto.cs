@@ -24,7 +24,7 @@ public class CategoriaProducto
             Nombre = nombre.Trim(),
             Descripcion = descripcion.Trim(),
             Fechacreacion = DateTime.Now,
-            Fechamodificacion = DateTime.UtNow
+            Fechamodificacion = DateTime.UtcNow
         };
     }
 
