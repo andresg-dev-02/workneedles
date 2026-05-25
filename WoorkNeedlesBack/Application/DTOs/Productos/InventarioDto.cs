@@ -12,6 +12,8 @@ namespace Application.DTOs.Productos
         public string NombreColor { get; set; } = string.Empty;
         public string NombreTalla { get; set; } = string.Empty;
         public int Stock { get; set; }
+        public DateTime? Fechacreacion { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreateInventarioDto

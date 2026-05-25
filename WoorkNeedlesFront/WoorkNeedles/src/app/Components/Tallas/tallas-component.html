@@ -1,0 +1,54 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+  @for(talla of tallas; track talla.id) {
+
+    <div class="bg-white rounded-xl shadow border border-gray-200 p-4">
+
+      <!-- Nombre -->
+      <div class="flex items-center justify-between">
+
+        <h3 class="text-lg font-semibold text-gray-800">
+          {{ talla.nombre }}
+        </h3>
+
+        <span class="text-xs bg-gray-100 px-2 py-1 rounded">
+          ID: {{ talla.id }}
+        </span>
+
+      </div>
+
+      <!-- Fecha -->
+      <div class="mt-3 text-sm text-gray-500">
+
+        <p>
+          Creado:
+          {{ talla.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+
+        <p *ngIf="talla.fechamodificacion">
+          Modificado:
+          {{ talla.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-2 mt-4">
+
+        <button
+          class="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600">
+          Editar
+        </button>
+
+        <button
+          class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
+          Eliminar
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

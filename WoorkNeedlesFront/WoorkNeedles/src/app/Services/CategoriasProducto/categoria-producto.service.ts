@@ -2,41 +2,46 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import id from '@angular/common/locales/extra/id';
 
 
-export interface TallaDto {
+export interface CategoriaProductoDto 
+{
   id: number;
   nombre: string;
+  descripcion: string;
   fechacreacion: string | null;
   fechamodificacion: string | null;
 }
 
-export interface CreateTallaDto {
+export interface CreateCategoriaProductoDto
+{
   nombre: string;
+  descripcion: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class TallasService 
+export class CategoriaProductoService
 {
-  private apiUrl = environment.apiUrl + '/Talla';
+  private apiUrl = environment.apiUrl + '/CategoriaProducto';
 
   constructor(private http: HttpClient) {}
 
-  getTallas(): Observable<any> {
+  getCategoriasProducto(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}`);
   }
 
-  createTalla(dto: CreateTallaDto): Observable<any> {
+  createCategoriaProducto(dto: CreateCategoriaProductoDto): Observable<any> {
     return this.http.post(`${this.apiUrl}`, dto);
   }
 
-  updateTalla(id: number, dto: TallaDto): Observable<any> {
+  updateCategoriaProducto(id: number, dto: CategoriaProductoDto): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, dto);
   }
 
-  deleteTalla(id: number) {
+  deleteCategoriaProducto(id: number) {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 

@@ -1,1 +1,50 @@
-<p>colores.component works!</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+  @for(color of colores; track color.id) {
+
+    <div class="bg-white rounded-xl shadow p-4 border border-gray-200">
+
+      <!-- Color preview -->
+      <div
+        class="w-full h-20 rounded-lg border"
+        [style.background]="color.codigohex">
+      </div>
+
+      <!-- Info -->
+      <div class="mt-4 space-y-1">
+
+        <h3 class="text-lg font-semibold text-gray-800">
+          {{ color.nombre }}
+        </h3>
+
+        <p class="text-sm text-gray-500">
+          {{ color.codigohex }}
+        </p>
+
+        <p class="text-xs text-gray-400">
+          Creado:
+          {{ color.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 mt-4">
+
+        <button
+          class="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600">
+          Editar
+        </button>
+
+        <button
+          class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
+          Eliminar
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { ColoresService, ColorDto, CreateColorDto } from '../../Services/Color/colores.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-colores.component',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './colores.component.html',
 })
 export class ColoresComponent {
@@ -16,8 +17,8 @@ export class ColoresComponent {
   }
 
   getColores() {
-    this.coloresService.getColores().subscribe((data) => {
-      this.colores = data;
+    this.coloresService.getColores().subscribe({
+      next: r => this.colores = r
     });
   }
 }

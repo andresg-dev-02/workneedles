@@ -6,6 +6,9 @@ import { PedidoComponent } from './Components/Pedido/pedido/pedido.component';
 import { CrearPedidoComponent } from './Components/Pedido/CrearPedido/crear-pedido-component';
 import { ClienteComponent } from './Components/Client/cliente.component';
 import { ColoresComponent } from './Components/Colores/colores.component';
+import { InsumosComponent } from './Components/Insumo/insumo-component';
+import { InventarioComponent } from './Components/Inventario/inventario-component';
+import { TallasComponent } from './Components/Tallas/tallas-component';
 
 export const routes: Routes = [
   { path: 'productos', component: ProductoComponent },
@@ -16,5 +19,8 @@ export const routes: Routes = [
   { path: '', redirectTo: 'productos', pathMatch: 'full' },
   { path: 'admin/pedidos', component: PedidoComponent},
   { path: 'admin/pedidos/nuevo', component: CrearPedidoComponent},
-  { path: 'admin/clientes', component: ClienteComponent }
+  { path: 'admin/clientes', component: ClienteComponent },
+  { path: 'admin/insumos', component: InsumosComponent },
+  { path: 'admin/inventario', component: InventarioComponent },
+  { path: 'admin/tallas', component: TallasComponent }
 ];

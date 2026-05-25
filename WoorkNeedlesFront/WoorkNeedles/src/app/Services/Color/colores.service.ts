@@ -6,14 +6,14 @@ import { environment } from '../../../environments/environment';
 export interface ColorDto {
   id: number;
   nombre: string;
-  codigoHexadecimal: string;
+  codigohex: string;
   fechacreacion: string | null;
   fechamodificacion: string | null;
 }
 
 export interface CreateColorDto {
   nombre: string;
-  codigoHexadecimal: string;
+  codigohex: string;
 }
 
 @Injectable({

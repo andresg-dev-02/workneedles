@@ -11,6 +11,7 @@ namespace Application.DTOs.Productos
         public string Nombre { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
         public DateTime? Fechacreacion { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreateCategoriaProductoDto

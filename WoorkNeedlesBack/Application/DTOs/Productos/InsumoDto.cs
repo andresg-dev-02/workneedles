@@ -17,6 +17,8 @@ namespace Application.DTOs.Productos
         public string? Proveedor { get; set; }
         public bool Activo { get; set; }
         public string Categoria { get; set; } = string.Empty;
+        public DateTime? Fechacreacion { get; set; }
+        public DateTime? Fechamodificacion { get; set; }
     }
 
     public class CreateInsumoDto
