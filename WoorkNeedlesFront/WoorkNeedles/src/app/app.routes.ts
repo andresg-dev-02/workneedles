@@ -21,32 +21,27 @@ export const routes: Routes = [
   
 
   {
-    path: 'admin',
-    canActivate: [adminGuard],
-    children:[
-      { path: 'admin/usuarios', component: LoginComponent },
-      { path: 'admin/colores', component: ColoresComponent },
-      
-      
-      { path: 'admin/pedidos/nuevo', component: CrearPedidoComponent},
-      { path: 'admin/clientes', component: ClienteComponent },
-      { path: 'admin/insumos', component: InsumosComponent },
-      { path: 'admin/tallas', component: TallasComponent },
-      { path: 'admin/categorias', component: CategoriaPComponent },
-      { path: 'admin/categorias-insumos', component: CategoriaInsumoComponent },
-      
-      { path: 'admin/productos-base', component: ProductoBaseComponent }
-
-
-    ]
-  },
+  path: 'admin',
+  canActivate: [adminGuard],
+  children:[
+    { path: 'usuarios', component: LoginComponent },
+    { path: 'colores', component: ColoresComponent },
+    { path: 'pedidos/nuevo', component: CrearPedidoComponent},
+    { path: 'clientes', component: ClienteComponent },
+    { path: 'insumos', component: InsumosComponent },
+    { path: 'tallas', component: TallasComponent },
+    { path: 'categorias', component: CategoriaPComponent },
+    { path: 'categorias-insumos', component: CategoriaInsumoComponent },
+    { path: 'productos-base', component: ProductoBaseComponent }
+  ]
+},
   {
-    path: 'gestion',
-    canActivate: [empleadoGuard],
-    children: [
-      { path: 'admin/pedidos', component: PedidoComponent},
-      { path: 'admin/reportes', component: ReportesComponent },
-      { path: 'admin/inventario', component: InsumoProductoComponent },
-    ],
-  },
+  path: 'gestion',
+  canActivate: [empleadoGuard],
+  children: [
+    { path: 'pedidos', component: PedidoComponent},
+    { path: 'reportes', component: ReportesComponent },
+    { path: 'inventario', component: InsumoProductoComponent },
+  ],
+},
 ];
