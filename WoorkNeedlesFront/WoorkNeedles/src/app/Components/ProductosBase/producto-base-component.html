@@ -7,6 +7,14 @@
         <h1 class="text-2xl font-bold text-gray-900">Productos</h1>
         <p class="text-gray-500 text-sm mt-1">Catálogo de productos disponibles</p>
       </div>
+      <button (click)="abrirCrear()"
+        class="text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity"
+        style="background-color: #7B1D3F;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuevo producto
+      </button>
     </div>
 
     <!-- Error -->
@@ -64,7 +72,7 @@
             <!-- Meta -->
             <div class="space-y-0.5">
               <p class="text-xs text-gray-400">
-                <span class="font-medium text-gray-500">Categoría Producto:</span> {{ producto.categoria }}
+                <span class="font-medium text-gray-500">Categoría:</span> {{ producto.categoria }}
               </p>
               @if (producto.genero) {
                 <p class="text-xs text-gray-400">
@@ -82,9 +90,9 @@
                   {{ producto.fechacreacion | date:'dd/MM/yyyy' }}
                 </p>
               }
-              @if(producto.fechamodificacion) {
+              @if (producto.fechamodificacion) {
                 <p class="text-xs text-gray-400">
-                  <span class="font-medium text-gray-500">Última modificación:</span>
+                  <span class="font-medium text-gray-500">Modificación:</span>
                   {{ producto.fechamodificacion | date:'dd/MM/yyyy' }}
                 </p>
               }
@@ -104,6 +112,18 @@
               </span>
             </div>
 
+            <!-- Acciones -->
+            <div class="flex gap-1">
+              <button (click)="abrirEditar(producto)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition-colors">
+                Editar
+              </button>
+              <button (click)="abrirEliminar(producto)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                Eliminar
+              </button>
+            </div>
+
           </div>
         }
       </div>
@@ -111,3 +131,233 @@
 
   </div>
 </div>
+
+<!-- ── MODAL CREAR ── -->
+@if (modalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalCrear = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Nuevo producto</h3>
+        <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
+
+        <!-- Preview -->
+        <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white" style="background-color: #7B1D3F;">
+          <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+          </svg>
+          <span class="text-sm font-semibold">{{ nuevoProducto.nombre || 'Sin nombre' }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <input type="text" [(ngModel)]="nuevoProducto.nombre" placeholder="Ej: Camiseta básica"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+            <textarea [(ngModel)]="nuevoProducto.descripcion" placeholder="Describe el producto..." rows="2"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400 resize-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Precio base *</label>
+            <input type="number" [(ngModel)]="nuevoProducto.preciobase" min="0" placeholder="0.00"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ID Categoría *</label>
+            <input type="number" [(ngModel)]="nuevoProducto.idCategoria" min="1" placeholder="1"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+            <input type="text" [(ngModel)]="nuevoProducto.material" placeholder="Ej: Algodón"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Género</label>
+            <select [(ngModel)]="nuevoProducto.genero"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400">
+              <option value="">Sin especificar</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Unisex">Unisex</option>
+            </select>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">URL imagen</label>
+            <input type="text" [(ngModel)]="nuevoProducto.urlimagen" placeholder="https://..."
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+        </div>
+
+        @if (errorCrear) {
+          <p class="text-xs text-red-500">{{ errorCrear }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalCrear = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="crearProducto()"
+          [disabled]="!nuevoProducto.nombre || !nuevoProducto.descripcion || loadingCrear"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50 hover:opacity-90 transition-opacity"
+          style="background-color: #7B1D3F;">
+          @if (loadingCrear) { Guardando... } @else { Crear producto }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR ── -->
+@if (modalEditar && productoEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar producto</h3>
+        <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
+
+        <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white" style="background-color: #7B1D3F;">
+          <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+          </svg>
+          <span class="text-sm font-semibold">{{ productoEditar.nombre || '—' }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <input type="text" [(ngModel)]="productoEditar.nombre"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+            <textarea [(ngModel)]="productoEditar.descripcion" rows="2"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400 resize-none"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Precio base *</label>
+            <input type="number" [(ngModel)]="productoEditar.preciobase" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
+            <input type="text" [(ngModel)]="productoEditar.material"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Género</label>
+            <select [(ngModel)]="productoEditar.genero"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400">
+              <option value="">Sin especificar</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Unisex">Unisex</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
+            <select [(ngModel)]="productoEditar.activo"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400">
+              <option [ngValue]="true">Sí</option>
+              <option [ngValue]="false">No</option>
+            </select>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">URL imagen</label>
+            <input type="text" [(ngModel)]="productoEditar.urlimagen"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
+          </div>
+        </div>
+
+        @if (errorEditar) {
+          <p class="text-xs text-red-500">{{ errorEditar }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditar = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="guardarEdicion()" [disabled]="loadingEditar"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50 hover:opacity-90 transition-opacity"
+          style="background-color: #7B1D3F;">
+          @if (loadingEditar) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR ── -->
+@if (modalEliminar && productoEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white" style="background-color: #7B1D3F;">
+          <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
+          </svg>
+          <span class="text-sm font-semibold">{{ productoEliminar.nombre }}</span>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar "{{ productoEliminar.nombre }}"?</p>
+          <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50 hover:bg-red-700 transition-colors">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -6,6 +6,7 @@ export interface ProductoModel {
     preciobase: number;
     urlimagen?: string;
     activo: boolean;
+    idCategoria: number;
     fechacreacion?: string; 
     categoria: string;
     genero?: string;

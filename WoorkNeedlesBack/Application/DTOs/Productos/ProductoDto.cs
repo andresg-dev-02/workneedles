@@ -17,6 +17,7 @@ public class ProductoDto
     public DateTime? Fechacreacion { get; set; }
     public string Categoria { get; set; } = string.Empty;
     public string? Genero { get; set; }
+    public int IdCategoria { get; set; }
     public DateTime? Fechamodificacion { get; set; }
 }
 
