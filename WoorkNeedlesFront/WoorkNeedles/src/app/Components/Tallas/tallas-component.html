@@ -1,54 +1,186 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-4xl mx-auto">
 
-  @for(talla of tallas; track talla.id) {
-
-    <div class="bg-white rounded-xl shadow border border-gray-200 p-4">
-
-      <!-- Nombre -->
-      <div class="flex items-center justify-between">
-
-        <h3 class="text-lg font-semibold text-gray-800">
-          {{ talla.nombre }}
-        </h3>
-
-        <span class="text-xs bg-gray-100 px-2 py-1 rounded">
-          ID: {{ talla.id }}
-        </span>
-
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Tallas</h1>
+        <p class="text-gray-500 text-sm mt-1">Gestiona las tallas disponibles</p>
       </div>
-
-      <!-- Fecha -->
-      <div class="mt-3 text-sm text-gray-500">
-
-        <p>
-          Creado:
-          {{ talla.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-
-        <p *ngIf="talla.fechamodificacion">
-          Modificado:
-          {{ talla.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-
-      </div>
-
-      <!-- Botones -->
-      <div class="flex gap-2 mt-4">
-
-        <button
-          class="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600">
-          Editar
-        </button>
-
-        <button
-          class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
-          Eliminar
-        </button>
-
-      </div>
-
+      <button (click)="modalCrear = true"
+        class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2"
+        style="background-color: #7B1D3F;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nueva talla
+      </button>
     </div>
 
-  }
+    <!-- Error -->
+    @if (error) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ error }}</div>
+    }
 
+    <!-- Grid -->
+    @if (tallas.length === 0) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay tallas registradas</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        @for (talla of tallas; track talla.id) {
+          <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow flex flex-col gap-3">
+
+            <!-- Badge talla -->
+            <div class="flex items-center justify-center">
+              <div class="w-21 h-16 rounded-xl flex items-center justify-center text-xl font-bold text-white"
+                style="background-color: #7B1D3F;">
+                {{ talla.nombre }}
+              </div>
+            </div>
+
+            <!-- Fecha -->
+            <p class="text-xs text-gray-400 text-center">
+              Fecha creación: {{ talla.fechacreacion | date:'dd/MM/yyyy' }}
+            </p>
+            <p class="text-xs text-gray-400 text-center">
+              Fecha modificación: {{ talla.fechamodificacion | date:'dd/MM/yyyy' }}
+            </p>
+
+            <!-- Acciones -->
+            <div class="flex gap-1">
+              <button (click)="abrirEditar(talla)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition-colors">
+                Editar
+              </button>
+              <button (click)="abrirEliminar(talla)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                Eliminar
+              </button>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
 </div>
+
+<!-- ── MODAL CREAR ── -->
+@if (modalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalCrear = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Nueva talla</h3>
+        <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-4">
+
+        <!-- Preview -->
+        <div class="flex justify-center">
+          <div class="w-20 h-20 rounded-xl flex items-center justify-center text-2xl font-bold text-white transition-all"
+            style="background-color: #7B1D3F;">
+            {{ nuevaTalla.nombre || '?' }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la talla</label>
+          <input type="text" [(ngModel)]="nuevaTalla.nombre" placeholder="Ej: XL, 42, M..."
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none text-center font-semibold"/>
+        </div>
+
+        @if (errorCrear) {
+          <p class="text-xs text-red-500">{{ errorCrear }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalCrear = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="crearTalla()" [disabled]="!nuevaTalla.nombre || loadingCrear"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingCrear) { Guardando... } @else { Crear talla }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR ── -->
+@if (modalEditar && tallaEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar talla</h3>
+        <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-4">
+
+        <div class="flex justify-center">
+          <div class="w-20 h-20 rounded-xl flex items-center justify-center text-2xl font-bold text-white"
+            style="background-color: #7B1D3F;">
+            {{ tallaEditar.nombre || '?' }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="tallaEditar.nombre"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none text-center font-semibold"/>
+        </div>
+
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="guardarEdicion()" [disabled]="loadingEditar"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingEditar) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR ── -->
+@if (modalEliminar && tallaEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold text-white"
+          style="background-color: #7B1D3F;">
+          {{ tallaEliminar.nombre }}
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar talla "{{ tallaEliminar.nombre }}"?</p>
+          <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 btn bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+    </div>
+  </div>
+}

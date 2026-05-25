@@ -7,8 +7,8 @@ import { CrearPedidoComponent } from './Components/Pedido/CrearPedido/crear-pedi
 import { ClienteComponent } from './Components/Client/cliente.component';
 import { ColoresComponent } from './Components/Colores/colores.component';
 import { InsumosComponent } from './Components/Insumo/insumo-component';
-import { InventarioComponent } from './Components/Inventario/inventario-component';
 import { TallasComponent } from './Components/Tallas/tallas-component';
+import { CategoriaPComponent } from './Components/CategoriaProducto/categoria-p-component';
 
 export const routes: Routes = [
   { path: 'productos', component: ProductoComponent },
@@ -21,6 +21,6 @@ export const routes: Routes = [
   { path: 'admin/pedidos/nuevo', component: CrearPedidoComponent},
   { path: 'admin/clientes', component: ClienteComponent },
   { path: 'admin/insumos', component: InsumosComponent },
-  { path: 'admin/inventario', component: InventarioComponent },
-  { path: 'admin/tallas', component: TallasComponent }
+  { path: 'admin/tallas', component: TallasComponent },
+  { path: 'admin/categorias', component: CategoriaPComponent }
 ];

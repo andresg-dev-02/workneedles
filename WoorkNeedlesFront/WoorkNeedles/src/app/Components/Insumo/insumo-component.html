@@ -1,1 +1,383 @@
-<p>insumo-component works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Insumos</h1>
+        <p class="text-gray-500 text-sm mt-1">Gestiona los insumos y materiales</p>
+      </div>
+      <button (click)="modalCrear = true"
+        class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2"
+        style="background-color: #7B1D3F;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuevo insumo
+      </button>
+    </div>
+
+    <!-- Alerta stock bajo -->
+    @if (totalAlerta > 0) {
+      <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5 flex items-center gap-3">
+        <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <p class="text-sm text-red-700 font-medium">{{ totalAlerta }} insumo{{ totalAlerta > 1 ? 's' : '' }} con stock bajo</p>
+        <button (click)="filtroAlerta = !filtroAlerta"
+          class="ml-auto text-xs underline text-red-600">
+          {{ filtroAlerta ? 'Ver todos' : 'Ver solo estos' }}
+        </button>
+      </div>
+    }
+
+    <!-- Filtros -->
+    <div class="flex gap-2 mb-5 flex-wrap">
+      <button (click)="filtroActivo = null"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        [class.text-white]="filtroActivo === null"
+        [class.bg-gray-200]="filtroActivo !== null"
+        [class.text-gray-600]="filtroActivo !== null"
+        [style]="filtroActivo === null ? 'background-color: #7B1D3F;' : ''">
+        Todos
+      </button>
+      <button (click)="filtroActivo = true"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        [class.text-white]="filtroActivo === true"
+        [class.bg-gray-200]="filtroActivo !== true"
+        [class.text-gray-600]="filtroActivo !== true"
+        [style]="filtroActivo === true ? 'background-color: #7B1D3F;' : ''">
+        Activos
+      </button>
+      <button (click)="filtroActivo = false"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        [class.text-white]="filtroActivo === false"
+        [class.bg-gray-200]="filtroActivo !== false"
+        [class.text-gray-600]="filtroActivo !== false"
+        [style]="filtroActivo === false ? 'background-color: #7B1D3F;' : ''">
+        Inactivos
+      </button>
+    </div>
+
+    <!-- Error -->
+    @if (error) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ error }}</div>
+    }
+
+    <!-- Grid -->
+    @if (insumosFiltrados.length === 0) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay insumos registrados</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        @for (insumo of insumosFiltrados; track insumo.id) {
+          <div class="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-shadow"
+            [class.border-red-200]="insumo.stockactual <= insumo.stockalerta">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex-1 min-w-0">
+                <h2 class="text-base font-bold text-gray-900 truncate">{{ insumo.nombre }}</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Categoria: {{ insumo.categoria }}</p>
+              </div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0"
+                [class]="insumo.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">
+                {{ insumo.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            <!-- Descripción -->
+            @if (insumo.descripcion) {
+              <p class="text-xs text-gray-500 mb-3 line-clamp-2">Descripción: {{ insumo.descripcion }}</p>
+            }
+
+            <!-- Datos -->
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div class="bg-gray-50 rounded-lg p-2.5">
+                <p class="text-xs text-gray-400">Unidad</p>
+                <p class="text-sm font-semibold text-gray-900 mt-0.5">{{ insumo.unidadmedida }}</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-2.5">
+                <p class="text-xs text-gray-400">Precio</p>
+                <p class="text-sm font-semibold text-gray-900 mt-0.5">{{ formatCurrency(insumo.precio) }}</p>
+              </div>
+              <div class="rounded-lg p-2.5" [class]="insumo.stockactual <= insumo.stockalerta ? 'bg-red-50' : 'bg-gray-50'">
+                <p class="text-xs text-gray-400">Stock actual</p>
+                <p class="text-sm font-bold mt-0.5" [class]="insumo.stockactual <= insumo.stockalerta ? 'text-red-600' : 'text-gray-900'">
+                  {{ insumo.stockactual }}
+                </p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-2.5">
+                <p class="text-xs text-gray-400">Stock alerta</p>
+                <p class="text-sm font-semibold text-gray-900 mt-0.5">{{ insumo.stockalerta }}</p>
+              </div>
+            </div>
+
+            <!-- Proveedor -->
+            @if (insumo.proveedor) {
+              <p class="text-xs text-gray-500 mb-3">
+                <span class="font-medium text-gray-700">Proveedor:</span> {{ insumo.proveedor }}
+              </p>
+            }
+            <!-- Fechas -->
+                <div class="space-y-1 mb-3">
+
+                @if (insumo.activo) {
+                    <p class="text-[11px] text-gray-400">
+                    Creado:
+                    {{ insumo.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                }
+
+                @if (insumo.fechamodificacion) {
+                    <p class="text-[11px] text-gray-400">
+                    Modificado:
+                    {{ insumo.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                }
+
+                </div>
+
+            <!-- Alerta stock -->
+            @if (insumo.stockactual <= insumo.stockalerta) {
+              <div class="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg px-3 py-2 mb-3 flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                Stock bajo. Se recomienda reabastecer.
+              </div>
+            }
+
+            <!-- Acciones -->
+            <div class="flex gap-2">
+              <button (click)="abrirEditar(insumo)"
+                class="flex-1 py-2 rounded-lg text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition-colors">
+                Editar
+              </button>
+              <button (click)="abrirEliminar(insumo)"
+                class="flex-1 py-2 rounded-lg text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                Eliminar
+              </button>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- ── MODAL CREAR ── -->
+@if (modalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalCrear = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Nuevo insumo</h3>
+        <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto text-sm">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="nuevoInsumo.nombre" placeholder="Ej: Tela poliéster"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Categoría</label>
+            <select [(ngModel)]="nuevoInsumo.idcategoria"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+              <option [ngValue]="0" disabled>Selecciona una categoría</option>
+              @for (c of categorias; track c.id) {
+                <option [ngValue]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Descripción</label>
+            <input type="text" [(ngModel)]="nuevoInsumo.descripcion" placeholder="Descripción breve"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Unidad de medida</label>
+            <select [(ngModel)]="nuevoInsumo.unidadmedida"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+              <option value="" disabled>Selecciona</option>
+              @for (u of unidades; track u) {
+                <option [value]="u">{{ u }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Precio</label>
+            <input type="number" [(ngModel)]="nuevoInsumo.precio" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Stock actual</label>
+            <input type="number" [(ngModel)]="nuevoInsumo.stockactual" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Stock alerta</label>
+            <input type="number" [(ngModel)]="nuevoInsumo.stockalerta" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Proveedor <span class="text-gray-400 font-normal">(opcional)</span></label>
+            <input type="text" [(ngModel)]="nuevoInsumo.proveedor" placeholder="Nombre del proveedor"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+        </div>
+
+        @if (errorCrear) {
+          <p class="text-xs text-red-500">{{ errorCrear }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalCrear = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="crearInsumo()" [disabled]="!nuevoInsumo.nombre || !nuevoInsumo.idcategoria || loadingCrear"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingCrear) { Guardando... } @else { Crear insumo }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR ── -->
+@if (modalEditar && insumoEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar insumo</h3>
+        <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto text-sm">
+        <div class="grid grid-cols-2 gap-3">
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="insumoEditar.nombre"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Descripción</label>
+            <input type="text" [(ngModel)]="insumoEditar.descripcion"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Unidad de medida</label>
+            <select [(ngModel)]="insumoEditar.unidadmedida"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+              @for (u of unidades; track u) {
+                <option [value]="u">{{ u }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Precio</label>
+            <input type="number" [(ngModel)]="insumoEditar.precio" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Stock actual</label>
+            <input type="number" [(ngModel)]="insumoEditar.stockactual" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">Stock alerta</label>
+            <input type="number" [(ngModel)]="insumoEditar.stockalerta" min="0"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-700 mb-1">Proveedor</label>
+            <input type="text" [(ngModel)]="insumoEditar.proveedor"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+          </div>
+
+          <!-- Estado activo -->
+          <div class="col-span-2 flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+            <div>
+              <p class="text-sm font-medium text-gray-700">Estado</p>
+              <p class="text-xs text-gray-400">{{ insumoEditar.activo ? 'Insumo activo' : 'Insumo inactivo' }}</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="insumoEditar.activo" class="sr-only peer"/>
+              <div class="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#7B1D3F] transition-colors
+                after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full
+                after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-4"></div>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="guardarEdicion()" [disabled]="loadingEditar"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingEditar) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR ── -->
+@if (modalEliminar && insumoEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar "{{ insumoEliminar.nombre }}"?</p>
+          <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 btn bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+    </div>
+  </div>
+}

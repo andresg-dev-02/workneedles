@@ -24,6 +24,10 @@ export class ColoresService {
 
   constructor(private http: HttpClient) {}
 
+  createColor(dto: CreateColorDto): Observable<any> {
+    return this.http.post(this.apiUrl, dto);
+  }
+
   getColores(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}`);
   }

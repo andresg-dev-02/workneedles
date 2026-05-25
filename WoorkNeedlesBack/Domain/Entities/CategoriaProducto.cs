@@ -8,6 +8,7 @@ public class CategoriaProducto
     public string Nombre { get; private set; } = string.Empty;
     public string Descripcion { get; private set; } = string.Empty;
     public DateTime? Fechacreacion { get; private set; }
+    public DateTime? Fechamodificacion { get; private set; }
 
     private CategoriaProducto() { }
 
@@ -22,7 +23,8 @@ public class CategoriaProducto
         {
             Nombre = nombre.Trim(),
             Descripcion = descripcion.Trim(),
-            Fechacreacion = DateTime.Now
+            Fechacreacion = DateTime.Now,
+            Fechamodificacion = DateTime.Now
         };
     }
 
@@ -35,5 +37,6 @@ public class CategoriaProducto
 
         Nombre = nombre.Trim();
         Descripcion = descripcion.Trim();
+        Fechamodificacion = DateTime.Now;
     }
 }

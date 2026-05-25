@@ -1,50 +1,208 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-5xl mx-auto">
 
-  @for(color of colores; track color.id) {
-
-    <div class="bg-white rounded-xl shadow p-4 border border-gray-200">
-
-      <!-- Color preview -->
-      <div
-        class="w-full h-20 rounded-lg border"
-        [style.background]="color.codigohex">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Colores</h1>
+        <p class="text-gray-500 text-sm mt-1">Gestiona los colores disponibles</p>
       </div>
-
-      <!-- Info -->
-      <div class="mt-4 space-y-1">
-
-        <h3 class="text-lg font-semibold text-gray-800">
-          {{ color.nombre }}
-        </h3>
-
-        <p class="text-sm text-gray-500">
-          {{ color.codigohex }}
-        </p>
-
-        <p class="text-xs text-gray-400">
-          Creado:
-          {{ color.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
-        </p>
-
-      </div>
-
-      <!-- Actions -->
-      <div class="flex gap-2 mt-4">
-
-        <button
-          class="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600">
-          Editar
-        </button>
-
-        <button
-          class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
-          Eliminar
-        </button>
-
-      </div>
-
+      <button (click)="modalCrear = true"
+        class="btn text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2"
+        style="background-color: #7B1D3F;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Nuevo color
+      </button>
     </div>
 
-  }
+    <!-- Error -->
+    @if (error) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ error }}</div>
+    }
 
+    <!-- Grid de colores -->
+    @if (colores.length === 0) {
+      <div class="bg-white rounded-xl border border-gray-200 flex flex-col items-center justify-center py-20 gap-3">
+        <svg class="w-12 h-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+        </svg>
+        <p class="text-gray-400 text-sm">No hay colores registrados</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        @for (color of colores; track color.id) {
+          <div class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+
+            <!-- Preview color -->
+            <div class="h-24 w-full" [style.background-color]="color.codigohex"></div>
+
+            <!-- Info -->
+            <div class="p-3">
+                <p class="text-sm font-semibold text-gray-900 truncate">
+                    {{ color.nombre }}
+                </p>
+
+                <p class="text-xs text-gray-400 mt-0.5 font-mono">
+                    {{ color.codigohex }}
+                </p>
+
+                <div class="mt-2 space-y-1">
+
+                    <p class="text-[11px] text-gray-400">
+                    Creado:
+                    {{ color.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+
+                    @if (color.fechamodificacion) {
+                    <p class="text-[11px] text-gray-400">
+                        Modificado:
+                        {{ color.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
+                    </p>
+                    }
+
+                </div>
+
+                </div>
+
+            <!-- Acciones -->
+            <div class="px-3 pb-3 flex gap-1">
+              <button (click)="abrirEditar(color)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition-colors">
+                Editar
+              </button>
+              <button (click)="abrirEliminar(color)"
+                class="flex-1 py-1.5 rounded-lg text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                Eliminar
+              </button>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
 </div>
+
+<!-- ── MODAL CREAR ── -->
+@if (modalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalCrear = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Nuevo color</h3>
+        <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-4">
+
+        <!-- Preview -->
+        <div class="h-16 rounded-xl border border-gray-200 transition-all" [style.background-color]="nuevoColor.codigohex"></div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="nuevoColor.nombre" placeholder="Ej: Rojo vino"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+          <div class="flex gap-2 items-center">
+            <input type="color" [(ngModel)]="nuevoColor.codigohex"
+              class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5"/>
+            <input type="text" [(ngModel)]="nuevoColor.codigohex" placeholder="#000000"
+              class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none"/>
+          </div>
+        </div>
+
+        @if (errorCrear) {
+          <p class="text-xs text-red-500">{{ errorCrear }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalCrear = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="crearColor()" [disabled]="!nuevoColor.nombre || loadingCrear"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingCrear) { Guardando... } @else { Crear color }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL EDITAR ── -->
+@if (modalEditar && colorEditar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEditar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Editar color</h3>
+        <button (click)="modalEditar = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-4">
+
+        <div class="h-16 rounded-xl border border-gray-200 transition-all" [style.background-color]="colorEditar.codigohex"></div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+          <input type="text" [(ngModel)]="colorEditar.nombre"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+          <div class="flex gap-2 items-center">
+            <input type="color" [(ngModel)]="colorEditar.codigohex"
+              class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5"/>
+            <input type="text" [(ngModel)]="colorEditar.codigohex"
+              class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none"/>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEditar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="guardarEdicion()" [disabled]="loadingEditar"
+          class="flex-1 btn text-white text-sm py-2 rounded-lg disabled:opacity-50" style="background-color: #7B1D3F;">
+          @if (loadingEditar) { Guardando... } @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR ── -->
+@if (modalEliminar && colorEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="w-14 h-14 rounded-full border-4 border-white shadow-md" [style.background-color]="colorEliminar.codigohex"></div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar "{{ colorEliminar.nombre }}"?</p>
+          <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false" class="flex-1 btn btn-ghost border border-gray-200 text-sm py-2 rounded-lg">Cancelar</button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 btn bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+    </div>
+  </div>
+}

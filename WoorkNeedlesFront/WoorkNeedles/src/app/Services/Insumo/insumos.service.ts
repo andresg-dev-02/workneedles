@@ -15,6 +15,8 @@ export interface InsumoDto {
   proveedor?: string | null;
   activo: boolean;
   categoria: string;
+  fechacreacion: string | null;
+  fechamodificacion: string | null;
 }
 
 export interface CreateInsumoDto {
