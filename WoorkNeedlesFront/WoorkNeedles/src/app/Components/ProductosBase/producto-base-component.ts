@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductoService, CreateProductoDto } from '../../Services/Producto/producto.service';
 import { ProductoModel } from '../../Models/Producto/producto.model';
+import { CategoriaProductoService, CategoriaProductoDto } from '../../Services/CategoriasProducto/categoria-producto.service';
 
 @Component({
   selector: 'app-producto-base-component',
@@ -12,33 +13,33 @@ import { ProductoModel } from '../../Models/Producto/producto.model';
 })
 export class ProductoBaseComponent implements OnInit {
   productos: ProductoModel[] = [];
+  categorias: CategoriaProductoDto[] = [];  
   errorProductos: string | null = null;
 
-  // Modales
   modalCrear = false;
   modalEditar = false;
   modalEliminar = false;
 
-  // Loading por acción
   loadingCrear = false;
   loadingEditar = false;
   loadingEliminar = false;
 
-  // Errores por acción
   errorCrear: string | null = null;
   errorEditar: string | null = null;
 
-  // Producto en foco para editar/eliminar
   productoEditar: ProductoModel | null = null;
   productoEliminar: ProductoModel | null = null;
 
-  // Form crear
   nuevoProducto: CreateProductoDto = this.formVacio();
 
-  constructor(private productoService: ProductoService) {}
+  constructor(
+    private productoService: ProductoService,
+    private categoriaService: CategoriaProductoService  
+  ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
+    this.cargarCategorias();  
   }
 
   private formVacio(): CreateProductoDto {
@@ -60,7 +61,13 @@ export class ProductoBaseComponent implements OnInit {
     });
   }
 
-  // ── Crear ──────────────────────────────────────────────────
+  cargarCategorias(): void {
+    this.categoriaService.getCategoriasProducto().subscribe({
+      next: (categorias: CategoriaProductoDto[]) => (this.categorias = categorias),
+      error: () => console.error('Error al cargar categorías'),
+    });
+  }
+
   abrirCrear(): void {
     this.nuevoProducto = this.formVacio();
     this.errorCrear = null;
@@ -85,7 +92,6 @@ export class ProductoBaseComponent implements OnInit {
     });
   }
 
-  // ── Editar ─────────────────────────────────────────────────
   abrirEditar(producto: ProductoModel): void {
     this.productoEditar = { ...producto };
     this.errorEditar = null;
@@ -105,6 +111,7 @@ export class ProductoBaseComponent implements OnInit {
       urlimagen: this.productoEditar.urlimagen,
       idCategoria: this.productoEditar.idCategoria,
       genero: this.productoEditar.genero,
+      activo: this.productoEditar.activo,
     };
 
     this.productoService.updateProducto(this.productoEditar.id, dto).subscribe({
@@ -120,7 +127,6 @@ export class ProductoBaseComponent implements OnInit {
     });
   }
 
-  // ── Eliminar ───────────────────────────────────────────────
   abrirEliminar(producto: ProductoModel): void {
     this.productoEliminar = producto;
     this.modalEliminar = true;
@@ -136,9 +142,7 @@ export class ProductoBaseComponent implements OnInit {
         this.loadingEliminar = false;
         this.cargarProductos();
       },
-      error: () => {
-        this.loadingEliminar = false;
-      },
+      error: () => (this.loadingEliminar = false),
     });
   }
 }

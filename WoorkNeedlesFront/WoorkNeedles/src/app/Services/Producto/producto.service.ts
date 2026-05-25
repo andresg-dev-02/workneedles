@@ -28,6 +28,7 @@ export interface CreateProductoDto {
   urlimagen?: string;
   idCategoria: number;
   genero?: string;
+  activo?: boolean;
 }
 
 export type UpdateProductoDto = CreateProductoDto;

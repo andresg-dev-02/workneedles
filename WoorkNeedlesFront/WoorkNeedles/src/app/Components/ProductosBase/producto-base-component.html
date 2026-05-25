@@ -177,11 +177,16 @@
               class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">ID Categoría *</label>
-            <input type="number" [(ngModel)]="nuevoProducto.idCategoria" min="1" placeholder="1"
-              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400"/>
-          </div>
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
+                <select [(ngModel)]="nuevoProducto.idCategoria"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400">
+                    <option [ngValue]="0" disabled>Selecciona una categoría</option>
+                    @for (cat of categorias; track cat.id) {
+                    <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+                    }
+                </select>
+            </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Material</label>
@@ -289,6 +294,17 @@
               <option value="Unisex">Unisex</option>
             </select>
           </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
+            <select [(ngModel)]="productoEditar.idCategoria"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400">
+                <option [ngValue]="0" disabled>Selecciona una categoría</option>
+                @for (cat of categorias; track cat.id) {
+                <option [ngValue]="cat.id">{{ cat.nombre }}</option>
+                }
+            </select>
+            </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Activo</label>
