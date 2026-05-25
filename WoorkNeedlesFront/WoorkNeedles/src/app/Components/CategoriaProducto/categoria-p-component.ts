@@ -43,14 +43,21 @@ export class CategoriaPComponent implements OnInit {
   }
 
   // ── Listar ───────────────────────────────────────────────────────────
-  cargarCategorias(): void {
+    cargarCategorias(): void {
     this.error = '';
+
     this.categoriaService.getCategoriasProducto().subscribe({
-      next: (data) => (this.categorias = data),
-      error: () => (this.error = 'Error al cargar las categorías.'),
+      next: (data) => {
+        this.categorias = data;
+
+        console.log(this.categorias);
+      },
+
+      error: () => (
+        this.error = 'Error al cargar las categorías.'
+      ),
     });
   }
-
   // ── Crear ────────────────────────────────────────────────────────────
   crearCategoria(): void {
     if (!this.nuevaCategoria.nombre.trim()) {
