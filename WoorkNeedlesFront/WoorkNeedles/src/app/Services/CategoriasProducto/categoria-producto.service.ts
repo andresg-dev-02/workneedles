@@ -20,6 +20,12 @@ export interface CreateCategoriaProductoDto
   descripcion: string;
 }
 
+export interface UpdateCategoriaProductoDto
+{
+  nombre: string | null;
+  descripcion: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,7 +43,7 @@ export class CategoriaProductoService
     return this.http.post(`${this.apiUrl}`, dto);
   }
 
-  updateCategoriaProducto(id: number, dto: CategoriaProductoDto): Observable<any> {
+  updateCategoriaProducto(id: number, dto: UpdateCategoriaProductoDto): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, dto);
   }
 

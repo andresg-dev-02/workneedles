@@ -279,8 +279,7 @@ public partial class PostgresContext : DbContext
                 .HasColumnName("fechacreacion");
             entity.Property(e => e.Fechamodificacion)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("fechamodificacion");
+                .HasColumnType("timestamp without time zone");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(80)
                 .HasColumnName("nombre");
