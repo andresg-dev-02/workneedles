@@ -91,7 +91,6 @@ export class CategoriaPComponent implements OnInit {
     if (!this.categoriaEditar) return;
     this.loadingEditar = true;
 
-    console.log('PUT body:', JSON.stringify(this.categoriaEditar));
     this.categoriaService
       .updateCategoriaProducto(this.categoriaEditar.id, this.categoriaEditar)
       .subscribe({

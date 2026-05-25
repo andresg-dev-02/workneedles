@@ -23,8 +23,8 @@ public class CategoriaProducto
         {
             Nombre = nombre.Trim(),
             Descripcion = descripcion.Trim(),
-            Fechacreacion = DateTime.UtcNow,
-            Fechamodificacion = DateTime.UtcNow
+            Fechacreacion = DateTime.Now,
+            Fechamodificacion = DateTime.UtNow
         };
     }
 
