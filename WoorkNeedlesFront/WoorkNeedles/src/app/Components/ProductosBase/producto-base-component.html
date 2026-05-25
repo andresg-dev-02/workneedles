@@ -87,13 +87,13 @@
               @if (producto.fechacreacion) {
                 <p class="text-xs text-gray-400">
                   <span class="font-medium text-gray-500">Creación:</span>
-                  {{ producto.fechacreacion | date:'dd/MM/yyyy' }}
+                  {{ producto.fechacreacion | date:'dd/MM/yyyy HH:mm' }}
                 </p>
               }
               @if (producto.fechamodificacion) {
                 <p class="text-xs text-gray-400">
                   <span class="font-medium text-gray-500">Modificación:</span>
-                  {{ producto.fechamodificacion | date:'dd/MM/yyyy' }}
+                  {{ producto.fechamodificacion | date:'dd/MM/yyyy HH:mm' }}
                 </p>
               }
             </div>

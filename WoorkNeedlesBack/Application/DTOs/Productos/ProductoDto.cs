@@ -32,4 +32,6 @@ public class CreateProductoDto
     public string? Genero { get; set; }
 }
 
-public class UpdateProductoDto : CreateProductoDto { }
+public class UpdateProductoDto : CreateProductoDto {
+     public bool Activo { get; set; }
+ }

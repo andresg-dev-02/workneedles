@@ -66,7 +66,7 @@ namespace Application.UseCases.Products.Producto
                 ?? throw new KeyNotFoundException("Producto no encontrado.");
             producto.Actualizar(
                 actualizarProductodto.Nombre, actualizarProductodto.Descripcion, actualizarProductodto.Material,
-                actualizarProductodto.Preciobase, actualizarProductodto.Urlimagen, actualizarProductodto.IdCategoria, actualizarProductodto.Genero);
+                actualizarProductodto.Preciobase, actualizarProductodto.Urlimagen, actualizarProductodto.IdCategoria, actualizarProductodto.Genero, actualizarProductodto.Activo);
             unitofwork.Productos.Update(producto);
             await unitofwork.SaveAsync();
         }

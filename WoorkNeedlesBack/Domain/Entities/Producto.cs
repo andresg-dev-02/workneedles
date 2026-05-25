@@ -36,12 +36,12 @@ public class Producto
             Idcategoria = idcategoria
         };
 
-        producto.Actualizar(nombre, descripcion, material, preciobase, urlimagen, idcategoria, genero);
+        producto.Actualizar(nombre, descripcion, material, preciobase, urlimagen, idcategoria, genero, true);
         return producto;
     }
 
     public void Actualizar(string nombre, string descripcion, string? material,
-        decimal preciobase, string? urlimagen, int idcategoria, string? genero)
+        decimal preciobase, string? urlimagen, int idcategoria, string? genero, bool activo)
     {
         if (string.IsNullOrWhiteSpace(nombre))
             throw new DomainException("El nombre es requerido.");
@@ -58,5 +58,6 @@ public class Producto
         Idcategoria = idcategoria;
         Fechamodificacion = DateTime.Now;
         Genero = genero?.Trim();
+        Activo = activo;
     }
 }
