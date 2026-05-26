@@ -46,19 +46,20 @@ namespace Infraestructure.Repositories.Email
 
         private async Task EnviarAsync(string destinatario, string asunto, string html)
         {
-            var apiKey = config["Resend:ApiKey"];
-            var remitente = config["Resend:From"]; 
+            var apiKey = config["Brevo:EmailKey"];
+            var nombreRemitente = config["Brevo:NombreRemitente"];
+            var emailRemitente = config["Brevo:EmailRemitente"];
 
             var payload = new
             {
-                from = remitente,
-                to = new[] { destinatario },
+                sender = new { name = nombreRemitente, email = emailRemitente },
+                to = new[] { new { email = destinatario } },
                 subject = asunto,
-                html
+                htmlContent = html
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
+            request.Headers.Add("api-key", apiKey);
             request.Content = new StringContent(
                 JsonSerializer.Serialize(payload),
                 Encoding.UTF8,
