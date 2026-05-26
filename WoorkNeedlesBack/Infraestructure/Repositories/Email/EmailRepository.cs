@@ -57,22 +57,24 @@ namespace Infraestructure.Repositories.Email
         }
 
         private async Task EnviarAsync(string destinatario, string asunto, string html)
-        {
-            var mensaje = new MimeMessage();
-            mensaje.From.Add(new MailboxAddress(
-                config["Email:NombreRemitente"],
-                config["Email:Usuario"]));
-            mensaje.To.Add(MailboxAddress.Parse(destinatario));
-            mensaje.Subject = asunto;
-            mensaje.Body = new TextPart("html") { Text = html };
+{
+    var mensaje = new MimeMessage();
+    mensaje.From.Add(new MailboxAddress(
+        config["Email:NombreRemitente"],
+        config["Email:Usuario"]));
+    mensaje.To.Add(MailboxAddress.Parse(destinatario));
+    mensaje.Subject = asunto;
+    mensaje.Body = new TextPart("html") { Text = html };
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(config["Email:Host"],
-                int.Parse(config["Email:Port"]!),
-                SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(config["Email:Usuario"], config["Email:Contrasena"]);
-            await smtp.SendAsync(mensaje);
-            await smtp.DisconnectAsync(true);
-        }
+    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+    using var smtp = new SmtpClient();
+    
+    await smtp.ConnectAsync(config["Email:Host"],
+        int.Parse(config["Email:Port"]!),
+        SecureSocketOptions.StartTls, cts.Token);
+    await smtp.AuthenticateAsync(config["Email:Usuario"], config["Email:Contrasena"], cts.Token);
+    await smtp.SendAsync(mensaje, cancellationToken: cts.Token);
+    await smtp.DisconnectAsync(true, cts.Token);
+}
     }
 }

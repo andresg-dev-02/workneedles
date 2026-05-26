@@ -257,7 +257,7 @@ export class PedidoComponent implements OnInit {
     this.loadingEditarDetalle = true;
 
     const dto: UpdateDetallePedidoDto = {
-      idinventario: this.detalleEditar.idinventario ?? null, // 👈 usa el del detalle original
+      idinventario: this.detalleEditar.idinventario ?? null, 
       cantidad: this.editarCantidad,
       preciounitario: this.editarPrecio
     };

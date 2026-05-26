@@ -233,13 +233,13 @@ export class CrearPedidoComponent implements OnInit {
     };
 
     this.pagoService.createPago(this.pedidoCreadoId, dto).subscribe({
-      next: () => { this.loadingPago = false; this.router.navigate(['/admin/pedidos']); },
+      next: () => { this.loadingPago = false; this.router.navigate(['/gestion/pedidos']); },
       error: () => { this.error = 'No se pudo registrar el pago.'; this.loadingPago = false; }
     });
   }
 
   finalizarSinPago() {
-    this.router.navigate(['/admin/pedidos']);
+    this.router.navigate(['/gestion/pedidos']);
   }
 
   formatCurrency(value: number): string {
