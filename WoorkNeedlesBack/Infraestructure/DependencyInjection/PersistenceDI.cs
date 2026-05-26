@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infraestructure.Repositories.UserRepo;
 using Domain.Ports.Output.Email;
+using Infraestructure.Repositories.Email;
 
 namespace Infraestructure.DI;
 
