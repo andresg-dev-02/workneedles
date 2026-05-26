@@ -24,7 +24,7 @@ namespace Domain.Entities
         public DateTime? Fechamodificacion { get; private set; }
         public string NombreCliente { get; private set; } = string.Empty;
         public string NombreUsuario { get; private set; } = string.Empty;
-        public string? TokenConfirmacion { get; private set; }
+        public string? Tokenconfirmacion  { get; private set; }
 
         private Pedido() { }
 
@@ -88,13 +88,13 @@ namespace Domain.Entities
 
         public void AsignarToken(string token)
         {
-            TokenConfirmacion = token;
+            Tokenconfirmacion  = token;
             Fechamodificacion = DateTime.Now;
         }
 
         public void LimpiarToken()
         {
-            TokenConfirmacion = null;
+            Tokenconfirmacion  = null;
             Fechamodificacion = DateTime.Now;
         }
     }

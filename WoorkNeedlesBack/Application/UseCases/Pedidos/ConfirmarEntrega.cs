@@ -16,7 +16,7 @@ namespace Application.UseCases.Pedidos
             var pedido = await unitofwork.Pedidos.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Pedido no encontrado.");
 
-            if (pedido.TokenConfirmacion != token)
+            if (pedido.Tokenconfirmacion != token)
                 throw new DomainException("Token inválido.");
 
             var cliente = await unitofwork.Clientes.GetByIdAsync(pedido.Idcliente)
