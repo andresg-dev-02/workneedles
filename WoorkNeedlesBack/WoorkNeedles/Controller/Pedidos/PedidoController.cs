@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Exceptions;
 using Application.DTOs.Pedido;
 using Application.UseCases.Pedidos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WoorkNeedles.Controller.Pedidos
 {
