@@ -41,5 +41,5 @@ public partial class Usuario
 
     public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 
-    public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
+    public virtual ICollection<TokenConfirmacion> TokenConfirmacions { get; set; } = new List<TokenConfirmacion>();
 }

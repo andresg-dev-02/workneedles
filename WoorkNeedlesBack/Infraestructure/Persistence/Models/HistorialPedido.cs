@@ -19,7 +19,7 @@ public partial class HistorialPedido
 
     public DateTime Fecha { get; set; }
 
-    public virtual Pedido IdpedidoNavigation { get; set; } = null!;
+    public virtual TokenConfirmacion IdpedidoNavigation { get; set; } = null!;
 
     public virtual Usuario IdusuarioNavigation { get; set; } = null!;
 }

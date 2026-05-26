@@ -21,7 +21,7 @@ public partial class DetallePedido
 
     public virtual Inventario? IdinventarioNavigation { get; set; }
 
-    public virtual Pedido IdpedidoNavigation { get; set; } = null!;
+    public virtual TokenConfirmacion IdpedidoNavigation { get; set; } = null!;
 
     public virtual Producto IdproductoNavigation { get; set; } = null!;
 }
