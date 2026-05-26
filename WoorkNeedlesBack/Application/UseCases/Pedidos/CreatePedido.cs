@@ -7,6 +7,7 @@ using Domain.Entities;
 using Application.DTOs.Pedido;
 using Domain.Specification;
 using Domain.Ports.Output.UnitOfWork;
+using Domain.Ports.Output.Email;
 
 namespace Application.UseCases.Pedidos
 {
@@ -78,7 +79,7 @@ namespace Application.UseCases.Pedidos
         }
     }
 
-    public class CambiarEstadoPedido(IUnitOfWork unitofwork)
+    public class CambiarEstadoPedido(IUnitOfWork unitofwork, IEmailService emailService)
     {
         public async Task Execute(int id, CambiarEstadoPedidoDto dto)
         {
@@ -102,6 +103,24 @@ namespace Application.UseCases.Pedidos
                         }
                     }
                 }
+            }
+
+            if (dto.Estado.ToLower() == "enviado")
+            {
+                var cliente = await unitofwork.Clientes.GetByIdAsync(pedido.Idcliente)
+                    ?? throw new KeyNotFoundException("Cliente no encontrado.");
+
+                var token = Guid.NewGuid().ToString("N");
+                pedido.AsignarToken(token);
+
+                await emailService.EnviarCorreoEnvioAsync(
+                    cliente.Email,
+                    cliente.Nombres,
+                    cliente.Apellidos,
+                    pedido.Id,
+                    pedido.Direccionentrega,
+                    pedido.Fechentregaaprox,
+                    token);
             }
 
             pedido.CambiarEstado(dto.Estado);

@@ -77,7 +77,9 @@ export class PedidoService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-
+  getPagos(idPedido: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${idPedido}/Pagos`);
+  }
 
 
   

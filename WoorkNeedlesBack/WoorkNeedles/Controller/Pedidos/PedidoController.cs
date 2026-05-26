@@ -61,6 +61,19 @@ namespace WoorkNeedles.Controller.Pedidos
             catch (DomainException ex) { return BadRequest(ex.Message); }
         }
 
+        [HttpGet("{id}/confirmar-entrega")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmarEntrega(int id, [FromQuery] string token)
+        {
+            try
+            {
+                await confirmarEntrega.Execute(id, token);
+                return Redirect("http://localhost:4200/entrega-confirmada");
+            }
+            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
+            catch (DomainException ex) { return BadRequest(ex.Message); }
+        }
+
         [HttpPatch("{id}/estado")]
         public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoPedidoDto dto)
         {

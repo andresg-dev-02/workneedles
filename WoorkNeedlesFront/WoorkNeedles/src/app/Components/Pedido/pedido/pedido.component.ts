@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../../Services/Pedido/pedido.service';
@@ -33,6 +34,7 @@ interface UpdateDetallePedidoDto {
 export class PedidoComponent implements OnInit {
 
   pedidos: PedidoModel[] = [];
+  pagos: any[] = [];
   loading = false;
   error = '';
 
@@ -119,15 +121,23 @@ export class PedidoComponent implements OnInit {
   verDetalles(pedido: PedidoModel) {
     this.pedidoSeleccionado = pedido;
     this.detalles = [];
+    this.pagos = [];
     this.modalDetalles = true;
     this.loadingDetalles = true;
     this.mostrarFormAgregar = false;
     this.resetFormAgregar();
 
-    this.pedidoService.getDetalles(pedido.id).subscribe({
-      next: d => { this.detalles = d; this.loadingDetalles = false; },
-      error: () => { this.loadingDetalles = false; }
-    });
+    forkJoin({
+    detalles: this.pedidoService.getDetalles(pedido.id),
+    pagos: this.pedidoService.getPagos(pedido.id)   // 👈
+  }).subscribe({
+    next: ({ detalles, pagos }) => {
+      this.detalles = detalles;
+      this.pagos = pagos;         // 👈
+      this.loadingDetalles = false;
+    },
+    error: () => { this.loadingDetalles = false; }
+  });
   }
 
   // ── Agregar producto en modal detalles ──

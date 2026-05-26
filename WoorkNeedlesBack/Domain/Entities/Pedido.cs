@@ -24,6 +24,7 @@ namespace Domain.Entities
         public DateTime? Fechamodificacion { get; private set; }
         public string NombreCliente { get; private set; } = string.Empty;
         public string NombreUsuario { get; private set; } = string.Empty;
+        public string? TokenConfirmacion { get; private set; }
 
         private Pedido() { }
 
@@ -82,6 +83,18 @@ namespace Domain.Entities
             if (!estadosValidos.Contains(nuevoEstado))
                 throw new DomainException("Estado no válido.");
             Estado = nuevoEstado;
+            Fechamodificacion = DateTime.Now;
+        }
+
+        public void AsignarToken(string token)
+        {
+            TokenConfirmacion = token;
+            Fechamodificacion = DateTime.Now;
+        }
+
+        public void LimpiarToken()
+        {
+            TokenConfirmacion = null;
             Fechamodificacion = DateTime.Now;
         }
     }

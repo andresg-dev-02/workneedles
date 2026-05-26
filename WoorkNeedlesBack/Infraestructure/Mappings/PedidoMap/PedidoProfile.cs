@@ -22,7 +22,6 @@ namespace Infraestructure.Mappings.PedidoMap
                             ? src.IdusuarioNavigation.Nombres + " " + src.IdusuarioNavigation.Apellidos
                             : string.Empty));
 
-            CreateMap<Domain.Entities.Pedido, Infraestructure.Persistence.Models.Pedido>();
         }
     }
 }
