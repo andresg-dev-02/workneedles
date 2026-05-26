@@ -22,7 +22,7 @@ public static class PersistenceDI
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
-        services.AddScoped<IEmailService, EmailRepository>();
+        services.AddHttpClient<IEmailService, EmailRepository>();
         
 
         return services;
