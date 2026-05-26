@@ -13,6 +13,7 @@ import { CategoriaInsumoComponent } from './Components/CategoriaInsumo/categoria
 import { InsumoProductoComponent } from './Components/Inventario/inventario-component';
 import { ProductoBaseComponent } from './Components/ProductosBase/producto-base-component';
 import { adminGuard, empleadoGuard } from './Guards/auth-guard';
+import { PagosComponent } from './Components/Pagos/pagos-component';
 
 export const routes: Routes = [
   { path: 'productos', component: ProductoComponent },
@@ -42,6 +43,7 @@ export const routes: Routes = [
     { path: 'pedidos', component: PedidoComponent},
     { path: 'reportes', component: ReportesComponent },
     { path: 'inventario', component: InsumoProductoComponent },
+    { path: 'pago', component: PagosComponent}
   ],
 },
 ];

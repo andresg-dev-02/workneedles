@@ -1,0 +1,298 @@
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Pagos</h1>
+      <p class="text-gray-500 text-sm mt-1">Selecciona un pedido para gestionar sus pagos</p>
+    </div>
+
+    @if (errorPedidos) {
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-6 text-sm">{{ errorPedidos }}</div>
+    }
+
+    @if (cargandoPedidos) {
+      <div class="bg-white rounded-xl border border-gray-200 flex items-center justify-center py-20">
+        <p class="text-gray-400 text-sm">Cargando pedidos...</p>
+      </div>
+    }
+
+    <!-- Grid pedidos -->
+    @if (!cargandoPedidos && pedidos.length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+        @for (pedido of pedidos; track pedido.id) {
+          <div
+            class="bg-white rounded-xl border p-4 flex flex-col gap-2 cursor-pointer transition-all duration-200"
+            [class.border-gray-200]="!estaSeleccionado(pedido)"
+            [class.shadow-md]="estaSeleccionado(pedido)"
+            [style.border-color]="estaSeleccionado(pedido) ? '#7B1D3F' : ''"
+            (click)="seleccionarPedido(pedido)"
+            role="button" tabindex="0"
+            (keydown.enter)="seleccionarPedido(pedido)">
+
+            <div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-white" style="background-color: #7B1D3F;">
+              <svg class="w-5 h-5 flex-shrink-0 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <span class="text-sm font-semibold truncate">Pedido #{{ pedido.id }}</span>
+            </div>
+
+            <p class="text-xs text-gray-500">
+              <span class="font-medium text-gray-600">Cliente:</span> {{ pedido.nombreCliente }}
+            </p>
+            <p class="text-xs text-gray-500">
+              <span class="font-medium text-gray-600">Total:</span> ${{ pedido.total | number:'1.2-2' }}
+            </p>
+
+            <div class="flex items-center justify-between mt-auto pt-1 border-t border-gray-100">
+              <span class="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                [ngClass]="{
+                  'bg-green-100 text-green-700': pedido.estado === 'Completado',
+                  'bg-yellow-100 text-yellow-700': pedido.estado === 'Pendiente',
+                  'bg-red-100 text-red-600': pedido.estado === 'Cancelado',
+                  'bg-blue-100 text-blue-700': pedido.estado === 'En proceso'
+                }">
+                {{ pedido.estado }}
+              </span>
+              <span class="text-xs text-gray-400">{{ pedido.fechapedido | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Panel pagos -->
+    @if (pedidoSeleccionado) {
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-gray-900">
+              Pagos — Pedido #{{ pedidoSeleccionado.id }}
+            </h2>
+            <p class="text-xs text-gray-400 mt-0.5">Cliente: {{ pedidoSeleccionado.nombreCliente }}</p>
+          </div>
+          <button (click)="abrirCrear()"
+            class="text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity"
+            style="background-color: #7B1D3F;">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Registrar pago
+          </button>
+        </div>
+
+        @if (cargandoPagos) {
+          <p class="text-sm text-gray-400 py-8 text-center">Cargando pagos...</p>
+        }
+
+        @if (errorPagos) {
+          <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">{{ errorPagos }}</div>
+        }
+
+        @if (!cargandoPagos && pagos.length === 0 && !errorPagos) {
+          <div class="flex flex-col items-center justify-center py-12 gap-2">
+            <svg class="w-10 h-10 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+            <p class="text-gray-400 text-sm">No hay pagos registrados para este pedido</p>
+          </div>
+        }
+
+        @if (!cargandoPagos && pagos.length > 0) {
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">#</th>
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">Usuario</th>
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">Fecha</th>
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">Tipo</th>
+                  <th class="text-right font-semibold text-gray-500 pb-3 pr-4">Monto</th>
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">Referencia</th>
+                  <th class="text-left font-semibold text-gray-500 pb-3 pr-4">Estado</th>
+                  <th class="pb-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pago of pagos; track pago.id) {
+                  <tr class="border-b border-gray-100 last:border-0">
+                    <td class="py-3 pr-4 text-gray-400 text-xs">{{ pago.id }}</td>
+                    <td class="py-3 pr-4 text-gray-800">{{ pago.nombreUsuario }}</td>
+                    <td class="py-3 pr-4 text-gray-500 text-xs">{{ pago.fechapago | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="py-3 pr-4 text-gray-700">{{ pago.tipopago }}</td>
+                    <td class="py-3 pr-4 text-right font-semibold text-gray-900">${{ pago.monto | number:'1.2-2' }}</td>
+                    <td class="py-3 pr-4 text-gray-500 text-xs">{{ pago.referencia || '—' }}</td>
+                    <td class="py-3 pr-4">
+                      <span class="text-xs font-medium px-2.5 py-0.5 rounded-full" [ngClass]="estadoClass(pago.estado)">
+                        {{ pago.estado }}
+                      </span>
+                    </td>
+                    <td class="py-3">
+                      <div class="flex gap-1 justify-end">
+                        <button (click)="abrirEstado(pago)"
+                          class="px-2 py-1 rounded-lg text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100 transition-colors">
+                          Estado
+                        </button>
+                        <button (click)="abrirEliminar(pago)"
+                          class="px-2 py-1 rounded-lg text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 transition-colors">
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- ── MODAL CREAR PAGO ── -->
+@if (modalCrear) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalCrear = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Registrar pago</h3>
+        <button (click)="modalCrear = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Monto *</label>
+          <input type="number" [(ngModel)]="nuevoPago.monto" min="0.01" step="0.01" placeholder="0.00"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de pago *</label>
+          <select [(ngModel)]="nuevoPago.tipopago"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            <option value="" disabled>Selecciona un tipo</option>
+            @for (tipo of tiposPago; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Referencia</label>
+          <input type="text" [(ngModel)]="nuevoPago.referencia" placeholder="Ej: TRX-00123"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+          <textarea [(ngModel)]="nuevoPago.observaciones" rows="2" placeholder="Opcional..."
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none resize-none"></textarea>
+        </div>
+        @if (errorCrear) {
+          <p class="text-xs text-red-500">{{ errorCrear }}</p>
+        }
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalCrear = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="crearPago()" [disabled]="loadingCrear"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingCrear) { Guardando... } @else { Registrar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL CAMBIAR ESTADO ── -->
+@if (modalEstado && pagoEditando) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEstado = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="font-semibold text-gray-900">Cambiar estado</h3>
+        <button (click)="modalEstado = false" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-6 py-4 space-y-3">
+        <p class="text-sm text-gray-600">
+          Pago <span class="font-medium">#{{ pagoEditando.id }}</span> —
+          <span class="font-medium">${{ pagoEditando.monto | number:'1.2-2' }}</span>
+        </p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nuevo estado *</label>
+          <select [(ngModel)]="nuevoEstado"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
+            @for (estado of estados; track estado) {
+              <option [value]="estado">{{ estado }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="px-6 pb-4 flex gap-2">
+        <button (click)="modalEstado = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="guardarEstado()" [disabled]="loadingEstado"
+          class="flex-1 text-white text-sm py-2 rounded-lg disabled:opacity-50"
+          style="background-color: #7B1D3F;">
+          @if (loadingEstado) { Guardando... } @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── MODAL ELIMINAR ── -->
+@if (modalEliminar && pagoEliminar) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40" (click)="modalEliminar = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm z-10 p-6">
+
+      <div class="flex flex-col items-center text-center gap-3 mb-5">
+        <div class="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white" style="background-color: #7B1D3F;">
+          <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+          <span class="text-sm font-semibold">Pago #{{ pagoEliminar.id }}</span>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-900">¿Eliminar este pago?</p>
+          <p class="text-sm text-gray-500 mt-1">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button (click)="modalEliminar = false"
+          class="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50">
+          Cancelar
+        </button>
+        <button (click)="confirmarEliminar()" [disabled]="loadingEliminar"
+          class="flex-1 bg-red-600 text-white text-sm py-2 rounded-lg disabled:opacity-50 hover:bg-red-700">
+          @if (loadingEliminar) { Eliminando... } @else { Sí, eliminar }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

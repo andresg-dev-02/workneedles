@@ -56,7 +56,7 @@ namespace Domain.Entities
 
         public void CambiarEstado(string nuevoEstado)
         {
-            var estadosValidos = new[] { "pendiente", "completado", "cancelado", "reembolsado" };
+            var estadosValidos = new[] { "pendiente", "completado", "reembolsado", "fallido" };
             if (!estadosValidos.Contains(nuevoEstado))
                 throw new DomainException("Estado de pago no válido.");
             Estado = nuevoEstado;
