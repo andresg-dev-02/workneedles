@@ -41,11 +41,11 @@ export class PagosComponent implements OnInit {
   loadingEliminar = false;
 
   readonly tiposPago = [
-    'Efectivo',
-    'Transferencia',
-    'Tarjeta_credito',
-    'Tarjeta_debito',
-    'Credito_empresa'
+    'efectivo',
+    'transferencia',
+    'tarjeta_credito',
+    'tarjeta_debito',
+    'credito_empresa'
   ];
   readonly estados = ['pendiente', 'completado', 'reembolsado', 'fallido'];
 
@@ -116,6 +116,8 @@ export class PagosComponent implements OnInit {
       referencia: this.nuevoPago.referencia,
       observaciones: this.nuevoPago.observaciones,
     };
+
+    console.log('DTO enviado:', dto);
     
 
     this.pagoService.createPago(this.pedidoSeleccionado.id, dto).subscribe({

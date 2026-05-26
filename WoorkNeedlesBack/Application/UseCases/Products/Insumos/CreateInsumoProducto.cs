@@ -14,8 +14,19 @@ namespace Application.UseCases.Products.Insumos
     {
         public async Task Execute(CreateInsumosProductoDto dto)
         {
-            var insumosProducto = Domain.Entities.InsumosProducto.Crear(dto.Idproducto, dto.Idinsumo, dto.Cantidad);
+            var insumo = await unitofwork.Insumos.GetByIdAsync(dto.Idinsumo)
+                ?? throw new KeyNotFoundException("Insumo no encontrado.");
+
+            if (insumo.Stockactual < dto.Cantidad)
+                throw new DomainException("Stock insuficiente para este insumo.");
+
+            insumo.Actualizar(insumo.Idcategoria, insumo.Nombre, insumo.Descripcion,
+                insumo.Unidadmedida, insumo.Stockactual - dto.Cantidad,
+                insumo.Stockalerta, insumo.Precio, insumo.Proveedor);
+
+            var insumosProducto = InsumosProducto.Crear(dto.Idproducto, dto.Idinsumo, dto.Cantidad);
             await unitofwork.InsumosProducto.AddAsync(insumosProducto);
+            unitofwork.Insumos.Update(insumo);
             await unitofwork.SaveAsync();
         }
     }
@@ -39,11 +50,26 @@ namespace Application.UseCases.Products.Insumos
         {
             var insumosProducto = await unitofwork.InsumosProducto.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Insumo de producto no encontrado.");
+
+            var insumo = await unitofwork.Insumos.GetByIdAsync(insumosProducto.Idinsumo)
+                ?? throw new KeyNotFoundException("Insumo no encontrado.");
+
+            var diferencia = dto.Cantidad - insumosProducto.Cantidad;
+
+            if (diferencia > 0 && insumo.Stockactual < diferencia)
+                throw new DomainException("Stock insuficiente para este insumo.");
+
+            insumo.Actualizar(insumo.Idcategoria, insumo.Nombre, insumo.Descripcion,
+                insumo.Unidadmedida, insumo.Stockactual - diferencia,
+                insumo.Stockalerta, insumo.Precio, insumo.Proveedor);
+
             insumosProducto.Actualizar(
                 insumosProducto.Idproducto,
                 insumosProducto.Idinsumo,
                 dto.Cantidad);
+
             unitofwork.InsumosProducto.Update(insumosProducto);
+            unitofwork.Insumos.Update(insumo);
             await unitofwork.SaveAsync();
         }
     }
@@ -54,7 +80,16 @@ namespace Application.UseCases.Products.Insumos
         {
             var insumosProducto = await unitofwork.InsumosProducto.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Insumo de producto no encontrado.");
+
+            var insumo = await unitofwork.Insumos.GetByIdAsync(insumosProducto.Idinsumo)
+                ?? throw new KeyNotFoundException("Insumo no encontrado.");
+
+            insumo.Actualizar(insumo.Idcategoria, insumo.Nombre, insumo.Descripcion,
+                insumo.Unidadmedida, insumo.Stockactual + insumosProducto.Cantidad,
+                insumo.Stockalerta, insumo.Precio, insumo.Proveedor);
+
             unitofwork.InsumosProducto.Delete(insumosProducto);
+            unitofwork.Insumos.Update(insumo);
             await unitofwork.SaveAsync();
         }
     }
