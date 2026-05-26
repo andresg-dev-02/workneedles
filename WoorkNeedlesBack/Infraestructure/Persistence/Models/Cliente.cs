@@ -47,5 +47,5 @@ public partial class Cliente
 
     public virtual Paise IdpaisNavigation { get; set; } = null!;
 
-    public virtual ICollection<TokenConfirmacion> TokenConfirmacions { get; set; } = new List<TokenConfirmacion>();
+    public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 }

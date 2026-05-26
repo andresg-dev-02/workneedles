@@ -33,6 +33,8 @@ public partial class Pedido
 
     public DateTime? Fechamodificacion { get; set; }
 
+    public string? Tokenconfirmacion { get; set; }
+
     public virtual ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
 
     public virtual ICollection<Devolucione> Devoluciones { get; set; } = new List<Devolucione>();

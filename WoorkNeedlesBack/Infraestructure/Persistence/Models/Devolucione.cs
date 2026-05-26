@@ -21,7 +21,7 @@ public partial class Devolucione
 
     public virtual Cliente? IdclienteNavigation { get; set; }
 
-    public virtual TokenConfirmacion IdpedidoNavigation { get; set; } = null!;
+    public virtual Pedido IdpedidoNavigation { get; set; } = null!;
 
     public virtual Usuario IdusuarioNavigation { get; set; } = null!;
 }
