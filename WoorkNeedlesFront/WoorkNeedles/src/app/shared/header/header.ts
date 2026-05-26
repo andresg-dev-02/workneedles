@@ -19,8 +19,16 @@ export class Header {
     return this.authService.isAdmin();
   }
 
+  get isLoggedIn(): boolean {
+  return this.authService.isAuthenticated();
+}
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  get isEmpleado(): boolean {
+    return this.authService.getRol() === 'Empleado';
   }
 
   goToLogin() {

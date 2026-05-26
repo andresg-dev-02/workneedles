@@ -91,12 +91,13 @@ export class UsuarioComponent implements OnInit {
       nombres: u.nombres,
       apellidos: u.apellidos,
       email: u.email,
-      contrasena: '',           // el backend debería ignorar si está vacío
+      contrasena: '',          
       contrasenaNueva: null,
       telefono: u.telefono,
       idRol: u.rol === 'Administrador' ? 1 : 2,
       idPais: 1,
-      idCiudad: 1
+      idCiudad: 1,
+      activo: u.activo
     };
     this.usuarioService.updateUsuario(u.id, dto).subscribe({
       next: () => { this.modalEditar = false; this.cargarUsuarios(); },

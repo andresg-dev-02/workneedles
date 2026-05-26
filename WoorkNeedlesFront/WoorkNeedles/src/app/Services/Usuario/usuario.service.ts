@@ -30,6 +30,7 @@ export interface CreateUsuarioDto {
 
 export interface UpdateUsuarioDto extends CreateUsuarioDto {
   contrasenaNueva?: string | null;
+  activo: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductoService, CreateProductoDto } from '../../Services/Producto/producto.service';
 import { ProductoModel } from '../../Models/Producto/producto.model';
 import { CategoriaProductoService, CategoriaProductoDto } from '../../Services/CategoriasProducto/categoria-producto.service';
+import { CloudinaryService } from '../../Services/Cloudinary/cloudinary.service';
 
 @Component({
   selector: 'app-producto-base-component',
@@ -13,7 +14,7 @@ import { CategoriaProductoService, CategoriaProductoDto } from '../../Services/C
 })
 export class ProductoBaseComponent implements OnInit {
   productos: ProductoModel[] = [];
-  categorias: CategoriaProductoDto[] = [];  
+  categorias: CategoriaProductoDto[] = [];
   errorProductos: string | null = null;
 
   modalCrear = false;
@@ -23,6 +24,7 @@ export class ProductoBaseComponent implements OnInit {
   loadingCrear = false;
   loadingEditar = false;
   loadingEliminar = false;
+  subiendoImagen = false;
 
   errorCrear: string | null = null;
   errorEditar: string | null = null;
@@ -34,12 +36,13 @@ export class ProductoBaseComponent implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private categoriaService: CategoriaProductoService  
+    private categoriaService: CategoriaProductoService,
+    private cloudinaryService: CloudinaryService
   ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
-    this.cargarCategorias();  
+    this.cargarCategorias();
   }
 
   private formVacio(): CreateProductoDto {
@@ -72,6 +75,27 @@ export class ProductoBaseComponent implements OnInit {
     this.nuevoProducto = this.formVacio();
     this.errorCrear = null;
     this.modalCrear = true;
+  }
+
+  // ── Cloudinary ──
+  onImagenSeleccionada(event: Event, modo: 'crear' | 'editar'): void {
+    const archivo = (event.target as HTMLInputElement).files?.[0];
+    if (!archivo) return;
+
+    this.subiendoImagen = true;
+
+    this.cloudinaryService.subirImagen(archivo).subscribe({
+      next: (url) => {
+        if (modo === 'crear') this.nuevoProducto.urlimagen = url;
+        if (modo === 'editar' && this.productoEditar) this.productoEditar.urlimagen = url;
+        this.subiendoImagen = false;
+      },
+      error: () => {
+        this.subiendoImagen = false;
+        if (modo === 'crear') this.errorCrear = 'Error al subir la imagen.';
+        if (modo === 'editar') this.errorEditar = 'Error al subir la imagen.';
+      }
+    });
   }
 
   crearProducto(): void {

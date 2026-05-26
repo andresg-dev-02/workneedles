@@ -1,58 +1,56 @@
 <div class="navbar bg-base-100 shadow-sm relative">
   <div class="pl-8 flex-1 flex items-center gap-4">
-
-    <div class="w-30 h-24 rounded-2xl overflow-hidden shadow-md ">
+    <div class="w-30 h-24 rounded-2xl overflow-hidden shadow-md">
       <img 
         src="https://res.cloudinary.com/dgcrpsesh/image/upload/q_auto/f_auto/v1779694894/WhatsApp_Image_2026-05-24_at_4.02.06_PM_yquyf8.jpg"
         alt="Logo WoorkNeedles"
         class="w-full h-full object-cover"
       >
     </div>
-
-   
-
-</div>
+  </div>
 
   <div class="flex-none flex items-center gap-2">
 
-    @if (!isAdmin) {
-      <button (click)="goToLogin()" class="btn btn-ghost" >Login</button>
+    @if (!isAdmin && !isLoggedIn) {
+      <button (click)="goToLogin()" class="btn btn-ghost">Login</button>
     }
 
-    @if (isAdmin) {
-      <div class="relative">
-        <button (click)="toggleMenu()" class="btn btn-ghost flex items-center gap-1">
-          Panel Admin
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+    @if (isLoggedIn) {
+  <div class="relative">
+    <button (click)="toggleMenu()" class="btn btn-ghost flex items-center gap-1">
+      {{ isAdmin ? 'Panel Admin' : 'Panel Empleado' }}
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
 
-        @if (menuOpen) {
-          <div class="absolute right-0 mt-2 w-48 bg-base-100 rounded-box shadow-lg z-50 border border-base-200">
-            <ul class="menu p-2">
-              <li><a (click)="navigateTo('/admin/usuarios')">Usuarios</a></li>
-              <li><a (click)="navigateTo('/admin/clientes')">Clientes</a></li>
-              <li><a (click)="navigateTo('/admin/colores')">Colores</a></li>
-              <li><a (click)="navigateTo('/admin/tallas')">Tallas</a></li>
-              <li><a (click)="navigateTo('/admin/categorias')">Categorías Productos</a></li>
-              <li><a (click)="navigateTo('/admin/productos-base')">Productos Base</a></li>
-              <li><a (click)="navigateTo('/admin/categorias-insumos')">Categorias Insumos</a></li>
-              <li><a (click)="navigateTo('/admin/insumos')">Insumos</a></li>
-              <li><a (click)="navigateTo('/gestion/inventario')">Inventario</a></li>
-              <li><a (click)="navigateTo('/gestion/pedidos')">Pedidos</a></li>
-              <li><a (click)="navigateTo('/gestion/pago')">Pagos</a></li>
-              <li><a (click)="navigateTo('/gestion/reportes')">Reportes</a></li>
-              
-            </ul>
-          </div>
-        }
+    @if (menuOpen) {
+      <div class="absolute right-0 mt-2 w-48 bg-base-100 rounded-box shadow-lg z-50 border border-base-200">
+        <ul class="menu p-2">
+          @if (isAdmin) {
+            <li><a (click)="navigateTo('/admin/usuarios')">Usuarios</a></li>
+            <li><a (click)="navigateTo('/admin/clientes')">Clientes</a></li>
+            <li><a (click)="navigateTo('/admin/colores')">Colores</a></li>
+            <li><a (click)="navigateTo('/admin/tallas')">Tallas</a></li>
+            <li><a (click)="navigateTo('/admin/categorias')">Categorías Productos</a></li>
+            <li><a (click)="navigateTo('/admin/productos-base')">Productos Base</a></li>
+            <li><a (click)="navigateTo('/admin/categorias-insumos')">Categorias Insumos</a></li>
+            <li><a (click)="navigateTo('/admin/insumos')">Insumos</a></li>
+          }
+          <li><a (click)="navigateTo('/gestion/inventario')">Inventario</a></li>
+          <li><a (click)="navigateTo('/gestion/pedidos')">Pedidos</a></li>
+          <li><a (click)="navigateTo('/gestion/pago')">Pagos</a></li>
+          <li><a (click)="navigateTo('/gestion/reportes')">Reportes</a></li>
+        </ul>
       </div>
-
-      <button (click)="logout()" class="btn text-white" style="background-color: #7B1D3F;">
-        Cerrar sesión
-      </button>
     }
+  </div>
+}
 
+@if (isLoggedIn) {
+  <button (click)="logout()" class="btn text-white" style="background-color: #7B1D3F;">
+    Cerrar sesión
+  </button>
+}
   </div>
 </div>
