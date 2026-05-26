@@ -45,8 +45,8 @@ namespace WoorkNeedles.Controller.Pedidos
         {
             try
             {
-                await create.Execute(dto);
-                return Created();
+                var id = await create.Execute(dto);
+                return Created("", new { id });
             }
             catch (DomainException ex) { return BadRequest(ex.Message); }
         }

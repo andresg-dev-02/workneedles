@@ -13,7 +13,7 @@ namespace Application.UseCases.Pedidos
 {
     public class CreatePedido(IUnitOfWork unitofwork)
     {
-        public async Task Execute(CreatePedidoDto dto)
+        public async Task<int> Execute(CreatePedidoDto dto)
         {
             var pedido = Domain.Entities.Pedido.Crear(
                 dto.IdCliente, dto.IdUsuario,
@@ -22,6 +22,7 @@ namespace Application.UseCases.Pedidos
                 dto.Descuento);
             await unitofwork.Pedidos.AddAsync(pedido);
             await unitofwork.SaveAsync();
+            return pedido.Id;
         }
     }
 

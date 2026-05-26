@@ -129,18 +129,12 @@ export class CrearPedidoComponent implements OnInit {
       descuento: this.descuento
     };
 
-    this.pedidoService.createPedido(dto).subscribe({
-      next: () => {
-        this.pedidoService.getPedidos().subscribe({
-          next: pedidos => {
-            const ultimo = pedidos[pedidos.length - 1];
-            this.pedidoCreadoId = ultimo.id;
-            this.montoPago = this.totalConDescuento;
-            this.paso = 'detalles';
-            this.loading = false;
-          },
-          error: () => { this.error = 'Pedido creado pero no se pudo obtener su ID.'; this.loading = false; }
-        });
+      this.pedidoService.createPedido(dto).subscribe({
+      next: (res: any) => {
+        this.pedidoCreadoId = res.id; // ✅ ID directo del backend
+        this.montoPago = this.totalConDescuento;
+        this.paso = 'detalles';
+        this.loading = false;
       },
       error: () => { this.error = 'No se pudo crear el pedido.'; this.loading = false; }
     });
