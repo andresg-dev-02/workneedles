@@ -18,7 +18,8 @@ namespace WoorkNeedles.Controller.Pedidos
         CreatePedido create,
         UpdatePedido update,
         CambiarEstadoPedido cambiarEstado,
-        DeletePedido delete
+        DeletePedido delete,
+        ConfirmarEntrega confirmarEntrega
     ) : ControllerBase
     {
         [HttpGet]
