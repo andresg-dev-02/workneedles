@@ -18,11 +18,10 @@ public class UpdateUser(IUnitOfWork unitofwork, IPasswordHash passwordHash)
         var usuario = await unitofwork.Usuarios.GetByIdAsync(id, options)
             ?? throw new KeyNotFoundException("Usuario no encontrado.");
 
-        var contrasenaHash = string.IsNullOrWhiteSpace(actualizarUsuarioDto.Contrasena)
-            ? null : passwordHash.Hashear(actualizarUsuarioDto.Contrasena);
+        var contrasenaHash = string.IsNullOrWhiteSpace(actualizarUsuarioDto.ContrasenaNueva)
+    ? null : passwordHash.Hashear(actualizarUsuarioDto.ContrasenaNueva);
 
-        usuario.Actualizar(actualizarUsuarioDto.Nombres, actualizarUsuarioDto.Apellidos, actualizarUsuarioDto.Email,
-            actualizarUsuarioDto.Telefono, actualizarUsuarioDto.IdRol, actualizarUsuarioDto.IdPais, actualizarUsuarioDto.IdCiudad, contrasenaHash);
+        usuario.Actualizar(actualizarUsuarioDto.Nombres, actualizarUsuarioDto.Apellidos, actualizarUsuarioDto.Email, actualizarUsuarioDto.Telefono, actualizarUsuarioDto.IdRol, actualizarUsuarioDto.IdPais, actualizarUsuarioDto.IdCiudad, contrasenaHash, actualizarUsuarioDto.Activo);
 
         unitofwork.Usuarios.Update(usuario);
         await unitofwork.SaveAsync();

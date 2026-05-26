@@ -30,4 +30,5 @@ public class CreateUsuarioDto
 public class UpdateUsuarioDto : CreateUsuarioDto
 {
     public new string? ContrasenaNueva { get; set; } 
+    public bool Activo { get; set; }
 }

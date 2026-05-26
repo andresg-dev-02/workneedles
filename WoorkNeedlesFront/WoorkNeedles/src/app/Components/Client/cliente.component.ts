@@ -104,12 +104,16 @@ cargarClientes() {
       this.clienteEditar.tipodocumento = 'nit';
     }
   }
+  
 
   guardarEdicion(cliente: ClienteDto) {
+  console.log('activo antes de enviar:', cliente.activo);
+  console.log('tipo:', typeof cliente.activo);
     this.clienteService.updateCliente(cliente.id, {
       idPais: cliente.idPais,
       idDepart: cliente.idDepart,
       idCiudad: cliente.idCiudad,
+      activo: cliente.activo,
       tipocliente: cliente.tipocliente,
       tipodocumento: cliente.tipodocumento,
       documento: cliente.documento,

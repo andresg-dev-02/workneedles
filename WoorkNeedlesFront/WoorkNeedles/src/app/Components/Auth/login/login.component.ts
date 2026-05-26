@@ -32,7 +32,6 @@ export class LoginComponent {
     ).subscribe({
 
       next: (res) => {
-        console.log('RESPUESTA LOGIN:', res);
 
         localStorage.setItem('token', res.token);
 
@@ -54,7 +53,7 @@ export class LoginComponent {
 
     this.authService.logout();
 
-    this.router.navigate(['/login']);
+    this.router.navigate(['/productos']);
 
   }
 }

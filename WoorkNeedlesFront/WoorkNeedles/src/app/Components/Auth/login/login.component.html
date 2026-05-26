@@ -53,12 +53,11 @@
 
     </form>
 
-    <div
-      @if {erro}
-      class="mt-5 bg-red-100 text-red-600 p-3 rounded-xl"
-    >
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="mt-5 bg-red-100 text-red-600 p-3 rounded-xl">
+        {{ error }}
+      </div>
+    }
 
   </div>
 

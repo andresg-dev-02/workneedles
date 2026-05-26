@@ -14,6 +14,7 @@ import { InsumoProductoComponent } from './Components/Inventario/inventario-comp
 import { ProductoBaseComponent } from './Components/ProductosBase/producto-base-component';
 import { adminGuard, empleadoGuard } from './Guards/auth-guard';
 import { PagosComponent } from './Components/Pagos/pagos-component';
+import { UsuarioComponent } from './Components/Usuario/usuario.component';
 
 export const routes: Routes = [
   { path: 'productos', component: ProductoComponent },
@@ -25,7 +26,6 @@ export const routes: Routes = [
   path: 'admin',
   canActivate: [adminGuard],
   children:[
-    { path: 'usuarios', component: LoginComponent },
     { path: 'colores', component: ColoresComponent },
     { path: 'pedidos/nuevo', component: CrearPedidoComponent},
     { path: 'clientes', component: ClienteComponent },
@@ -33,7 +33,8 @@ export const routes: Routes = [
     { path: 'tallas', component: TallasComponent },
     { path: 'categorias', component: CategoriaPComponent },
     { path: 'categorias-insumos', component: CategoriaInsumoComponent },
-    { path: 'productos-base', component: ProductoBaseComponent }
+    { path: 'productos-base', component: ProductoBaseComponent },
+    { path: 'usuarios', component: UsuarioComponent}
   ]
 },
   {

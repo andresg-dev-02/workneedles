@@ -50,7 +50,7 @@ public class Usuario
     }
 
     public void Actualizar(string nombres, string apellidos, string email,
-        string telefono, int idRol, int idPais, int idCiudad, string? nuevaContrasena = null)
+    string telefono, int idRol, int idPais, int idCiudad, string? nuevaContrasena = null, bool? activo = null)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new DomainException("El email es requerido.");
@@ -67,6 +67,9 @@ public class Usuario
 
         if (!string.IsNullOrWhiteSpace(nuevaContrasena))
             Contrasena = nuevaContrasena;
+
+        if (activo.HasValue)        
+            Activo = activo.Value;
 
         Fechamodificacion = DateTime.Now;
     }
