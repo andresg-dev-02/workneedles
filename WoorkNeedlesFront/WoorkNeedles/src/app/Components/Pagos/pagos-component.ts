@@ -116,10 +116,15 @@ export class PagosComponent implements OnInit {
       referencia: this.nuevoPago.referencia,
       observaciones: this.nuevoPago.observaciones,
     };
+    
 
     this.pagoService.createPago(this.pedidoSeleccionado.id, dto).subscribe({
       next: () => { this.modalCrear = false; this.loadingCrear = false; this.cargarPagos(); },
-      error: () => { this.errorCrear = 'Error al registrar el pago.'; this.loadingCrear = false; },
+      error: (err) => { 
+  console.error('Error crear pago:', err.error); 
+  this.errorCrear = err.error || 'Error al registrar el pago.'; 
+  this.loadingCrear = false; 
+},
     });
   }
 
