@@ -22,7 +22,12 @@ namespace Application.UseCases.Pedidos
                 dto.Descuento);
             await unitofwork.Pedidos.AddAsync(pedido);
             await unitofwork.SaveAsync();
-            return pedido.Id;
+            var todos = await unitofwork.Pedidos.GetAllAsync();
+            var nuevo = todos
+                .Where(p => p.Idcliente == dto.IdCliente && p.Idusuario == dto.IdUsuario)
+                .OrderByDescending(p => p.Fechacreacion)
+                .First();
+            return nuevo.Id;
         }
     }
 

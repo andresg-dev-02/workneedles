@@ -131,7 +131,8 @@ export class CrearPedidoComponent implements OnInit {
 
       this.pedidoService.createPedido(dto).subscribe({
       next: (res: any) => {
-        this.pedidoCreadoId = res.id; // ✅ ID directo del backend
+        console.log('Respuesta createPedido:', res);
+        this.pedidoCreadoId = res.id; 
         this.montoPago = this.totalConDescuento;
         this.paso = 'detalles';
         this.loading = false;
@@ -191,6 +192,9 @@ export class CrearPedidoComponent implements OnInit {
         });
         this.montoPago = this.totalConDescuento;
         this.successMsg = '✓ Producto agregado correctamente.';
+        if (this.inventarioSeleccionado) {
+          this.inventarioSeleccionado.stock -= this.cantidad;
+        }
         this.resetDetalle();
         this.loadingDetalle = false;
       },
