@@ -6,6 +6,7 @@ using Application.DTOs.Productos;
 using Domain.Entities;
 using Domain.Ports.Output.UnitOfWork;
 using AutoMapper;
+using Domain.Exceptions;
 using Domain.Specification;
 
 namespace Application.UseCases.Products.Insumos
