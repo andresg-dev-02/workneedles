@@ -106,11 +106,22 @@ cargarClientes() {
   }
 
   guardarEdicion(cliente: ClienteDto) {
-    this.clienteService.updateCliente(cliente.id, cliente).subscribe({
-      next: () => {
-        this.modalEditar = false;
-        this.cargarClientes();
-      },
+    this.clienteService.updateCliente(cliente.id, {
+      idPais: cliente.idPais,
+      idDepart: cliente.idDepart,
+      idCiudad: cliente.idCiudad,
+      tipocliente: cliente.tipocliente,
+      tipodocumento: cliente.tipodocumento,
+      documento: cliente.documento,
+      nombres: cliente.nombres ?? '',
+      apellidos: cliente.apellidos ?? '',
+      razonsocial: cliente.razonsocial ?? '',
+      email: cliente.email,
+      telefono: cliente.telefono,
+      direccion: cliente.direccion,
+      preferenciasCompra: cliente.preferenciasCompra ?? ''
+    }).subscribe({
+      next: () => { this.modalEditar = false; this.cargarClientes(); },
       error: () => this.error = 'Error al actualizar cliente.'
     });
   }

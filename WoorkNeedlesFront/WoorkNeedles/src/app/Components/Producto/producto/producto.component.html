@@ -112,39 +112,88 @@
 
 
 
-<div class="p-6">
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-2xl shadow p-6 mb-8">
+    <h3 class="text-lg font-bold text-[#07142f] mb-4">Filtrar productos</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <input [(ngModel)]="filtro.nombre" placeholder="Nombre"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <input [(ngModel)]="filtro.categoria" placeholder="Categoría"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <input [(ngModel)]="filtro.material" placeholder="Material"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <input [(ngModel)]="filtro.talla" placeholder="Talla (ej: M, L, XL)"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <input [(ngModel)]="filtro.color" placeholder="Color"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <select [(ngModel)]="filtro.genero"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]">
+        <option value="">Todos los géneros</option>
+        @for (g of generos; track g) {
+          <option [value]="g">{{ g }}</option>
+        }
+      </select>
+
+      <input [(ngModel)]="filtro.precioMin" type="number" placeholder="Precio mínimo"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+      <input [(ngModel)]="filtro.precioMax" type="number" placeholder="Precio máximo"
+        class="border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#8d1d4f]"/>
+
+    </div>
+
+    <div class="flex gap-3 mt-4">
+      <button (click)="aplicarFiltro()"
+        class="bg-[#8d1d4f] hover:bg-[#741640] text-white px-6 py-2 rounded-lg text-sm font-semibold transition">
+        Buscar
+      </button>
+      <button (click)="limpiarFiltro()"
+        class="border border-gray-300 hover:bg-gray-50 text-gray-600 px-6 py-2 rounded-lg text-sm transition">
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid de productos -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     @for (producto of productos; track producto.id) {
-      <div class="border rounded-lg shadow p-4 bg-white">
-
+      <div class="border rounded-xl shadow p-4 bg-white">
         @if (producto.urlimagen) {
           <img [src]="producto.urlimagen" [alt]="producto.nombre"
-               class="w-full h-48 object-cover object-top rounded mb-3"/>
+               class="w-full h-48 object-cover object-top rounded-lg mb-3"/>
         }
-
-        <h2 class="text-lg font-bold">{{ producto.nombre }}</h2>
-        <p class="text-gray-600 text-sm mb-2">{{ producto.descripcion }}</p>
-        <span class="text-xs bg-gray-100 px-2 py-1 rounded">{{ producto.categoria }}</span>
-
+        <h2 class="text-lg font-bold text-[#07142f]">{{ producto.nombre }}</h2>
+        <p class="text-gray-500 text-sm mb-2">{{ producto.descripcion }}</p>
+        <span class="text-xs bg-[#efe7ea] text-[#8d1d4f] px-2 py-1 rounded-full">{{ producto.categoria }}</span>
         @if (producto.material) {
-          <p class="text-sm text-gray-500 mt-1">Material: {{ producto.material }}</p>
+          <p class="text-sm text-gray-500 mt-2">Material: {{ producto.material }}</p>
         }
-
         @if (producto.genero) {
           <p class="text-sm text-gray-500">Género: {{ producto.genero }}</p>
         }
-
-        <p class="font-bold text-lg mt-3">{{ producto.preciobase | currency:'COP ':'symbol':'1.0-0' }}</p>
-
+        <p class="font-bold text-lg mt-3 text-[#07142f]">
+          {{ producto.preciobase | currency:'COP ':'symbol':'1.0-0' }}
+        </p>
       </div>
     }
   </div>
 
   @if (cargando) {
-    <p class="text-gray-500 text-center">Cargando productos...</p>
+    <p class="text-gray-500 text-center mt-8">Cargando productos...</p>
+  }
+  @if (!cargando && productos.length === 0) {
+    <p class="text-gray-400 text-center mt-8">No se encontraron productos.</p>
+  }
+  @if (error) {
+    <div class="bg-red-100 text-red-700 p-4 rounded mt-4">{{ error }}</div>
   }
 
-  @if (error !== '') {
-    <div class="bg-red-100 text-red-700 p-4 rounded">{{ error }}</div>
-  }
 </div>

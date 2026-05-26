@@ -5,6 +5,9 @@ import { environment } from '../../../environments/environment';
 
 export interface ClienteDto {
   id: number;
+  idPais: number;      
+  idDepart: number;    
+  idCiudad: number;
   tipocliente: string;
   tipodocumento: string;
   documento: string;

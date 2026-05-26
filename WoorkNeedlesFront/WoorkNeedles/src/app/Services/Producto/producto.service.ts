@@ -31,6 +31,18 @@ export interface CreateProductoDto {
   activo?: boolean;
 }
 
+export interface FiltroProductoDto {
+  nombre?: string;
+  categoria?: string;
+  talla?: string;
+  color?: string;
+  material?: string;
+  genero?: string;
+  precioMin?: number;
+  precioMax?: number;
+  disponible?: boolean;
+}
+
 export type UpdateProductoDto = CreateProductoDto;
 
 @Injectable({ providedIn: 'root' })
@@ -77,5 +89,19 @@ export class ProductoService {
 
   deleteProducto(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  buscarProductos(filtro: FiltroProductoDto): Observable<ProductoModel[]> {
+    const params: any = {};
+    if (filtro.nombre) params.nombre = filtro.nombre;
+    if (filtro.categoria) params.categoria = filtro.categoria;
+    if (filtro.talla) params.talla = filtro.talla;
+    if (filtro.color) params.color = filtro.color;
+    if (filtro.material) params.material = filtro.material;
+    if (filtro.genero) params.genero = filtro.genero;
+    if (filtro.precioMin != null) params.precioMin = filtro.precioMin;
+    if (filtro.precioMax != null) params.precioMax = filtro.precioMax;
+    if (filtro.disponible != null) params.disponible = filtro.disponible;
+    return this.http.get<ProductoModel[]>(`${this.apiUrl}/buscar`, { params });
   }
 }

@@ -8,6 +8,9 @@ namespace Application.DTOs.Client
     public class ClienteDto
     {
         public int Id { get; set; }
+        public int IdPais { get; set; }
+        public int IdDepart { get; set; }
+        public int IdCiudad { get; set; }
         public string Tipocliente { get; set; } = string.Empty;
         public string Tipodocumento { get; set; } = string.Empty;
         public string Documento { get; set; } = string.Empty;
