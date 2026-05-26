@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infraestructure.Repositories.UserRepo;
+using Domain.Ports.Output.Email;
 
 namespace Infraestructure.DI;
 
@@ -20,6 +21,8 @@ public static class PersistenceDI
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkRepository>();
+        services.AddScoped<IEmailService, EmailRepository>();
+        
 
         return services;
     }
